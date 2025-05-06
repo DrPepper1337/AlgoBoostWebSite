@@ -1,6 +1,7 @@
 package database
 
 import (
+	"AlgoBoostWebSite/internal/models"
 	"context"
 	"errors"
 	"fmt"
@@ -15,12 +16,12 @@ type Database struct {
 }
 
 func NewDatabase() (*Database, error) {
-	pgxpool, err := NewPostgresQLConnection()
+	pool, err := NewPostgresQLConnection()
 	if err != nil {
 		return nil, err
 	}
 	return &Database{
-		Postgres: pgxpool,
+		Postgres: pool,
 	}, nil
 }
 func (db *Database) Close() {
@@ -41,8 +42,8 @@ func replacePlaceholder(sql string) string {
 	return result.String()
 }
 
-func (db *Database) AddUser(email string, password string, role string) (int, error) {
-	sql, args, err := sq.Insert("users").Columns("email", "password", "role").Values(email, password, role).Suffix("RETURNING id").ToSql()
+func (db *Database) AddUser(name string, email string, password string, role string) (int, error) {
+	sql, args, err := sq.Insert("users").Columns("name", "email", "password", "role").Values(name, email, password, role).Suffix("RETURNING id").ToSql()
 	if err != nil {
 		return 0, err
 	}
@@ -70,12 +71,24 @@ func (db *Database) DeleteUser(id int) error {
 	return nil
 }
 
-//
-//func EditUser(conn *pgx.Conn, id int, email string, password string, role string) error {
-//
-//}
+func (db *Database) EditUser(id int, name string, email string, password string, role string) error {
+	sql, args, err := sq.Update("users").Set("name", name).Set("email", email).Set("password", password).Set("role", role).Where(sq.Eq{"id": id}).ToSql()
+	if err != nil {
+		return err
+	}
+	row := db.Postgres.QueryRow(context.Background(), replacePlaceholder(sql), args...)
+	var result interface{}
+	err = row.Scan(&result)
+	return nil
+}
 
-//
-//func GetUser(conn *pgx.Conn, id int) (models.User, error) {
-//
-//}
+func (db *Database) GetUser(id int) (models.User, error) {
+	sql, args, err := sq.Select("id", "name", "email", "password", "role").From("users").Where(sq.Eq{"id": id}).ToSql()
+	if err != nil {
+		return models.User{}, err
+	}
+	row := db.Postgres.QueryRow(context.Background(), replacePlaceholder(sql), args...)
+	var result models.User
+	err = row.Scan(&result.ID, &result.Name, &result.Email, &result.Password, &result.Role)
+	return result, nil
+}
