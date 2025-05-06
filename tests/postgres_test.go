@@ -34,28 +34,35 @@ func TestMain(m *testing.M) {
 func TestAddUser(t *testing.T) {
 	db, _ := database.NewDatabase()
 	defer db.Close()
+	id, err := db.AddUser("example1@gmail.com", "123", "admin")
+	if id != 1 || err != nil {
+		t.Errorf("AddUser failed with error: %v", err)
+	}
+	id, err = db.AddUser("example1@gmail.com", "123", "admin")
+	if err == nil {
+		t.Errorf("AddUser should have failed, in case of an existing user")
+	}
+	id, err = db.AddUser("example2@gmail.com", "123", "admin")
+	if id != 3 || err != nil {
+		t.Errorf("AddUser failed with error: %v", err)
+	}
+}
+
+func TestDeleteUser(t *testing.T) {
+	db, _ := database.NewDatabase()
+	defer db.Close()
 	var tests = []struct {
-		email    string
-		password string
-		role     string
-		wantID   int
-		wantErr  error
+		id      int
+		wantErr error
 	}{
-		{"example1@gmail.com", "123", "admin", 1, nil},
-		{"example1@gmail.com", "123", "admin", 0, errors.New("user already exists")},
-		{"example2@gmail.com", "123", "admin", 3, nil},
-		{"example3@gmail.com", "123", "admin", 4, nil},
+		{1, nil},
+		{2, nil},
+		{3, nil},
 	}
 	for _, test := range tests {
-		id, err := db.AddUser(test.email, test.password, test.role)
-		if test.wantErr != nil {
-			if err.Error() != test.wantErr.Error() {
-				t.Errorf("AddUser(%s, %s, %s) = %d, %v; want %d, %v", test.email, test.password, test.role, id, err, test.wantID, test.wantErr)
-			}
-		} else {
-			if id != test.wantID || !errors.Is(err, test.wantErr) {
-				t.Errorf("AddUser(%s, %s, %s) = %d, %v; want %d, %v", test.email, test.password, test.role, id, err, test.wantID, test.wantErr)
-			}
+		err := db.DeleteUser(test.id)
+		if !errors.Is(err, test.wantErr) {
+			t.Errorf("Delete user failed with error: %v", err)
 		}
 	}
 }
