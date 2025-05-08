@@ -3,13 +3,14 @@ package tests
 import (
 	"AlgoBoostWebSite/internal/database"
 	"errors"
-	"github.com/joho/godotenv"
 	"os"
 	"testing"
+
+	"github.com/joho/godotenv"
 )
 
 func setup() {
-	if err := godotenv.Load("../configs/.env"); err != nil {
+	if err := godotenv.Load("../../configs/.env"); err != nil {
 		panic(err)
 	}
 	db, err := database.NewDatabase()
