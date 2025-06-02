@@ -87,7 +87,7 @@ func (db *Database) CreateTables() error {
 			time NUMERIC(10, 3),
 			memory NUMERIC(10, 3),
 			status_code VARCHAR(20) NOT NULL,
-			status_id INTEGER NOT NULL,
+			status_id INTEGER,
     		task_id INTEGER NOT NULL,
 			user_id INTEGER NOT NULL,
 			FOREIGN KEY (user_id) REFERENCES users(id),
@@ -110,7 +110,7 @@ func (db *Database) CreateTables() error {
 		);`
 	_, err = db.Postgres.Exec(context.Background(), query)
 	if err != nil {
-		zap.L().Error("failed to create statuses table", zap.Error(err))
+		zap.L().Error("failed to create lessons_tasks table", zap.Error(err))
 		return err
 	}
 

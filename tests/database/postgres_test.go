@@ -3,10 +3,10 @@ package tests
 import (
 	"AlgoBoostWebSite/internal/database"
 	"errors"
+	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 	"os"
 	"testing"
-
-	"github.com/joho/godotenv"
 )
 
 func setup() {
@@ -109,5 +109,80 @@ func TestEditUser(t *testing.T) {
 	user, _ = db.GetUser(id)
 	if user.Email != "example3@gmail.com" {
 		t.Errorf("user should be updated")
+	}
+}
+
+func TestAddLesson(t *testing.T) {
+	db, _ := database.NewDatabase()
+	defer db.Close()
+	id, err := db.AddLesson("lesson1", "description1")
+	if err != nil {
+		t.Errorf("AddLesson failed with error: %v", err)
+	}
+	lesson, err := db.GetLesson(id)
+	zap.L().Debug("lesson", zap.Any("lesson", lesson))
+	if err != nil {
+		t.Errorf("GetLesson failed with error: %v", err)
+	}
+	if lesson.Title != "lesson1" || lesson.Description != "description1" {
+		t.Errorf("Lesson weren't added to the database correctly. (title: %s, description: %s)", lesson.Title, lesson.Description)
+	}
+}
+
+func TestDeleteLesson(t *testing.T) {
+	db, _ := database.NewDatabase()
+	defer db.Close()
+	id, err := db.AddLesson("lesson1", "description1")
+	if err != nil {
+		t.Errorf("AddLesson failed with error: %v", err)
+	}
+	err = db.DeleteLesson(id)
+	if err != nil {
+		t.Errorf("DeleteLesson failed with error: %v", err)
+	}
+	_, err = db.GetLesson(id)
+	if err == nil {
+		t.Errorf("GetLesson should have failed after deleting lesson")
+	}
+}
+
+func TestEditLesson(t *testing.T) {
+	db, _ := database.NewDatabase()
+	defer db.Close()
+	id, err := db.AddLesson("lesson1", "description1")
+	if err != nil {
+		t.Errorf("AddLesson failed with error: %v", err)
+	}
+	err = db.EditLesson(id, "lesson2", "description2")
+	if err != nil {
+		t.Errorf("EditLesson failed with error: %v", err)
+	}
+	lesson, err := db.GetLesson(id)
+	if err != nil {
+		t.Errorf("GetLesson failed with error: %v", err)
+	}
+	if lesson.Title != "lesson2" || lesson.Description != "description2" {
+		t.Errorf("Lesson weren't updated in the database correctly. (title: %s, description: %s)", lesson.Title, lesson.Description)
+	}
+}
+
+func TestSetLessonVisability(t *testing.T) {
+	db, _ := database.NewDatabase()
+	defer db.Close()
+	id, err := db.AddLesson("lesson123", "description1")
+	t.Log(id)
+	if err != nil {
+		t.Errorf("AddLesson failed with error: %v", err)
+	}
+	err = db.SetLessonVisability(id, true)
+	if err != nil {
+		t.Errorf("SetLessonVisability failed with error: %v", err)
+	}
+	lesson, err := db.GetLesson(id)
+	if err != nil {
+		t.Errorf("GetLesson failed with error: %v", err)
+	}
+	if lesson.Open != true {
+		t.Errorf("Lesson visibility wasn't updated in the database correctly. (open: %t)", lesson.Open)
 	}
 }

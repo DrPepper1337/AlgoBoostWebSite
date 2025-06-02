@@ -1,11 +1,12 @@
 package database
 
 import (
+	"AlgoBoostWebSite/internal/models"
 	"context"
 	"errors"
-
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
+	"go.uber.org/zap"
 )
 
 func (db *Database) AddLesson(title string, description string) (int, error) {
@@ -28,18 +29,19 @@ func (db *Database) AddLesson(title string, description string) (int, error) {
 
 func (db *Database) AddTaskToLesson(taskId, lessonId int) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	sql, args, err := psql.Insert("lessons_tasks").Columns("lesson_id", "task_id").Values(taskId, lessonId).ToSql()
+	sql, args, err := psql.Insert("lessons_tasks").Columns("lesson_id", "task_id").Values(lessonId, taskId).ToSql()
 	if err != nil {
+
 		return err
 	}
-	row := db.Postgres.QueryRow(context.Background(), sql, args...)
-	if !errors.Is(row.Scan(), pgx.ErrNoRows) {
-		return errors.New("adding task to a lesson failed")
+	_, err = db.Postgres.Exec(context.Background(), sql, args...)
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
-func (db *Database) DeleteTaskFromLesson(lessonId, taskId int) error {
+func (db *Database) DeleteTaskFromLesson(taskId, lessonId int) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	sql, args, err := psql.Delete("lessons_tasks").Where(sq.Eq{"lesson_id": lessonId, "task_id": taskId}).ToSql()
 	if err != nil {
@@ -62,10 +64,13 @@ func (db *Database) DeleteLesson(lessonId int) error {
 	if err != nil {
 		return err
 	}
-	args := append(args1, args2...)
-	row := db.Postgres.QueryRow(context.Background(), sql1+";"+sql2, args...)
-	if !errors.Is(row.Scan(), pgx.ErrNoRows) {
-		return errors.New("deleting lesson failed")
+	_, err = db.Postgres.Exec(context.Background(), sql1, args1...)
+	if err != nil {
+		return err
+	}
+	_, err = db.Postgres.Exec(context.Background(), sql2, args2...)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -82,7 +87,7 @@ func (db *Database) EditLesson(id int, title, description string) error {
 	return nil
 }
 
-func (db *Database) SetLessonVisuability(id int, open bool) error {
+func (db *Database) SetLessonVisability(id int, open bool) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	sql, args, err := psql.Update("lessons").Set("open", open).Where(sq.Eq{"id": id}).ToSql()
 	if err != nil {
@@ -94,14 +99,34 @@ func (db *Database) SetLessonVisuability(id int, open bool) error {
 	return nil
 }
 
-// func (db *Database) GetLesson(id int) (models.User, error) {
-// 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-// 	sql, args, err := psql.Select("id", "name", "email", "password", "role").From("users").Where(sq.Eq{"id": id}).ToSql()
-// 	if err != nil {
-// 		return models.User{}, err
-// 	}
-// 	row := db.Postgres.QueryRow(context.Background(), sql, args...)
-// 	var result models.User
-// 	err = row.Scan(&result.ID, &result.Name, &result.Email, &result.Password, &result.Role)
-// 	return result, nil
-// }
+func (db *Database) GetLesson(id int) (models.Lesson, error) {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.
+		Select(
+			"l.id",
+			"l.title",
+			"l.description",
+			"l.open",
+			"COALESCE(json_agg(json_build_object("+
+				"'id', tasks.id, "+
+				"'title', tasks.title "+
+				")) FILTER (WHERE tasks.id IS NOT NULL), '[]') AS tasks").
+		From("lessons l").
+		LeftJoin("lessons_tasks ON l.id = lessons_tasks.lesson_id").
+		LeftJoin("tasks ON tasks.id = lessons_tasks.task_id").
+		Where(sq.Eq{"l.id": id}).
+		GroupBy("l.id", "l.title", "l.description", "l.open").
+		ToSql()
+	zap.L().Info("sql", zap.String("sql", sql))
+	if err != nil {
+		return models.Lesson{}, err
+	}
+	row := db.Postgres.QueryRow(context.Background(), sql, args...)
+	var result models.Lesson
+	err = row.Scan(&result.ID, &result.Title, &result.Description, &result.Open, &result.Tasks)
+	if err != nil {
+		return models.Lesson{}, err
+	}
+	zap.L().Info("result", zap.Any("result", result))
+	return result, nil
+}

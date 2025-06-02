@@ -9,12 +9,12 @@ type User struct {
 }
 
 type Task struct {
-	ID          int    `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"Description"`
-	TimeLimit   int    `json:"time_limit"`
-	MemoryLimit int    `json:"memory_limit"`
-	IsPractice  bool   `json:"is_practice"`
+	ID          int     `json:"id"`
+	Title       string  `json:"title"`
+	Description string  `json:"Description"`
+	TimeLimit   float64 `json:"time_limit"`
+	MemoryLimit string  `json:"memory_limit"`
+	IsPractice  bool    `json:"is_practice"`
 }
 
 type ShortTask struct {
