@@ -5,9 +5,18 @@ import (
 	"AlgoBoostWebSite/internal/database"
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
+
+	"log"
+	"net/http"
+	"ALGOBOOSTWEBSITE/internal/receiver"
 )
 
 func main() {
+
+	r := receiver.SetupRoutes()
+	log.PrintLln("receiver running on :8080")
+	log.Fatal(http.ListenAndServe(":8080", r))
+
 	config.InitLogger(true)
 	if err := godotenv.Load("../configs/.env"); err != nil {
 		panic(err)
