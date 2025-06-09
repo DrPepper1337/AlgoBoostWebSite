@@ -8,13 +8,13 @@ import (
 
 	"log"
 	"net/http"
-	"ALGOBOOSTWEBSITE/internal/receiver"
+	"AlgoBoostWebSite/internal/receiver"
 )
 
 func main() {
 
 	r := receiver.SetupRoutes()
-	log.PrintLln("receiver running on :8080")
+	log.Println("receiver running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
 
 	config.InitLogger(true)

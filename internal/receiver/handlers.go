@@ -15,14 +15,14 @@ type SubmitRequest struct {
 	UserID string `json:"user_id`
 }
 
-var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriteConfig{
+var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
 	Brokers: []string{"localhost:9092"},
 	Topic: "submissons",
 })
 
 func SubmitHandler(w http.ResponseWriter , r *http.Request) {
 	var req SubmitRequest
-	err := json.newDecoder(r.Body).Decode(&req)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "invalid request", http.StatusBadRequest)
 		return
@@ -31,10 +31,10 @@ func SubmitHandler(w http.ResponseWriter , r *http.Request) {
 	// serialise as json to end to kafka
 	value, _ := json.Marshal(req)
 
-	err = kafkaWriter.WriterMessages(contextBackground(), kafka.Message{
-		Key: []byte(req.UserID)
+	err = kafkaWriter.WriteMessages(context.Background(), kafka.Message{
+		Key: []byte(req.UserID),
 		Value:  value,
-	}
+	})
 	if err != nil {
 		http.Error(w, "failed to submit code", http.StatusInternalServerError)
 		return
