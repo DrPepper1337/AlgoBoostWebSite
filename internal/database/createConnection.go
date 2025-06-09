@@ -68,10 +68,12 @@ func (db *Database) CreateTables() error {
 	query = `
 		CREATE TABLE IF NOT EXISTS statuses (
 			id SERIAL PRIMARY KEY,
+			solution_id INTEGER NOT NULL,
 			num_of_test INTEGER NOT NULL,
 			test_input TEXT NOT NULL,
 			test_output TEXT NOT NULL,
-			user_output TEXT NOT NULL
+			user_output TEXT NOT NULL,
+			FOREIGN KEY (solution_id) REFERENCES solutions(id) ON DELETE CASCADE
 		);`
 	_, err = db.Postgres.Exec(context.Background(), query)
 	if err != nil {
@@ -87,12 +89,10 @@ func (db *Database) CreateTables() error {
 			time NUMERIC(10, 3),
 			memory NUMERIC(10, 3),
 			status_code VARCHAR(20) NOT NULL,
-			status_id INTEGER,
     		task_id INTEGER NOT NULL,
 			user_id INTEGER NOT NULL,
-			FOREIGN KEY (user_id) REFERENCES users(id),
-			FOREIGN KEY (task_id) REFERENCES tasks(id),
-			FOREIGN KEY (status_id) REFERENCES statuses(id)
+			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+			FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 		);`
 	_, err = db.Postgres.Exec(context.Background(), query)
 	if err != nil {

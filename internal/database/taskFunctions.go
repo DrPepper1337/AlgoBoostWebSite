@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
 )
 
 func (db *Database) AddTask(title, description string, timeLimit int, memoryLimit int, isPractice bool) (int, error) {
@@ -25,31 +26,30 @@ func (db *Database) AddTask(title, description string, timeLimit int, memoryLimi
 	return int(result.(int32)), nil
 }
 
-//func (db *Database) DeleteUser(id int) error {
-//	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-//	sql, args, err := psql.Delete("users").Where(sq.Eq{"id": id}).ToSql()
-//	if err != nil {
-//		return err
-//	}
-//	row := db.Postgres.QueryRow(context.Background(), sql, args...)
-//	if !errors.Is(row.Scan(), pgx.ErrNoRows) {
-//		return errors.New("deleting user failed")
-//	}
-//	return nil
-//}
-//
-//func (db *Database) EditUser(id int, name string, email string, password string, role string) error {
-//	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-//	sql, args, err := psql.Update("users").Set("name", name).Set("email", email).Set("password", password).Set("role", role).Where(sq.Eq{"id": id}).ToSql()
-//	if err != nil {
-//		return err
-//	}
-//	row := db.Postgres.QueryRow(context.Background(), sql, args...)
-//	var result interface{}
-//	err = row.Scan(&result)
-//	return nil
-//}
-//
+func (db *Database) DeleteTask(id int) error {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Delete("tasks").Where(sq.Eq{"id": id}).ToSql()
+	if err != nil {
+		return err
+	}
+	row := db.Postgres.QueryRow(context.Background(), sql, args...)
+	if !errors.Is(row.Scan(), pgx.ErrNoRows) {
+		return errors.New("deleting task failed")
+	}
+	return nil
+}
+
+func (db *Database) EditTask(id int, title, description string, timeLimit, memoryLimit int, isPractice bool) error {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Update("tasks").Set("title", title).Set("description", description).Set("time_limit", timeLimit).Set("memory_limit", memoryLimit).Set("is_practice", isPractice).Where(sq.Eq{"id": id}).ToSql()
+	if err != nil {
+		return err
+	}
+	row := db.Postgres.QueryRow(context.Background(), sql, args...)
+	var result interface{}
+	err = row.Scan(&result)
+	return nil
+}
 
 func (db *Database) GetTask(id int) (models.Task, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)

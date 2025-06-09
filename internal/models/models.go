@@ -38,8 +38,9 @@ type Solution struct {
 	Memory     string  `json:"memory"`
 	Time       float64 `json:"time"`
 	StatusCode string  `json:"status_code"`
-	StatusID   int     `json:"status_id"`
 	TaskID     int     `json:"task_id"`
+	UserID     int     `json:"user_id"`
+	Status     Status  `json:"status"`
 }
 
 type Status struct {
