@@ -1,0 +1,330 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Silkscreen&display=swap');
+
+.maintext {
+    color: white;
+    font-size: 700%;
+    z-index: 5;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 2rem;
+  position: relative;
+  top: 2vh;
+  left: 0;
+  right: 0;
+  z-index: 3000;
+  height: 3.5rem;
+
+}
+
+body {
+    background-color: black;
+    font-family: "Space Mono", monospace;
+    margin: 0;
+    overflow: hidden;
+}
+
+.logo {
+    float: right;
+    margin: 4px;
+    height: 10vh;
+    pointer-events: none;
+    opacity: 0;
+}
+
+#mainlogo {
+    position: absolute;
+    z-index: 2;
+    float: left;
+    align-content: center;
+}
+
+#background {
+    z-index: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.listingsOfCode {
+    color: rgba(253, 221, 165, 0.529);
+    font-family: "JetBrains Mono", monospace;
+    user-select: none;
+    animation-fill-mode: backwards;
+    font-size: 2vh;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.forward {
+    width: 100%;
+    overflow: hidden;
+    display: inline-block;
+    animation: forward 120s linear infinite;
+}
+
+.backwards {
+    width: 100%;
+    overflow: hidden;
+    display: inline-block;
+    animation: backward 120s linear infinite;
+}
+
+.forward-delay {
+    width: 100%;
+    overflow: hidden;
+    display: inline-block;
+    animation: forward1 120s linear infinite;
+    animation-delay: -60s;
+}
+
+.backwards-delay {
+    width: 100%;
+    overflow: hidden;
+    display: inline-block;
+    animation: backward1 120s linear infinite;
+    animation-delay: -60s;
+}
+
+.border-line {
+    border: 1px solid white;
+    width: 100%;
+    opacity: 0;
+}
+
+@keyframes forward {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes backward {
+    0% {
+        transform: translateX(+100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes forward1 {
+    0% {
+        transform: translateX(-200%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+@keyframes backward1 {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-200%);
+    }
+}
+
+.ombre-top {
+    z-index: 1000;
+    position: absolute;
+    width : 100%;
+    height: 10rem;
+    background: linear-gradient( #000000, #00000000);
+}
+
+.ombre-bottom{
+    z-index: 1000;
+    position: absolute;
+    bottom: 0.2rem;
+    width : 100%;
+    height: 10rem;
+    background: linear-gradient(180turn, #000000, #00000000);
+}
+/*
+.navbar {
+    z-index: 1000;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+    user-select: none;
+    padding-left: 3rem;
+    position: absolute;
+    width: 100%;
+    height: 10rem;
+    font-size: 0.7rem;
+    overflow: hidden;
+    background: transparent;
+    transition: background 1s ease-in-out;
+} */
+
+
+.navbar {
+  display: flex;
+  gap: 3rem;
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  position: static;
+  width: auto;
+  height: auto;
+  background: transparent;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+
+}
+
+.menu-container:hover .navbar {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(0);
+}
+
+
+.menu-button {
+    transition: all 0.3s ease-out;
+}
+
+.menu-container {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.menu-line {
+    transition: transform 0.3s ease-out;
+}
+
+.menu-button:hover {
+    stroke: #f18913;
+    /* opacity: 0; */
+}
+
+.navbarLink {
+  color: white;
+  text-decoration: none;
+  margin: 0.5rem 0;
+  font-size: 1.2rem;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+
+.menu-container:hover .navbarLink {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* .navbarLink.show {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0px);
+} */
+
+.navbarLink:hover {
+    color: orange;
+}
+
+.a-container {
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3000;
+    transform: translate(-50%, -50%);
+  }
+
+  .glitch {
+    font-size: 7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-family: "Silkscreen", sans-serif;
+    color:#000000;
+    position: relative;
+    text-shadow: 0.05em 0 0 #fec069, -0.03em -0.04em 0 #f9f8f8,
+      0.025em 0.04em 0 #ff9500;
+    /* animation: glitch 725ms infinite; */
+  }
+
+  .glitch span {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .glitch span:first-child {
+    /* animation: glitch 500ms infinite; */
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    transform: translate(-0.04em, -0.03em);
+    opacity: 0.75;
+  }
+
+  .glitch span:last-child {
+    /* animation: glitch 375ms infinite; */
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    transform: translate(0.04em, 0.03em);
+    opacity: 0.75;
+  }
+
+  @keyframes glitch {
+    0% {
+      text-shadow: 0.05em 0 0 #fec069, -0.03em -0.04em 0 #f9f8f8,
+        0.025em 0.04em 0 #ff9500;
+    }
+    15% {
+      text-shadow: 0.05em 0 0 #fec069, -0.03em -0.04em 0 #f9f8f8,
+        0.025em 0.04em 0 #ff9500;
+    }
+    16% {
+      text-shadow: -0.05em -0.025em 0 #fec069, 0.025em 0.035em 0 #f9f8f8,
+        -0.05em -0.05em 0 #ff9500;
+    }
+    49% {
+      text-shadow: -0.05em -0.025em 0 #fec069, 0.025em 0.035em 0 #f9f8f8,
+        -0.05em -0.05em 0 #ff9500;
+    }
+    50% {
+      text-shadow: 0.05em 0.035em 0 #fec069, 0.03em 0 0 #f9f8f8,
+        0 -0.04em 0 #ff9500;
+    }
+    99% {
+      text-shadow: 0.05em 0.035em 0 #fec069, 0.03em 0 0 #f9f8f8,
+        0 -0.04em 0 #ff9500;
+    }
+    100% {
+      text-shadow: -0.05em 0 0 #fec069, -0.025em -0.04em 0 #f9f8f8,
+        -0.04em -0.025em 0 #ff9500;
+    }
+  }
+
+
+.login {
+  padding: 0.6em 1.5em;
+  font-size: 1em;
+  font-weight: bold;
+  color: white;
+  background-color: transparent;
+  border: 2px solid white;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.login:hover {
+  color: #f18913;
+  border-color: #f18913;
+
+}
+
