@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import Login from './components/Login/Login';
+import LoginRegister from './components/LoginRegister/LoginRegister';
 import LessonsPage from './components/LessonsPage/Lessons';
 
 import './App.css';
@@ -13,7 +13,7 @@ function App() {
     <>
     <Routes>
       <Route path="/" element={<Home />} />
-       <Route path="/login" element={<Login />} />
+       <Route path="/login" element={<LoginRegister />} />
         <Route path="/lessons" element={<LessonsPage />} />
   </Routes>
 </>

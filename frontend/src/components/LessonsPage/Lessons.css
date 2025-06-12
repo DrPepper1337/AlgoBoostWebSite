@@ -43,8 +43,8 @@
 .lessons-list {
   list-style: none;
   padding: 0;
-  max-width: 700px;
-  margin: 0 auto;
+  margin: 0;
+  text-align: left;
 }
 
 .lesson-item {
@@ -54,6 +54,7 @@
   border-radius: 8px;
   font-size: 1.1rem;
   color: #ffffff;
+  width: 30%;
   transition: transform 0.2s, background-color 0.2s;
 }
 
