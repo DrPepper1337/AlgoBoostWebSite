@@ -1,34 +1,44 @@
 import './Lessons.css';
-import { FaLaptopCode } from 'react-icons/fa';
+import { FaLaptopCode, FaBook } from 'react-icons/fa';
 
-const lessons = [
-  { type: 'Lecture', title: 'Lecture 1' },
-  { type: 'Practice', title: 'Practice 1' },
+const topics = [
+  { title: 'Topic 1' },
+  { title: 'Topic 2' },
 ];
 
-const Lessons = () => {
-  return (
-    <div className="lessons-wrapper">
-      <div className="lessons-page">
-        <header className="lessons-header">
-          <h1>
-            <FaLaptopCode className="header-icon" />Lessons
-          </h1>
-        </header>
+const lectures = [
+  { title: 'Theory 1' },
+  { title: 'Theory 2' },
 
-        <main className="lessons-content">
-          <ul className="lessons-list">
-            {lessons.map((lesson, index) => (
-              <li key={index} className="lesson-item">
-                {lesson.title}
-              </li>
-            ))}
-          </ul>
-        </main>
+];
+
+const practices = [
+  { title: 'Practice 1' },
+  { title: 'Practice 2' },
+
+];
+
+const sessions = topics.map((lec, i) => ({
+  lecture: lec.title,
+  practice: practices[i]?.title,
+}));
+
+const Lessons = () => (
+  <div className="lessons-wrapper">
+    {sessions.map((sess, idx) => (
+      <div key={idx} className="session-container">
+        <h2 className="session-title">{sess.lecture}</h2>
+        <div className="session-buttons">
+          <button className="session-btn theory">
+            <FaBook className="btn-icon" /> Theory
+          </button>
+          <button className="session-btn practice">
+            <FaLaptopCode className="btn-icon" /> Practice
+          </button>
+        </div>
       </div>
-
-    </div>
-  );
-};
+    ))}
+  </div>
+);
 
 export default Lessons;
