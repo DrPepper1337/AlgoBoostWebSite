@@ -1,10 +1,13 @@
 import AnimatedCodeBackground from './components/AnimatedCodeBackground';
 import { useNavigate } from 'react-router-dom';
-import './App.css';
+import './Home.css';
 export default function Home() {
 
   const navigate = useNavigate();
   return (
+
+
+    <div className="home-wrapper">
     <>
       <header>
         <div className="menu-container">
@@ -15,10 +18,9 @@ export default function Home() {
           </svg>
 
           <nav className="navbar">
-            <a className="navbarLink" href="#">About Us</a>
-            <a className="navbarLink" href="#">Lectures</a>
-            <a className="navbarLink" href="#">Schedule</a>
-            <a className="navbarLink" href="#">Resources</a>
+            <a className="navbarLink" href="#about">About Us</a>
+            <a className="navbarLink" href="#schedule">Schedule</a>
+            <a className="navbarLink" href="#resources">Resources</a>
           </nav>
         </div>
           <button className="login" onClick={() => navigate('/login')}>
@@ -37,7 +39,40 @@ export default function Home() {
       </div>
 
       <hr className="border-line" />
-    </>
+  <div className="spacer" />
+
+  <section id="about" className="section">
+    <h2>About Us</h2>
+    <p>
+      The AlgoBoost Society (ABS) is a community devoted to career readiness, problem-solving, and technical excellence.
+      We strive to provide a supportive environment for students to hone their coding skills, master data structures &
+      algorithms, and prepare for technical interviews.
+    </p>
+    <p>
+      Whether you’re aiming for a tech internship, a software engineering role, or simply love tackling coding challenges,
+      AlgoBoost is the place for you!
+    </p>
+    <p>
+      Our society offers a mix of lecture-style sessions, interactive problem-solving tutorials, and mock interviews,
+      helping students build both technical proficiency and strategic thinking.
+    </p>
+  </section>
+
+
+  <section id="schedule" className="section">
+    <h2>Schedule</h2>
+    <p><strong>DSA Talks:</strong> Mondays 5–6 PM</p>
+    <p><strong>Problem-Solving:</strong> Fridays 5–6 PM</p>
+  </section>
+
+  <section id="resources" className="section">
+    <h2>Resources</h2>
+    <p>
+    YAP YAP YAP
+    </p>
+  </section>
+</>
+    </div>
   );
 }
 

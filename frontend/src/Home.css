@@ -10,28 +10,14 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 1rem 2rem;
+.home-wrapper {
   position: relative;
-  top: 2vh;
-  left: 0;
-  right: 0;
-  z-index: 3000;
-  height: 3.5rem;
-
-}
-
-body {
-    background-color: black;
-    font-family: "Space Mono", monospace;
-    margin: 0;
-    overflow: hidden;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
 .logo {
@@ -54,6 +40,7 @@ body {
     overflow: hidden;
     position: relative;
 }
+
 
 .listingsOfCode {
     color: rgba(253, 221, 165, 0.529);
@@ -304,5 +291,74 @@ body {
   color: #f18913;
   border-color: #f18913;
 
+}
+
+.spacer {
+  height: 35vh;
+
+}
+
+.section {
+  padding: 100px 40px;
+  background-color: #0d0d0d;
+  color: #f2f2f2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: none;
+  scroll-margin-top: 80px;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+}
+
+.section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #ffa50055, transparent);
+  opacity: 0.6;
+}
+
+.section h2 {
+  color: #ffb347;
+  font-size: 2.4rem;
+  margin-bottom: 24px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+}
+
+
+.section p {
+  max-width: 700px;
+  margin: 0 auto 20px;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: #dddddd;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .section {
+    padding: 60px 20px;
+  }
+
+  .section h2 {
+    font-size: 1.8rem;
+  }
+
+  .section p {
+    font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 1000px) {
+  .section {
+    padding: 120px 60px;
+  }
 }
 

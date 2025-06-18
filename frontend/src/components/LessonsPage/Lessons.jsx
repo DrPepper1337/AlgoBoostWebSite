@@ -1,5 +1,8 @@
 import './Lessons.css';
-import { FaLaptopCode, FaBook } from 'react-icons/fa';
+import DropDownProfile from '../DropDownProfile/DropDownProfile';
+import { FaUser, FaLaptopCode, FaBook } from 'react-icons/fa';
+import { useRef, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const topics = [
   { title: 'Topic 1' },
@@ -23,8 +26,43 @@ const sessions = topics.map((lec, i) => ({
   practice: practices[i]?.title,
 }));
 
-const Lessons = () => (
+
+export default function Lessons() {
+
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+
+    const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+
+  return (
+
   <div className="lessons-wrapper">
+
+     <header className="header">
+        <button className="login" onClick={() => navigate('/')}>
+      Logout
+    </button>
+        <div className="user-menu" ref={menuRef}>
+           <FaUser
+            className="user-menu-button text-3xl cursor-pointer"
+            onClick={() => setOpen(!open)}
+          />
+          {open && <DropDownProfile />}
+    </div>
+  </header>
+
     {sessions.map((sess, idx) => (
       <div key={idx} className="session-container">
         <h2 className="session-title">{sess.lecture}</h2>
@@ -38,7 +76,8 @@ const Lessons = () => (
         </div>
       </div>
     ))}
+
   </div>
 );
 
-export default Lessons;
+}
