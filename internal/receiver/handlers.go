@@ -8,7 +8,7 @@ import(
 	kafka "github.com/segmentio/kafka-go"
 	"context"
 )
-
+// струтура запроса
 type SubmitRequest struct {
 	Code string `json:"code"`
 	TaskID string `json:"task_id"`
@@ -20,6 +20,7 @@ var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
 	Topic: "submissions",
 })
 
+// хандлер api/submit
 func SubmitHandler(w http.ResponseWriter , r *http.Request) {
 	var req SubmitRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -29,8 +30,15 @@ func SubmitHandler(w http.ResponseWriter , r *http.Request) {
 	}
 
 	// serialise as json to end to kafka
-	value, _ := json.Marshal(req)
+	// converts the request to a JSON-formatted byte slice
+	value, err := json.Marshal(req)
+	if err != nil {
+		log.Println("JSON marshal error:", err)
+		http.Error(w, "failed to marshal request", http.StatusInternalServerError)
+		return
+	}
 
+	// write the message to kafka
 	err = kafkaWriter.WriteMessages(context.Background(), kafka.Message{
 		Key: []byte(req.UserID),
 		Value:  value,
