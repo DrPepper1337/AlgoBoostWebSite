@@ -17,7 +17,7 @@ type SubmitRequest struct {
 
 var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
 	Brokers: []string{"localhost:9092"},
-	Topic: "submissons",
+	Topic: "submissions",
 })
 
 func SubmitHandler(w http.ResponseWriter , r *http.Request) {
@@ -36,6 +36,7 @@ func SubmitHandler(w http.ResponseWriter , r *http.Request) {
 		Value:  value,
 	})
 	if err != nil {
+    	log.Println("Kafka write error:", err)
 		http.Error(w, "failed to submit code", http.StatusInternalServerError)
 		return
 	}

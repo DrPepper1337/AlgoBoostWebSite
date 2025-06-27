@@ -12,11 +12,11 @@ import (
 )
 
 func main() {
-
+	// initialises the receiver
 	r := receiver.SetupRoutes()
 	log.Println("receiver running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
-
+	// ---
 	config.InitLogger(true)
 	if err := godotenv.Load("../configs/.env"); err != nil {
 		panic(err)
