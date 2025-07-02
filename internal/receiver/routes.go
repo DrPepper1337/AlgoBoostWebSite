@@ -1,15 +1,26 @@
 package receiver
 
-import(
+import (
+	"AlgoBoostWebSite/internal/database"
+	"AlgoBoostWebSite/internal/middleware"
 	"net/http"
+
 	"github.com/go-chi/chi/v5"
 )
 
-func SetupRoutes() http.Handler {
+func SetupRoutes(db *database.Database) http.Handler {
 	r := chi.NewRouter()
 
 	r.Post("/api/submit", SubmitHandler)
-	// TODO: more API requests to be added
+
+	r.Post("/api/login", LoginHandler(db))
+
+	r.With(middleware.JWTMiddleware).Get("/api/lessons", GetAllLessonsHandler(db))
+	// r.Get("api/lessons/{lessonID}", GetLessonByIdHandler)
+
+	// r.Get("api/tasks/{lessonID}", GetTasksByLessonHandler)
+	// r.Get("api/tasks/{taskID}", GetTasksDetailsHandler)
+	// user stats and progress handlers and routes as future improvements
 
 	return r
 }

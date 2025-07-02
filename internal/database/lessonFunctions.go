@@ -130,3 +130,55 @@ func (db *Database) GetLesson(id int) (models.Lesson, error) {
 	zap.L().Info("result", zap.Any("result", result))
 	return result, nil
 }
+
+func (db *Database) GetAllLessonsWithTasks(userID int) ([]models.Lesson, error) {
+	query := `
+	SELECT
+		l.id,
+		l.title,
+		l.description,
+		l.open,
+		COALESCE(json_agg(DISTINCT jsonb_build_object(
+			'id', t.id,
+			'title', t.title,
+			'status',
+			CASE
+				WHEN s.status_code = 'AC' THEN 2
+				WHEN s.id IS NOT NULL THEN 1
+				ELSE 0
+			END
+		)) FILTER (WHERE t.id IS NOT NULL), '[]') AS tasks
+	FROM lessons l
+	LEFT JOIN lessons_tasks lt ON l.id = lt.lesson_id
+	LEFT JOIN tasks t ON lt.task_id = t.id
+	LEFT JOIN LATERAL (
+		SELECT s.*
+		FROM solutions s
+		WHERE s.user_id = $1 AND s.task_id = t.id
+		ORDER BY s.id DESC
+		LIMIT 1
+	) s ON true
+	GROUP BY l.id, l.title, l.description, l.open;
+	`
+
+	rows, err := db.Postgres.Query(context.Background(), query, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var lessons []models.Lesson
+	for rows.Next() {
+		var lesson models.Lesson
+		err := rows.Scan(&lesson.ID, &lesson.Title, &lesson.Description, &lesson.Open, &lesson.Tasks)
+		if err != nil {
+			return nil, err
+		}
+		lessons = append(lessons, lesson)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return lessons, nil
+}

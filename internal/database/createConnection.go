@@ -8,7 +8,11 @@ import (
 	"go.uber.org/zap"
 )
 
-func NewPostgresQLConnection() (*pgxpool.Pool, error) {
+type Database struct {
+	Postgres *pgxpool.Pool
+}
+
+func NewDatabase() (*Database, error) {
 	url := "postgresql://" +
 		os.Getenv("POSTGRES_USER") + ":" +
 		os.Getenv("POSTGRES_PASSWORD") + "@" +
@@ -21,7 +25,20 @@ func NewPostgresQLConnection() (*pgxpool.Pool, error) {
 		return nil, err
 	}
 	zap.L().Info("connected to postgresql")
-	return pool, nil
+	return &Database{Postgres: pool}, nil
+}
+
+//	func NewDatabase() (*Database, error) {
+//		pool, err := NewPostgresQLConnection()
+//		if err != nil {
+//			return nil, err
+//		}
+//		return &Database{
+//			Postgres: pool,
+//		}, nil
+//	}
+func (db *Database) Close() {
+	db.Postgres.Close()
 }
 
 func (db *Database) CreateTables() error {

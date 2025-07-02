@@ -1,28 +1,66 @@
 package receiver
 
-import(
+import (
 	"encoding/json"
-	"net/http"
 	"log"
+	"net/http"
+
+	"AlgoBoostWebSite/internal/auth"
+	"AlgoBoostWebSite/internal/database"
+	"AlgoBoostWebSite/internal/models"
+	"context"
 
 	kafka "github.com/segmentio/kafka-go"
-	"context"
 )
-// струтура запроса
-type SubmitRequest struct {
-	Code string `json:"code"`
-	TaskID string `json:"task_id"`
-	UserID string `json:"user_id`
-}
 
 var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
 	Brokers: []string{"localhost:9092"},
-	Topic: "submissions",
+	Topic:   "submissions",
 })
 
+func LoginHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type creds struct {
+			Email    string `json:"email"`
+			Password string `json:"password"`
+		}
+
+		var credentials creds
+		err := json.NewDecoder(r.Body).Decode(&credentials)
+		if err != nil {
+			http.Error(w, "Invalid request", http.StatusBadRequest)
+			return
+		}
+
+		if credentials.Email == "" || credentials.Password == "" {
+			http.Error(w, "email and password are required", http.StatusBadRequest)
+			return
+		}
+
+		user, err := db.LoginUser(credentials.Email, credentials.Password)
+		if err != nil {
+			log.Println("Login error:", err)
+			http.Error(w, "failed to login", http.StatusInternalServerError)
+			return
+		}
+
+		// generate JWT token
+		token, err := auth.GenerateJWT(user.ID)
+		if err != nil {
+			log.Println("JWT generation error:", err)
+			http.Error(w, "failed to generate token", http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(map[string]string{
+			"token": token,
+		})
+	}
+}
+
 // хандлер api/submit
-func SubmitHandler(w http.ResponseWriter , r *http.Request) {
-	var req SubmitRequest
+func SubmitHandler(w http.ResponseWriter, r *http.Request) {
+	var req models.Solution
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "invalid request", http.StatusBadRequest)
@@ -40,11 +78,11 @@ func SubmitHandler(w http.ResponseWriter , r *http.Request) {
 
 	// write the message to kafka
 	err = kafkaWriter.WriteMessages(context.Background(), kafka.Message{
-		Key: []byte(req.UserID),
-		Value:  value,
+		Key:   []byte(r.Context().Value("userID").(string)),
+		Value: value,
 	})
 	if err != nil {
-    	log.Println("Kafka write error:", err)
+		log.Println("Kafka write error:", err)
 		http.Error(w, "failed to submit code", http.StatusInternalServerError)
 		return
 	}
@@ -52,3 +90,26 @@ func SubmitHandler(w http.ResponseWriter , r *http.Request) {
 	log.Println("code submitted to Kafka for task", req.TaskID)
 	w.Write([]byte(`{"status": "submitted"}`))
 }
+
+func GetAllLessonsHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// userID := 1
+		userID := r.Context().Value("iserID").(int)
+
+		lessons, err := db.GetAllLessonsWithTasks(userID)
+		if err != nil {
+			http.Error(w, "failed to fetch lessons", 500)
+			return
+		}
+
+		json.NewEncoder(w).Encode(lessons)
+	}
+}
+
+// func GetLessonByIdHandler(w http.ResponseWriter, r *http.Request) {
+
+// }
+
+// func GetTasksByLessonHandler(w http.ResponseWriter, r *http.Request) {
+
+// }
