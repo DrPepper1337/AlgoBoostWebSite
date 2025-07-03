@@ -6,11 +6,14 @@ import (
 	"log"
 	"net/http"
 
+	"strconv"
+
 	"AlgoBoostWebSite/internal/auth"
 	"AlgoBoostWebSite/internal/database"
 	"AlgoBoostWebSite/internal/models"
 	"context"
 
+	"github.com/go-chi/chi"
 	kafka "github.com/segmentio/kafka-go"
 )
 
@@ -120,10 +123,28 @@ func GetAllLessonsHandler(db *database.Database) http.HandlerFunc {
 	}
 }
 
-// func GetLessonByIdHandler(w http.ResponseWriter, r *http.Request) {
+func GetTasksByLessonIdHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// userID := r.Context().Value("userID").(int) // error handling later
 
-// }
+		lessonID := chi.URLParam(r, "lessonID")
+		if lessonID == "" {
+			http.Error(w, "lesson ID is required", http.StatusBadRequest)
+			return
+		}
 
-// func GetTasksByLessonHandler(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.Atoi(lessonID)
+		if err != nil {
+			http.Error(w, "invalid lesson ID", http.StatusBadRequest)
+			return
+		}
 
-// }
+		tasks, err := db.GetTasksByLessonIdHandler(id)
+		if err != nil {
+			http.Error(w, "failed to fetch tasks", http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(tasks)
+	}
+}

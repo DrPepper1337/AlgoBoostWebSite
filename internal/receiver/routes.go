@@ -16,7 +16,8 @@ func SetupRoutes(db *database.Database) http.Handler {
 	r.Post("/api/login", LoginHandler(db))
 
 	r.With(middleware.JWTMiddleware).Get("/api/lessons", GetAllLessonsHandler(db))
-	// r.Get("api/lessons/{lessonID}", GetLessonByIdHandler)
+
+	r.Get("api/tasks/{lessonID}", GetTasksByLessonIdHandler(db))
 
 	// r.Get("api/tasks/{lessonID}", GetTasksByLessonHandler)
 	// r.Get("api/tasks/{taskID}", GetTasksDetailsHandler)

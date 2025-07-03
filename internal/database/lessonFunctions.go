@@ -4,6 +4,7 @@ import (
 	"AlgoBoostWebSite/internal/models"
 	"context"
 	"errors"
+
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 	"go.uber.org/zap"
@@ -131,6 +132,7 @@ func (db *Database) GetLesson(id int) (models.Lesson, error) {
 	return result, nil
 }
 
+// redo
 func (db *Database) GetAllLessonsWithTasks(userID int) ([]models.Lesson, error) {
 	query := `
 	SELECT
