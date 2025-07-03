@@ -93,8 +93,7 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetAllLessonsHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// userID := 1
-		userID := r.Context().Value("iserID").(int)
+		userID := r.Context().Value("userID").(int)
 
 		lessons, err := db.GetAllLessonsWithTasks(userID)
 		if err != nil {

@@ -4,6 +4,7 @@ import (
 	"AlgoBoostWebSite/internal/config"
 	"AlgoBoostWebSite/internal/database"
 
+	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 
 	"AlgoBoostWebSite/internal/receiver"
@@ -13,9 +14,9 @@ import (
 
 func main() {
 	config.InitLogger(true)
-	// if err := godotenv.Load("../configs/.env"); err != nil {
-	// 	panic(err)
-	// }
+	if err := godotenv.Load("./configs/.env"); err != nil {
+		panic(err)
+	}
 	db, err := database.NewDatabase()
 	if err != nil {
 		zap.L().Debug(err.Error())
@@ -48,6 +49,11 @@ func main() {
 		zap.L().Debug(err.Error())
 	}
 	zap.L().Debug("a", zap.Any("ads", result.Tasks))
+
+	_, err = db.AddUser("test", "test@gmail.com", "test123", "admin")
+	if err != nil {
+		zap.L().Debug(err.Error())
+	}
 
 	// initialises the receiver
 	r := receiver.SetupRoutes(db)

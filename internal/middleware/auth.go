@@ -1,17 +1,18 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"strings"
-	"context"
+
+	"AlgoBoostWebSite/internal/auth"
 
 	"github.com/golang-jwt/jwt/v5"
-	"AlgoBoostWebSite/internal/auth"
 )
 
 func JWTMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
-		authHeader := r.Header.Get("Authorisation")
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
 			http.Error(w, "no auth header, wtf", http.StatusUnauthorized)
 			return

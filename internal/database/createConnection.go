@@ -12,31 +12,32 @@ type Database struct {
 	Postgres *pgxpool.Pool
 }
 
-func NewDatabase() (*Database, error) {
+func NewPostgresQLConnection() (*pgxpool.Pool, error) {
 	url := "postgresql://" +
 		os.Getenv("POSTGRES_USER") + ":" +
 		os.Getenv("POSTGRES_PASSWORD") + "@" +
 		os.Getenv("POSTGRES_HOST") + ":" +
 		os.Getenv("POSTGRES_PORT") + "/" +
-		os.Getenv("POSTGRES_DB")
+		os.Getenv("POSTGRES_DB") + "?sslmode=disable"
 	pool, err := pgxpool.New(context.Background(), url)
 	// TODO: configure connection pool in the future taking the amount of services from env
 	if err != nil {
 		return nil, err
 	}
 	zap.L().Info("connected to postgresql")
-	return &Database{Postgres: pool}, nil
+	return pool, nil
 }
 
-//	func NewDatabase() (*Database, error) {
-//		pool, err := NewPostgresQLConnection()
-//		if err != nil {
-//			return nil, err
-//		}
-//		return &Database{
-//			Postgres: pool,
-//		}, nil
-//	}
+func NewDatabase() (*Database, error) {
+	pool, err := NewPostgresQLConnection()
+	if err != nil {
+		return nil, err
+	}
+	return &Database{
+		Postgres: pool,
+	}, nil
+}
+
 func (db *Database) Close() {
 	db.Postgres.Close()
 }
@@ -83,22 +84,6 @@ func (db *Database) CreateTables() error {
 	}
 
 	query = `
-		CREATE TABLE IF NOT EXISTS statuses (
-			id SERIAL PRIMARY KEY,
-			solution_id INTEGER NOT NULL,
-			num_of_test INTEGER NOT NULL,
-			test_input TEXT NOT NULL,
-			test_output TEXT NOT NULL,
-			user_output TEXT NOT NULL,
-			FOREIGN KEY (solution_id) REFERENCES solutions(id) ON DELETE CASCADE
-		);`
-	_, err = db.Postgres.Exec(context.Background(), query)
-	if err != nil {
-		zap.L().Error("failed to create statuses table", zap.Error(err))
-		return err
-	}
-
-	query = `
 		CREATE TABLE IF NOT EXISTS solutions (
 			id SERIAL PRIMARY KEY,
 			compiler VARCHAR(50) NOT NULL,
@@ -114,6 +99,22 @@ func (db *Database) CreateTables() error {
 	_, err = db.Postgres.Exec(context.Background(), query)
 	if err != nil {
 		zap.L().Error("failed to create solutions table", zap.Error(err))
+		return err
+	}
+
+	query = `
+		CREATE TABLE IF NOT EXISTS statuses (
+			id SERIAL PRIMARY KEY,
+			solution_id INTEGER NOT NULL,
+			num_of_test INTEGER NOT NULL,
+			test_input TEXT NOT NULL,
+			test_output TEXT NOT NULL,
+			user_output TEXT NOT NULL,
+			FOREIGN KEY (solution_id) REFERENCES solutions(id) ON DELETE CASCADE
+		);`
+	_, err = db.Postgres.Exec(context.Background(), query)
+	if err != nil {
+		zap.L().Error("failed to create statuses table", zap.Error(err))
 		return err
 	}
 
