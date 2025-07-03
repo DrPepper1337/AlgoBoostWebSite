@@ -2,6 +2,7 @@ package receiver
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 
@@ -17,6 +18,20 @@ var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
 	Brokers: []string{"localhost:9092"},
 	Topic:   "submissions",
 })
+
+func LoginUser(db *database.Database, email, password string) (models.User, error) {
+	user, err := db.GetUserByEmail(email)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	if user.Password != password {
+		return models.User{}, errors.New("invalid credentials")
+	}
+
+	return user, nil
+
+}
 
 func LoginHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +52,7 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		user, err := db.LoginUser(credentials.Email, credentials.Password)
+		user, err := LoginUser(db, credentials.Email, credentials.Password)
 		if err != nil {
 			log.Println("Login error:", err)
 			http.Error(w, "failed to login", http.StatusInternalServerError)
