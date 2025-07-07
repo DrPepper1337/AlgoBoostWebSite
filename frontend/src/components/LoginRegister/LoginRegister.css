@@ -87,11 +87,18 @@ form .remember-forgot {
     justify-content: space-between;
     font-size: 14.5px;
     margin: -15px 0 15px;
+
+}
+
+.remember-forgot label {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: black;
 }
 
 .remember-forgot label input {
     color: black;
-    margin-left: 4px;
 }
 
 .remember-forgot a {

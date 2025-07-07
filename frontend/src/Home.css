@@ -20,20 +20,7 @@
   overflow: hidden;
 }
 
-.logo {
-    float: right;
-    margin: 4px;
-    height: 10vh;
-    pointer-events: none;
-    opacity: 0;
-}
 
-#mainlogo {
-    position: absolute;
-    z-index: 2;
-    float: left;
-    align-content: center;
-}
 
 #background {
     z-index: 1;

@@ -8,7 +8,7 @@
   --radius-sm: 6px;
   --radius: 12px;
 
-  --color-bg: #0d0d0d;
+  --color-bg: #000;
   --color-card: #1a1a1a;
   --color-btn: #ffa04d;
   --color-btn-hover: #e9a66c;
@@ -49,89 +49,27 @@ body:has(.lessons-wrapper),
 .user-menu-button {
   font-size: 2rem;
 }
-
-.session-container {
-  background: var(--color-card);
-  border-radius: var(--radius);
-  padding: var(--space-lg);
-  margin: var(--space-xl) auto;
-  box-shadow: 0 4px 16px var(--color-shadow);
-  max-width: 960px;
-  width: 100%;
-  transition: box-shadow 0.3s ease;
+.algo-logo {
+      float: right;
+    margin: 4px;
+    height: 10vh;
+    pointer-events: none;
+    opacity: 1;
 }
 
-.session-container:hover {
-  box-shadow: 0 6px 20px var(--color-shadow);
+.sessions-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 4rem;                    /* space between containers */
+  max-width: 1200px;
+  margin: 2rem auto;            /* center and vertical spacing */
+  padding: 0 1rem;
+  box-sizing: border-box;
+    justify-items: center;
 }
 
-.session-title {
-  font-size: 2.5rem;
-  font-weight: 600;
-  /* background-image: linear-gradient(to right, orange, white); */
-  color: white;
-  background-clip: text;
-  -webkit-background-clip: text;
-  text-align: center;
-  margin-bottom: var(--space-md);
-}
-
-
-
-.session-buttons {
-  display: flex;
-  gap: var(--space-sm);
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: var(--space-lg);
-}
-
-/* Buttons */
-.session-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  padding: 12px 24px;
-  min-width: 160px;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  background: var(--color-btn);
-  color: var(--color-text);
-  box-shadow: 0 2px 4px var(--color-shadow);
-  transition: all 0.2s ease;
-}
-
-.session-btn:hover {
-  transform: translateY(-2px);
-  background: var(--color-btn-hover);
-  box-shadow: 0 4px 12px var(--color-shadow);
-}
-
-.session-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.4);
-}
-
-.btn-icon {
-  font-size: 1.2rem;
-}
-
-@media (max-width: 600px) {
-  .session-buttons {
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  .session-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .session-title {
-    font-size: 2rem;
+@media (min-width: 700px) {
+  .sessions-wrapper {
+    grid-template-columns: 1fr 1fr;  /* 2 columns on wider screens */
   }
 }
