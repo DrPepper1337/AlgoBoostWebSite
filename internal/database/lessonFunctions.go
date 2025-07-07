@@ -134,36 +134,35 @@ func (db *Database) GetLesson(id int) (models.Lesson, error) {
 
 // redo
 func (db *Database) GetAllLessonsWithTasks(userID int) ([]models.Lesson, error) {
-	query := `
-	SELECT
-		l.id,
-		l.title,
-		l.description,
-		l.open,
-		COALESCE(json_agg(DISTINCT jsonb_build_object(
-			'id', t.id,
-			'title', t.title,
-			'status',
-			CASE
-				WHEN s.status_code = 'AC' THEN 2
-				WHEN s.id IS NOT NULL THEN 1
-				ELSE 0
-			END
-		)) FILTER (WHERE t.id IS NOT NULL), '[]') AS tasks
-	FROM lessons l
-	LEFT JOIN lessons_tasks lt ON l.id = lt.lesson_id
-	LEFT JOIN tasks t ON lt.task_id = t.id
-	LEFT JOIN LATERAL (
-		SELECT s.*
-		FROM solutions s
-		WHERE s.user_id = $1 AND s.task_id = t.id
-		ORDER BY s.id DESC
-		LIMIT 1
-	) s ON true
-	GROUP BY l.id, l.title, l.description, l.open;
-	`
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 
-	rows, err := db.Postgres.Query(context.Background(), query, userID)
+	sql, args, err := psql.
+		Select(
+			"l.id",
+			"l.title",
+			"l.description",
+			"l.open",
+			`COALESCE(
+				json_agg(
+					json_build_object(
+						'id', t.id,
+						'title', t.title,
+						'status', 0 -- you can update this later to be user-specific
+					)
+				) FILTER (WHERE t.id IS NOT NULL),
+				'[]'
+			) AS tasks`,
+		).
+		From("lessons l").
+		LeftJoin("lessons_tasks lt ON l.id = lt.lesson_id").
+		LeftJoin("tasks t ON lt.task_id = t.id").
+		GroupBy("l.id", "l.title", "l.description", "l.open").
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.Postgres.Query(context.Background(), sql, args...)
 	if err != nil {
 		return nil, err
 	}
