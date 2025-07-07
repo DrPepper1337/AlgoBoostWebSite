@@ -3,10 +3,11 @@ package tests
 import (
 	"AlgoBoostWebSite/internal/database"
 	"errors"
-	"github.com/joho/godotenv"
-	"go.uber.org/zap"
 	"os"
 	"testing"
+
+	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 )
 
 func setup() {
