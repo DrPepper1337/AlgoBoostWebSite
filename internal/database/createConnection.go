@@ -138,12 +138,12 @@ func (db *Database) CreateTables() error {
 
 func (db *Database) DropTables() error {
 	query := `
-		DROP TABLE IF EXISTS solutions;
+		DROP TABLE IF EXISTS statuses;
 		DROP TABLE IF EXISTS lessons_tasks;
+		DROP TABLE IF EXISTS lessons;
+		DROP TABLE IF EXISTS solutions;
 		DROP TABLE IF EXISTS tasks;
 		DROP TABLE IF EXISTS users;
-		DROP TABLE IF EXISTS statuses;
-		DROP TABLE IF EXISTS lessons;
 		`
 	_, err := db.Postgres.Exec(context.Background(), query)
 	if err != nil {

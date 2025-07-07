@@ -3,6 +3,7 @@ package receiver
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -13,7 +14,7 @@ import (
 	"AlgoBoostWebSite/internal/models"
 	"context"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	kafka "github.com/segmentio/kafka-go"
 )
 
@@ -125,8 +126,6 @@ func GetAllLessonsHandler(db *database.Database) http.HandlerFunc {
 
 func GetTasksByLessonIdHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// userID := r.Context().Value("userID").(int) // error handling later
-
 		lessonID := chi.URLParam(r, "lessonID")
 		if lessonID == "" {
 			http.Error(w, "lesson ID is required", http.StatusBadRequest)
@@ -147,4 +146,31 @@ func GetTasksByLessonIdHandler(db *database.Database) http.HandlerFunc {
 
 		json.NewEncoder(w).Encode(tasks)
 	}
+}
+
+func GetTasksDetailsHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		taskID := chi.URLParam(r, "taskID")
+		fmt.Println("Requested URL:", r.URL.Path)
+		fmt.Println("Task ID:", taskID)
+		if taskID == "" {
+			http.Error(w, "task ID is required", http.StatusBadRequest)
+			return
+		}
+
+		id, err := strconv.Atoi(taskID)
+		if err != nil {
+			http.Error(w, "invalid task ID", http.StatusBadRequest)
+			return
+		}
+
+		task, err := db.GetTask(id)
+		if err != nil {
+			http.Error(w, "failed to fetch tasks", http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(task)
+	}
+
 }

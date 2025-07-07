@@ -17,10 +17,11 @@ func SetupRoutes(db *database.Database) http.Handler {
 
 	r.With(middleware.JWTMiddleware).Get("/api/lessons", GetAllLessonsHandler(db))
 
-	r.Get("api/tasks/{lessonID}", GetTasksByLessonIdHandler(db))
+	r.With(middleware.JWTMiddleware).Get("/api/tasks/{taskID}", GetTasksDetailsHandler(db))
 
+	// unused roites
+	// r.Get("api/tasks/{lessonID}", GetTasksByLessonIdHandler(db))
 	// r.Get("api/tasks/{lessonID}", GetTasksByLessonHandler)
-	// r.Get("api/tasks/{taskID}", GetTasksDetailsHandler)
 	// user stats and progress handlers and routes as future improvements
 
 	return r
