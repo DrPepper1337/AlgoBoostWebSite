@@ -9,21 +9,47 @@ const LoginRegister = () => {
 
   const [isRegistering, setIsRegistering] = useState(false);
 
-  const [loginUsername, setLoginUsername] = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
   const [registerUsername, setRegisterUsername] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (loginUsername && loginPassword) {
-      navigate('/lessons');
-    } else {
-      alert('Please enter both username and password');
+  const handleLogin = async (e) => {
+  e.preventDefault();
+  if (!loginEmail || !loginPassword) {
+    alert('Please enter both username and password');
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:8080/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: loginEmail,
+        password: loginPassword
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Login failed');
     }
-  };
+
+    const data = await response.json();
+    const token = data.token;
+
+    localStorage.setItem('authToken', token);
+
+    navigate('/lessons');
+  } catch (error) {
+    alert(error.message);
+    console.error('Login error:', error);
+  }
+};
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -46,12 +72,12 @@ const LoginRegister = () => {
             <div className="input-box">
               <input
                 type="text"
-                placeholder="Username"
-                value={loginUsername}
-                onChange={(e) => setLoginUsername(e.target.value)}
+                placeholder="Email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
                 required
               />
-              <FaUser className="icon" />
+              <FaEnvelope className="icon" />
             </div>
             <div className="input-box">
               <input
