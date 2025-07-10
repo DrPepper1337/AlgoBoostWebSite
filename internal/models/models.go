@@ -42,7 +42,7 @@ type Solution struct {
 	UserID     int     `json:"user_id"`
 	Status     Status  `json:"status"`
 }
-
+	
 type Status struct {
 	ID         int    `json:"id"`
 	NumOfTest  int    `json:"num_of_test"`

@@ -8,9 +8,9 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (db *Database) AddSolution(compiler, code string, time float64, memory float64, userId int, taskId int) (int, error) {
+func (db *Database) AddSolution(compiler, code string, userId int, taskId int) (int, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	sql, args, err := psql.Insert("solutions").Columns("compiler", "code", "time", "memory", "statusCode", "userId", "task_id").Values(compiler, code, time, memory, "waiting", userId, taskId).Suffix("RETURNING id").ToSql()
+	sql, args, err := psql.Insert("solutions").Columns("compiler", "code", "status_code", "task_id", "user_id").Values(compiler, code, "waiting", taskId, userId).Suffix("RETURNING id").ToSql()
 	if err != nil {
 		return 0, err
 	}

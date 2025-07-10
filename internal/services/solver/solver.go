@@ -2,7 +2,6 @@ package solver
 
 import (
 	"AlgoBoostWebSite/internal/database"
-	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 )
 
@@ -26,7 +25,14 @@ func NewSolver() *Solver {
 
 func (s *Solver) Run() {
 	for {
-		//TODO: add kafka consumer
-
+		zap.L().Info("Starting solver")
 	}
+	////TODO: add kafka consumer
+	////RECIEVED solution in form: id, compiler, code, memory, time, statusCode, taskID, userID, status
+	////I expect that Nastya has already uploaded task to the database and here i will only solve it and update status
+	//compiler := "python"
+	//code := "print(1)"
+	//taskID := 3
+	//userID := 5
+	//s.CheckSubmission(1, compiler, code, taskID, userID)
 }
