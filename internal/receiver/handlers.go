@@ -77,6 +77,80 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 	}
 }
 
+func CheckMembersList(db *database.Database, email string) (string, error) {
+	whitelist, err := db.IsEmailWhitelisted(email)
+	if err != nil {
+		log.Println("Error checking whitelist:", err)
+		return "", errors.New("failed to check whitelist")
+	}
+	if whitelist.Name == "" {
+		log.Println("Email not allowed:", email)
+		return "", errors.New("email not allowed")
+	}
+	return whitelist.Name, nil
+}
+
+func RegistrationHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type regCreds struct {
+			Email    string `json:"email"`
+			Password string `json:"password"`
+		}
+
+		var credentials regCreds
+		err := json.NewDecoder(r.Body).Decode(&credentials)
+		if err != nil {
+			http.Error(w, "Invalid request", http.StatusBadRequest)
+			return
+		}
+
+		log.Println(credentials)
+		log.Println(r.Body)
+
+		if credentials.Email == "" || credentials.Password == "" {
+			http.Error(w, "email and password are required", http.StatusBadRequest)
+			return
+		}
+
+		// Check if the email is already registered
+		existingUser, err := db.GetUserByEmail(credentials.Email)
+		if err != nil {
+			log.Println("Error checking existing user:", err)
+			http.Error(w, "failed to check existing user", http.StatusInternalServerError)
+			return
+		}
+
+		if existingUser.ID != 0 {
+			http.Error(w, "email already registered", http.StatusConflict)
+			return
+		}
+
+		// check members list
+		name, err := CheckMembersList(db, credentials.Email)
+		if err != nil {
+			http.Error(w, "email not allowed", http.StatusForbidden)
+			return
+		}
+
+		// create new user
+		newUser := models.User{
+			Name:     name,
+			Email:    credentials.Email,
+			Password: credentials.Password,
+			Role:     "student",
+		}
+
+		userID, err := db.AddUser(newUser.Name, newUser.Email, newUser.Password, newUser.Role)
+		if err != nil {
+			log.Println("Error adding new user:", err)
+			http.Error(w, "failed to register user", http.StatusInternalServerError)
+			return
+		}
+		log.Println("New user with ID :", userID)
+
+	}
+}
+
 // хандлер api/submit
 func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	var req models.Solution

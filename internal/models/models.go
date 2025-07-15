@@ -1,5 +1,10 @@
 package models
 
+type Whitelist struct {
+	ID    int    `json:"id"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
+}
 type User struct {
 	ID       int    `json:"id"`
 	Name     string `json:"name"`

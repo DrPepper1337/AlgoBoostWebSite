@@ -132,7 +132,6 @@ func (db *Database) GetLesson(id int) (models.Lesson, error) {
 	return result, nil
 }
 
-// redo
 func (db *Database) GetAllLessonsWithTasks(userID int) ([]models.Lesson, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 
