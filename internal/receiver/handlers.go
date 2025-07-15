@@ -147,7 +147,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 		log.Println("New user with ID :", userID)
-
+		json.NewEncoder(w).Encode(userID)
 	}
 }
 
