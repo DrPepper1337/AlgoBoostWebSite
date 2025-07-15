@@ -1,5 +1,10 @@
 package models
 
+type Whitelist struct {
+	ID    int    `json:"id"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
+}
 type User struct {
 	ID       int    `json:"id"`
 	Name     string `json:"name"`
@@ -8,7 +13,7 @@ type User struct {
 	Role     string `json:"role"`
 }
 
-type Task struct {
+type Task struct { // add topic & difficulty
 	ID          int     `json:"id"`
 	Title       string  `json:"title"`
 	Description string  `json:"Description"`
@@ -31,7 +36,7 @@ type Lesson struct {
 	Tasks       []ShortTask `json:"tasks"`
 }
 
-type Solution struct {
+type Solution struct { // add timestamp
 	ID         int     `json:"id"`
 	Compiler   string  `json:"compiler"`
 	Code       string  `json:"code"`

@@ -4,6 +4,7 @@ import (
 	"AlgoBoostWebSite/internal/models"
 	"context"
 	"errors"
+
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 )
@@ -64,4 +65,32 @@ func (db *Database) GetTask(id int) (models.Task, error) {
 		return models.Task{}, err
 	}
 	return result, nil
+}
+
+func (db *Database) GetTasksByLessonIdHandler(lessonID int) ([]models.Task, error) {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Select("t.id", "t.title", "t.description", "t.time_limit", "t.memory_limit", "t.is_practice").
+		From("tasks t").
+		Join("lessons_tasks lt ON t.id = lt.task_id").
+		Where(sq.Eq{"lt.lesson_id": lessonID}).
+		OrderBy("t.id").ToSql()
+	if err != nil {
+		return nil, err
+	}
+	rows, err := db.Postgres.Query(context.Background(), sql, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tasks []models.Task
+	for rows.Next() {
+		var task models.Task
+		err = rows.Scan(&task.ID, &task.Title, &task.Description, &task.TimeLimit, &task.MemoryLimit, &task.IsPractice)
+		if err != nil {
+			return nil, err
+		}
+		tasks = append(tasks, task)
+	}
+	return tasks, nil
 }

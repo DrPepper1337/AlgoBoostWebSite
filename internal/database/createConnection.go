@@ -8,13 +8,17 @@ import (
 	"go.uber.org/zap"
 )
 
+type Database struct {
+	Postgres *pgxpool.Pool
+}
+
 func NewPostgresQLConnection() (*pgxpool.Pool, error) {
 	url := "postgresql://" +
 		os.Getenv("POSTGRES_USER") + ":" +
 		os.Getenv("POSTGRES_PASSWORD") + "@" +
 		os.Getenv("POSTGRES_HOST") + ":" +
 		os.Getenv("POSTGRES_PORT") + "/" +
-		os.Getenv("POSTGRES_DB")
+		os.Getenv("POSTGRES_DB") + "?sslmode=disable"
 	pool, err := pgxpool.New(context.Background(), url)
 	// TODO: configure connection pool in the future taking the amount of services from env
 	if err != nil {
@@ -24,8 +28,34 @@ func NewPostgresQLConnection() (*pgxpool.Pool, error) {
 	return pool, nil
 }
 
+func NewDatabase() (*Database, error) {
+	pool, err := NewPostgresQLConnection()
+	if err != nil {
+		return nil, err
+	}
+	return &Database{
+		Postgres: pool,
+	}, nil
+}
+
+func (db *Database) Close() {
+	db.Postgres.Close()
+}
+
 func (db *Database) CreateTables() error {
-	query := `
+	// create members email whitelist table
+	query := `CREATE TABLE IF NOT EXISTS whitelist (
+		id serial PRIMARY KEY,
+		email varchar(225) NOT NULL UNIQUE,
+		name varchar(255) NOT NULL
+		);`
+	_, err := db.Postgres.Exec(context.Background(), query)
+	if err != nil {
+		zap.L().Error("failed to cereate whitelist table", zap.Error(err))
+		return err
+	}
+
+	query = `
 		CREATE TABLE IF NOT EXISTS users (
 			id SERIAL PRIMARY KEY,
 			name varchar(255) NOT NULL,
@@ -33,7 +63,7 @@ func (db *Database) CreateTables() error {
 			password TEXT NOT NULL,
 			role TEXT NOT NULL
 	    );`
-	_, err := db.Postgres.Exec(context.Background(), query)
+	_, err = db.Postgres.Exec(context.Background(), query)
 	if err != nil {
 		zap.L().Error("failed to create users table", zap.Error(err))
 		return err
@@ -120,12 +150,13 @@ func (db *Database) CreateTables() error {
 
 func (db *Database) DropTables() error {
 	query := `
-		DROP TABLE IF EXISTS solutions;
+		DROP TABLE IF EXISTS whitelist;
+		DROP TABLE IF EXISTS statuses;
 		DROP TABLE IF EXISTS lessons_tasks;
+		DROP TABLE IF EXISTS lessons;
+		DROP TABLE IF EXISTS solutions;
 		DROP TABLE IF EXISTS tasks;
 		DROP TABLE IF EXISTS users;
-		DROP TABLE IF EXISTS statuses;
-		DROP TABLE IF EXISTS lessons;
 		`
 	_, err := db.Postgres.Exec(context.Background(), query)
 	if err != nil {
