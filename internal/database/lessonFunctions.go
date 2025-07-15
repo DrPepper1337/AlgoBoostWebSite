@@ -4,6 +4,7 @@ import (
 	"AlgoBoostWebSite/internal/models"
 	"context"
 	"errors"
+
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 	"go.uber.org/zap"
@@ -129,4 +130,55 @@ func (db *Database) GetLesson(id int) (models.Lesson, error) {
 	}
 	zap.L().Info("result", zap.Any("result", result))
 	return result, nil
+}
+
+func (db *Database) GetAllLessonsWithTasks(userID int) ([]models.Lesson, error) {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+
+	sql, args, err := psql.
+		Select(
+			"l.id",
+			"l.title",
+			"l.description",
+			"l.open",
+			`COALESCE(
+				json_agg(
+					json_build_object(
+						'id', t.id,
+						'title', t.title,
+						'status', 0 -- you can update this later to be user-specific
+					)
+				) FILTER (WHERE t.id IS NOT NULL),
+				'[]'
+			) AS tasks`,
+		).
+		From("lessons l").
+		LeftJoin("lessons_tasks lt ON l.id = lt.lesson_id").
+		LeftJoin("tasks t ON lt.task_id = t.id").
+		GroupBy("l.id", "l.title", "l.description", "l.open").
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.Postgres.Query(context.Background(), sql, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	var lessons []models.Lesson
+	for rows.Next() {
+		var lesson models.Lesson
+		err := rows.Scan(&lesson.ID, &lesson.Title, &lesson.Description, &lesson.Open, &lesson.Tasks)
+		if err != nil {
+			return nil, err
+		}
+		lessons = append(lessons, lesson)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return lessons, nil
 }
