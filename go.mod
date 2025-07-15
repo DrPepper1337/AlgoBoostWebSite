@@ -1,6 +1,6 @@
 module AlgoBoostWebSite
 
-go 1.24
+go 1.24.0
 
 require (
 	github.com/Masterminds/squirrel v1.5.4 // indirect
