@@ -17,13 +17,15 @@ import (
 	"AlgoBoostWebSite/internal/models"
 	"context"
 
+	"AlgoBoostWebSite/internal/config"
+
 	"github.com/go-chi/chi/v5"
 	kafka "github.com/segmentio/kafka-go"
 )
 
 var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
-	Brokers: []string{"localhost:9092"},
-	Topic:   "submissions",
+	Brokers: config.KafkaBrokers,
+	Topic:   config.KafkaTopic,
 })
 
 func LoginUser(db *database.Database, email, password string) (models.User, error) {
