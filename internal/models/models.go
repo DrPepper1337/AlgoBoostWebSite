@@ -1,9 +1,24 @@
 package models
 
+import (
+	"time"
+)
+
 type Whitelist struct {
 	ID    int    `json:"id"`
 	Email string `json:"email"`
 	Name  string `json:"name"`
+}
+
+type RegistrationEntry struct {
+	ID        int       `json:"id"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	Name      string    `json:"name"`
+	Token     string    `json:"token"`
+	TokenType string    `json:"token_type"`
+	ExpiresAt time.Time `json:"expires_at"`
+	Used      bool      `json:"used"`
 }
 type User struct {
 	ID       int    `json:"id"`

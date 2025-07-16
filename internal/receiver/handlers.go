@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/google/uuid"
 
 	"strconv"
 
@@ -90,6 +93,79 @@ func CheckMembersList(db *database.Database, email string) (string, error) {
 	return whitelist.Name, nil
 }
 
+func generateVerificationToken(db *database.Database, email, password, name string) (string, error) {
+	token := uuid.New().String()
+	expires := time.Now().Add(24 * time.Hour)
+
+	err := db.AddRegistrationEntry(email, password, name, token, "verfication", expires.Format(time.RFC3339))
+	if err != nil {
+		log.Println("Error adding user token:", err)
+		return "", errors.New("failed to generate verification token")
+	}
+
+	return token, nil
+}
+
+func VerifyHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		token := chi.URLParam(r, "token")
+		if token == "" {
+			http.Error(w, "token is required", http.StatusBadRequest)
+			return
+		}
+
+		entry, err := db.GetValidRegistrationEntry(token)
+		if err != nil {
+			log.Println("Error getting registration entry by token:", err)
+			http.Error(w, "invalid token", http.StatusUnauthorized)
+			return
+		}
+
+		// // create new user
+		newUser := models.User{
+			Name:     entry.Name,
+			Email:    entry.Email,
+			Password: entry.Password,
+			Role:     "student",
+		}
+
+		userID, err := db.AddUser(newUser.Name, newUser.Email, newUser.Password, newUser.Role)
+		if err != nil {
+			log.Println("Error adding new user:", err)
+			http.Error(w, "failed to register user", http.StatusInternalServerError)
+			return
+		}
+		log.Println("New user with ID :", userID)
+
+		err = db.MarkTokenAsUsed(token)
+		if err != nil {
+			log.Println("Error marking token as used:", err)
+			http.Error(w, "failed to verify token", http.StatusInternalServerError)
+			return
+		}
+		// send automatic login request
+		// to get JWT token ? manually for now
+		jwt, err := auth.GenerateJWT(userID)
+		if err != nil {
+			http.Error(w, "failed to generate jwt", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"token": jwt,
+		})
+
+		// json.NewEncoder(w).Encode(userID)
+	}
+
+}
+
+func sendVerificationEmail(email, name, verificationLink string) error {
+	log.Println("Sending verification email to:", email, " Name:", name, " Link:", verificationLink)
+	return nil
+}
+
 func RegistrationHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type regCreds struct {
@@ -132,22 +208,20 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		// create new user
-		newUser := models.User{
-			Name:     name,
-			Email:    credentials.Email,
-			Password: credentials.Password,
-			Role:     "student",
-		}
+		// email verification
+		token, err := generateVerificationToken(db, credentials.Email, credentials.Password, name)
 
-		userID, err := db.AddUser(newUser.Name, newUser.Email, newUser.Password, newUser.Role)
+		// verificationLink := fmt.Sprintf("http://algoboost.foo/api/verify/%s", token) // домен пока не работаеттттт
+		verificationLink := fmt.Sprintf("http://localhost:8080/api/verify/%s", token)
+		err = sendVerificationEmail(credentials.Email, name, verificationLink)
 		if err != nil {
-			log.Println("Error adding new user:", err)
-			http.Error(w, "failed to register user", http.StatusInternalServerError)
+			log.Println("Error sending verification email:", err)
+			http.Error(w, "failed to send verification email", http.StatusInternalServerError)
 			return
 		}
-		log.Println("New user with ID :", userID)
-		json.NewEncoder(w).Encode(userID)
+
+		json.NewEncoder(w).Encode("verification email sent to " + credentials.Email)
+
 	}
 }
 
