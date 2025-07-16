@@ -8,7 +8,6 @@
     color: black;
     border-radius: 10px;
     background-color: white;
-
 }
 
 .dropdown-menu::before {
@@ -37,6 +36,7 @@
 .dropdown-menu ul li {
     padding: 20px 0;
     border-top: 1px solid rgb(167, 156, 156);
+    font-weight: 500;
 }
 
 .dropdown-menu ul li:hover span {

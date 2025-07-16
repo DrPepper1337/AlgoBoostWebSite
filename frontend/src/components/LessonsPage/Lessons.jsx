@@ -5,14 +5,7 @@ import { FaUser, FaLaptopCode, FaBook } from 'react-icons/fa';
 import { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/algo-logo.png';
-
-  const sessions = [
-    "Introduction to Algorithms",
-    "Sorting Techniques",
-    "Graph Theory Basics",
-    "Dynamic Programming",
-  ];
-
+import axios from 'axios';
 
 
 
@@ -20,6 +13,7 @@ export default function Lessons() {
 
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [lessons, setLessons] = useState([]);
 
   const menuRef = useRef(null);
 
@@ -32,6 +26,32 @@ export default function Lessons() {
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+
+  useEffect(() => {
+    // getting lessons from the backend
+    const fetchLessons = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          console.error('No auth token found');
+          return;
+        }
+
+        const res = await axios.get('http://localhost:8080/api/lessons', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setLessons(res.data);
+      } catch (error) {
+        console.error('Failed to fetch lessons:', error);
+      }
+    };
+
+    fetchLessons();
   }, []);
 
 
@@ -55,10 +75,14 @@ export default function Lessons() {
       </header>
 
     <div className="sessions-wrapper">
-      {sessions.map((topic) => (
-        <SessionContainer key={topic} topic={topic} />
-      ))}
-    </div>
+  {lessons.map((lesson) => (
+    <SessionContainer
+      key={lesson.id}
+      topic={lesson.title}
+      onLearnClick={() => navigate(`/tasks/${lesson.id}`, { state: { lesson } })}
+    />
+  ))}
+</div>
     </div>
   );
 

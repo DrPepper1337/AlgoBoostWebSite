@@ -60,9 +60,9 @@ body:has(.lessons-wrapper),
 .sessions-wrapper {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 4rem;                    /* space between containers */
+  gap: 4rem;
   max-width: 1200px;
-  margin: 2rem auto;            /* center and vertical spacing */
+  margin: 2rem auto;
   padding: 0 1rem;
   box-sizing: border-box;
     justify-items: center;
@@ -70,6 +70,6 @@ body:has(.lessons-wrapper),
 
 @media (min-width: 700px) {
   .sessions-wrapper {
-    grid-template-columns: 1fr 1fr;  /* 2 columns on wider screens */
+    grid-template-columns: 1fr 1fr;
   }
 }
