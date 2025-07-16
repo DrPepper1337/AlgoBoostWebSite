@@ -3,20 +3,16 @@ package main
 import (
 	"AlgoBoostWebSite/internal/config"
 	"AlgoBoostWebSite/internal/database"
+	"AlgoBoostWebSite/internal/services/receiver"
 
-	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 
-	"AlgoBoostWebSite/internal/receiver"
 	"log"
 	"net/http"
 )
 
 func main() {
 	config.InitLogger(true)
-	if err := godotenv.Load("./configs/.env"); err != nil {
-		panic(err)
-	}
 	db, err := database.NewDatabase()
 	if err != nil {
 		zap.L().Debug(err.Error())

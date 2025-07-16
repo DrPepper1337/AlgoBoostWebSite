@@ -24,9 +24,10 @@ func NewSolver() *Solver {
 }
 
 func (s *Solver) Run() {
-	for {
-		zap.L().Info("Starting solver")
-	}
+	//for {
+	//	zap.L().Info("Starting solver")
+	//}
+	zap.L().Info("Starting solver")
 	////TODO: add kafka consumer
 	////RECIEVED solution in form: id, compiler, code, memory, time, statusCode, taskID, userID, status
 	////I expect that Nastya has already uploaded task to the database and here i will only solve it and update status

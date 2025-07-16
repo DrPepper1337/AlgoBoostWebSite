@@ -1,0 +1,74 @@
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    networks:
+      - service-network
+    env_file:
+      - "../configs/.env"
+
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    networks:
+      - service-network
+    ports:
+      - "9092:9092"
+    env_file:
+      -  "../configs/.env"
+    depends_on:
+      - zookeeper
+
+  solver:
+    build:
+      context: ../
+      dockerfile: "build/solver/Dockerfile"
+    container_name: solver
+    env_file:
+      - "../configs/.env"
+    networks:
+      - service-network
+    depends_on:
+      zookeeper:
+        condition: service_started
+      kafka:
+        condition: service_started
+      postgres:
+        condition: service_started
+      receiver:
+        condition: service_started
+
+  receiver:
+    build:
+      context: ../
+      dockerfile: "build/receiver/Dockerfile"
+    container_name: receiver
+    env_file:
+      - "../configs/.env"
+    networks:
+      - service-network
+    depends_on:
+      zookeeper:
+        condition: service_started
+      kafka:
+        condition: service_started
+      postgres:
+        condition: service_started
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    env_file:
+      - "../configs/.env"
+    ports:
+      - "5432:5432"
+    networks:
+      - service-network
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+
+
+networks:
+  service-network:
+    driver: bridge
