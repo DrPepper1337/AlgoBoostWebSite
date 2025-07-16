@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 
 	"strconv"
 
@@ -61,7 +61,7 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 
 		user, err := LoginUser(db, credentials.Email, credentials.Password)
 		if err != nil {
-			log.Println("Login error:", err)
+			zap.L().Error("Login error:", zap.Error(err))
 			http.Error(w, "failed to login", http.StatusInternalServerError)
 			return
 		}
@@ -69,7 +69,7 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 		// generate JWT token
 		token, err := auth.GenerateJWT(user.ID)
 		if err != nil {
-			log.Println("JWT generation error:", err)
+			zap.L().Error("JWT generation error:", zap.Error(err))
 			http.Error(w, "failed to generate token", http.StatusInternalServerError)
 			return
 		}
@@ -83,11 +83,11 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 func CheckMembersList(db *database.Database, email string) (string, error) {
 	whitelist, err := db.IsEmailWhitelisted(email)
 	if err != nil {
-		log.Println("Error checking whitelist:", err)
+		zap.L().Error("Error checking whitelist:", zap.Error(err))
 		return "", errors.New("failed to check whitelist")
 	}
 	if whitelist.Name == "" {
-		log.Println("Email not allowed:", email)
+		zap.L().Error("Email not allowed:", zap.String("email", email))
 		return "", errors.New("email not allowed")
 	}
 	return whitelist.Name, nil
@@ -99,7 +99,7 @@ func generateVerificationToken(db *database.Database, email, password, name stri
 
 	err := db.AddRegistrationEntry(email, password, name, token, "verfication", expires.Format(time.RFC3339))
 	if err != nil {
-		log.Println("Error adding user token:", err)
+		zap.L().Error("Error adding user token:", zap.Error(err))
 		return "", errors.New("failed to generate verification token")
 	}
 
@@ -116,7 +116,7 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 
 		entry, err := db.GetValidRegistrationEntry(token)
 		if err != nil {
-			log.Println("Error getting registration entry by token:", err)
+			zap.L().Error("Error getting registration entry by token:", zap.Error(err))
 			http.Error(w, "invalid token", http.StatusUnauthorized)
 			return
 		}
@@ -131,15 +131,15 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 
 		userID, err := db.AddUser(newUser.Name, newUser.Email, newUser.Password, newUser.Role)
 		if err != nil {
-			log.Println("Error adding new user:", err)
+			zap.L().Error("Error adding new user:", zap.Error(err))
 			http.Error(w, "failed to register user", http.StatusInternalServerError)
 			return
 		}
-		log.Println("New user with ID :", userID)
+		zap.L().Error("New user with ID :", zap.String("userId", strconv.Itoa(userID)))
 
 		err = db.MarkTokenAsUsed(token)
 		if err != nil {
-			log.Println("Error marking token as used:", err)
+			zap.L().Error("Error marking token as used:", zap.Error(err))
 			http.Error(w, "failed to verify token", http.StatusInternalServerError)
 			return
 		}
@@ -162,7 +162,7 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 }
 
 func sendVerificationEmail(email, name, verificationLink string) error {
-	log.Println("Sending verification email to:", email, " Name:", name, " Link:", verificationLink)
+	zap.L().Info("Sending verification email to:", zap.String("email", email), zap.String("name", name), zap.String("link", verificationLink))
 	return nil
 }
 
@@ -180,9 +180,6 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		log.Println(credentials)
-		log.Println(r.Body)
-
 		if credentials.Email == "" || credentials.Password == "" {
 			http.Error(w, "email and password are required", http.StatusBadRequest)
 			return
@@ -191,7 +188,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		// Check if the email is already registered
 		existingUser, err := db.GetUserByEmail(credentials.Email)
 		if err != nil {
-			log.Println("Error checking existing user:", err)
+			zap.L().Error("Error checking existing user:", zap.Error(err))
 			http.Error(w, "failed to check existing user", http.StatusInternalServerError)
 			return
 		}
@@ -215,7 +212,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		verificationLink := fmt.Sprintf("http://localhost:8080/api/verify/%s", token)
 		err = sendVerificationEmail(credentials.Email, name, verificationLink)
 		if err != nil {
-			log.Println("Error sending verification email:", err)
+			zap.L().Error("Error sending verification email:", zap.Error(err))
 			http.Error(w, "failed to send verification email", http.StatusInternalServerError)
 			return
 		}
@@ -238,7 +235,7 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	// converts the request to a JSON-formatted byte slice
 	value, err := json.Marshal(req)
 	if err != nil {
-		log.Println("JSON marshal error:", err)
+		zap.L().Error("JSON marshal error:", zap.Error(err))
 		http.Error(w, "failed to marshal request", http.StatusInternalServerError)
 		return
 	}
@@ -249,12 +246,12 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 		Value: value,
 	})
 	if err != nil {
-		log.Println("Kafka write error:", err)
+		zap.L().Error("Kafka write error:", zap.Error(err))
 		http.Error(w, "failed to submit code", http.StatusInternalServerError)
 		return
 	}
 
-	log.Println("code submitted to Kafka for task", req.TaskID)
+	zap.L().Info("code submitted to Kafka for task", zap.String("taskID", strconv.Itoa(req.TaskID)))
 	w.Write([]byte(`{"status": "submitted"}`))
 }
 
