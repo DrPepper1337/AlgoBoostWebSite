@@ -15,4 +15,3 @@ FROM alpine:latest
 COPY --from=builder /solver /solver
 
 CMD ["/solver"]
-

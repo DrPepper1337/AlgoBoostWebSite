@@ -19,7 +19,7 @@ import (
 )
 
 var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
-	Brokers: []string{"localhost:9092"},
+	Brokers: []string{"kafka:9092"},
 	Topic:   "submissions",
 })
 

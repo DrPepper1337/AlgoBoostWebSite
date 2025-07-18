@@ -2,6 +2,9 @@ package solver
 
 import (
 	"AlgoBoostWebSite/internal/database"
+	"context"
+	"fmt"
+	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
 )
 
@@ -24,11 +27,21 @@ func NewSolver() *Solver {
 }
 
 func (s *Solver) Run() {
-	//for {
-	//	zap.L().Info("Starting solver")
-	//}
 	zap.L().Info("Starting solver")
-	////TODO: add kafka consumer
+	r := kafka.NewReader(kafka.ReaderConfig{
+		Brokers:   []string{"kafka:9092"},
+		Topic:     "submissions",
+		Partition: 0,
+		MaxBytes:  10e6,
+	})
+	for {
+		m, err := r.ReadMessage(context.Background())
+		if err != nil {
+			zap.L().Info(err.Error())
+			break
+		}
+		fmt.Printf("message at offset %d: %s = %s\n", m.Offset, string(m.Key), string(m.Value))
+	}
 	////RECIEVED solution in form: id, compiler, code, memory, time, statusCode, taskID, userID, status
 	////I expect that Nastya has already uploaded task to the database and here i will only solve it and update status
 	//compiler := "python"
