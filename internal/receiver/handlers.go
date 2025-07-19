@@ -15,6 +15,7 @@ import (
 	"AlgoBoostWebSite/internal/auth"
 	"AlgoBoostWebSite/internal/database"
 	"AlgoBoostWebSite/internal/models"
+	"AlgoBoostWebSite/internal/verifEmail"
 	"context"
 
 	"AlgoBoostWebSite/internal/config"
@@ -165,6 +166,7 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 
 func sendVerificationEmail(email, name, verificationLink string) error {
 	zap.L().Info("Sending verification email to:", zap.String("email", email), zap.String("name", name), zap.String("link", verificationLink))
+	verifEmail.SendVerificationEmail(email, verificationLink)
 	return nil
 }
 

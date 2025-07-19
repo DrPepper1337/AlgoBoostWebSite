@@ -3,18 +3,13 @@ package main
 import (
 	"AlgoBoostWebSite/internal/config"
 	"AlgoBoostWebSite/internal/database"
-
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
-
-	"AlgoBoostWebSite/internal/receiver"
-	"log"
-	"net/http"
 )
 
 func main() {
 	config.InitLogger(true)
-	if err := godotenv.Load("./configs/.env"); err != nil {
+	if err := godotenv.Load("../configs/.env"); err != nil {
 		panic(err)
 	}
 	db, err := database.NewDatabase()
@@ -49,21 +44,4 @@ func main() {
 		zap.L().Debug(err.Error())
 	}
 	zap.L().Debug("a", zap.Any("ads", result.Tasks))
-
-	_, err = db.AddUser("test", "test@gmail.com", "test123", "admin")
-	if err != nil {
-		zap.L().Debug(err.Error())
-	}
-
-	err = db.AddEmailToWhitelist("stasymartinson@gmail.com", "test guy")
-	if err != nil {
-		zap.L().Debug(err.Error())
-	}
-
-	// initialises the receiver
-	r := receiver.SetupRoutes(db)
-	log.Println("receiver running on :8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
-	// ---
-
 }
