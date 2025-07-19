@@ -223,12 +223,17 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 
 		// email verification
 		token, err := generateVerificationToken(db, credentials.Email, password, name)
+		if err != nil {
+			zap.L().Error("error generating verification token:", zap.Error(err))
+			http.Error(w, "failed to generate verification token", http.StatusInternalServerError)
+			return
+		}
 
 		// verificationLink := fmt.Sprintf("http://algoboost.foo/api/verify/%s", token)
 		verificationLink := fmt.Sprintf("http://localhost:8080/api/verify?token=%s", token)
 		err = sendVerificationEmail(credentials.Email, name, verificationLink)
 		if err != nil {
-			zap.L().Error("Error sending verification email:", zap.Error(err))
+			zap.L().Error("error sending verification email:", zap.Error(err))
 			http.Error(w, "failed to send verification email", http.StatusInternalServerError)
 			return
 		}
