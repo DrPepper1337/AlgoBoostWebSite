@@ -169,7 +169,8 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 
 func sendVerificationEmail(email, name, verificationLink string) error {
 	zap.L().Info("Sending verification email to:", zap.String("email", email), zap.String("name", name), zap.String("link", verificationLink))
-	verifEmail.SendVerificationEmail(email, verificationLink)
+	verifEmail.SendVerificationEmailBrevo(email, name, verificationLink)
+	// verifEmail.SendVerificationEmailSendGrid(email,name, verificationLink)
 	return nil
 }
 
