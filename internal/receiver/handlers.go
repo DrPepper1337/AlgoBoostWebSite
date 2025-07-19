@@ -111,7 +111,7 @@ func generateVerificationToken(db *database.Database, email, password, name stri
 
 func VerifyHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token := chi.URLParam(r, "token")
+		token := r.URL.Query().Get("token")
 		if token == "" {
 			http.Error(w, "token is required", http.StatusBadRequest)
 			return
@@ -212,8 +212,8 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		// email verification
 		token, err := generateVerificationToken(db, credentials.Email, credentials.Password, name)
 
-		// verificationLink := fmt.Sprintf("http://algoboost.foo/api/verify/%s", token) // домен пока не работаеттттт
-		verificationLink := fmt.Sprintf("http://localhost:8080/api/verify/%s", token)
+		// verificationLink := fmt.Sprintf("http://algoboost.foo/api/verify/%s", token)
+		verificationLink := fmt.Sprintf("http://localhost:8080/api/verify?token=%s", token)
 		err = sendVerificationEmail(credentials.Email, name, verificationLink)
 		if err != nil {
 			zap.L().Error("Error sending verification email:", zap.Error(err))
