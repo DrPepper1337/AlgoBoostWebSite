@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 
 	"strconv"
 
@@ -35,8 +36,10 @@ func LoginUser(db *database.Database, email, password string) (models.User, erro
 		return models.User{}, err
 	}
 
-	if user.Password != password {
-		return models.User{}, errors.New("invalid credentials")
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		zap.L().Error("wrong password")
+		return models.User{}, errors.New("invalid email or password")
 	}
 
 	return user, nil
@@ -209,8 +212,17 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
+		// hashing the password becauase we're professional
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(credentials.Password), bcrypt.DefaultCost)
+		if err != nil {
+			http.Error(w, "failed to hash password", http.StatusInternalServerError)
+			return
+		}
+
+		password := string(hashedPassword)
+
 		// email verification
-		token, err := generateVerificationToken(db, credentials.Email, credentials.Password, name)
+		token, err := generateVerificationToken(db, credentials.Email, password, name)
 
 		// verificationLink := fmt.Sprintf("http://algoboost.foo/api/verify/%s", token)
 		verificationLink := fmt.Sprintf("http://localhost:8080/api/verify?token=%s", token)
