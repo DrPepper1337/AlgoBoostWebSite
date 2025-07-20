@@ -6,6 +6,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 
 	"AlgoBoostWebSite/internal/receiver"
 	"log"
@@ -86,33 +87,22 @@ func main() {
 	// Set lessons visible
 	db.SetLessonVisability(dpLessonID, true)
 	db.SetLessonVisability(llLessonID, true)
-	// id, err := db.AddTask("banana", "shit", 10, 250, true)
-	// if err != nil {
-	// 	zap.L().Debug(err.Error())
-	// }
-	// id1, _ := db.AddLesson("hui", "shit")
-	// err = db.AddTaskToLesson(id, id1)
-	// db.SetLessonVisability(id1, true)
 
-	// db.SetLessonVisability(id1, false)
-	// id, err = db.AddTask("apple", "shit1", 0, 0, false)
+	// _, err = db.AddUser("test", "test@gmail.com", "test123", "admin")
 	// if err != nil {
 	// 	zap.L().Debug(err.Error())
 	// }
-	// db.EditLesson(id1, "her", "shiiit")
-	// db.AddTaskToLesson(id, id1)
-	// result, err := db.GetLesson(id1)
-	// if err != nil {
-	// 	zap.L().Debug(err.Error())
-	// }
-	// zap.L().Debug("a", zap.Any("ads", result.Tasks))
-
-	_, err = db.AddUser("test", "test@gmail.com", "test123", "admin")
+	const password = "test123"
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return
+	}
+	_, err = db.AddUser("test", "test@gmail.com", string(hashedPassword), "admin")
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
 
-	err = db.AddEmailToWhitelist("stasymartinson@gmail.com", "test guy")
+	err = db.AddEmailToWhitelist("sofia.morgulchik@gmail.com", "test guy")
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}

@@ -231,7 +231,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		}
 
 		// verificationLink := fmt.Sprintf("http://algoboost.foo/api/verify/%s", token)
-		verificationLink := fmt.Sprintf("http://localhost:8080/api/verify?token=%s", token)
+		verificationLink := fmt.Sprintf("http://localhost:5173/verify?token=%s", token) //will redirect to the lessons page after following
 		err = sendVerificationEmail(credentials.Email, name, verificationLink)
 		if err != nil {
 			zap.L().Error("error sending verification email:", zap.Error(err))

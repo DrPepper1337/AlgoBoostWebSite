@@ -1,5 +1,5 @@
 import './LoginRegister.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
 
@@ -16,10 +16,23 @@ const LoginRegister = () => {
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
 
+  useEffect(() => {
+  const onStorageChange = (e) => {
+    if (e.key === 'verified' && e.newValue) {
+      navigate('/lessons');
+    }
+  };
+
+  window.addEventListener('storage', onStorageChange);
+  return () => window.removeEventListener('storage', onStorageChange);
+}, [navigate]);
+
+
+
   const handleLogin = async (e) => {
   e.preventDefault();
   if (!loginEmail || !loginPassword) {
-    alert('Please enter both username and password');
+    alert('Please enter both email and password');
     return;
   }
 
@@ -51,14 +64,36 @@ const LoginRegister = () => {
   }
 };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    if (registerUsername && registerEmail && registerPassword) {
-      alert('Registered successfully!');
-      setIsRegistering(false);
-      navigate('/lessons');
-    } else {
+
+    if (!registerUsername || !registerEmail || !registerPassword) {
       alert('Please fill all fields');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: registerEmail,
+          password: registerPassword,
+        }),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || 'Registration failed');
+      }
+
+      const message = await response.text();
+      alert(message); // e.g. "verification email sent to ..."
+
+      setIsRegistering(false);
+    } catch (error) {
+      alert(error.message);
+      console.error('Registration error:', error);
     }
   };
 
