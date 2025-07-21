@@ -1,25 +1,20 @@
 package receiver
 
 import (
+	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
-	"time"
+	"strconv"
 
-	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 
-	"strconv"
-
 	"AlgoBoostWebSite/internal/auth"
+	"AlgoBoostWebSite/internal/config"
 	"AlgoBoostWebSite/internal/database"
 	"AlgoBoostWebSite/internal/models"
-	"AlgoBoostWebSite/internal/verifEmail"
-	"context"
-
-	"AlgoBoostWebSite/internal/config"
+	"AlgoBoostWebSite/internal/utils"
 
 	"github.com/go-chi/chi/v5"
 	kafka "github.com/segmentio/kafka-go"
@@ -29,192 +24,6 @@ var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
 	Brokers: config.KafkaBrokers,
 	Topic:   config.KafkaTopic,
 })
-
-func LoginUser(db *database.Database, email, password string) (models.User, error) {
-	user, err := db.GetUserByEmail(email)
-	if err != nil {
-		return models.User{}, err
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	if err != nil {
-		zap.L().Error("wrong password")
-		return models.User{}, errors.New("invalid email or password")
-	}
-
-	return user, nil
-
-}
-
-func LoginHandler(db *database.Database) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		type creds struct {
-			Email    string `json:"email"`
-			Password string `json:"password"`
-		}
-
-		var credentials creds
-		err := json.NewDecoder(r.Body).Decode(&credentials)
-		if err != nil {
-			http.Error(w, "Invalid request", http.StatusBadRequest)
-			return
-		}
-
-		if credentials.Email == "" || credentials.Password == "" {
-			http.Error(w, "email and password are required", http.StatusBadRequest)
-			return
-		}
-
-		user, err := LoginUser(db, credentials.Email, credentials.Password)
-		if err != nil {
-			zap.L().Error("Login error:", zap.Error(err))
-			http.Error(w, "failed to login", http.StatusInternalServerError)
-			return
-		}
-
-		// generate JWT token
-		token, err := auth.GenerateJWT(user.ID)
-		if err != nil {
-			zap.L().Error("JWT generation error:", zap.Error(err))
-			http.Error(w, "failed to generate token", http.StatusInternalServerError)
-			return
-		}
-
-		json.NewEncoder(w).Encode(map[string]string{
-			"token": token,
-		})
-	}
-}
-
-func CheckMembersList(db *database.Database, email string) (string, error) {
-	whitelist, err := db.IsEmailWhitelisted(email)
-	if err != nil {
-		zap.L().Error("Error checking whitelist:", zap.Error(err))
-		return "", errors.New("failed to check whitelist")
-	}
-	if whitelist.Name == "" {
-		zap.L().Error("Email not allowed:", zap.String("email", email))
-		return "", errors.New("email not allowed")
-	}
-	return whitelist.Name, nil
-}
-
-func GenerateVerificationToken(db *database.Database, email, password, name, tokenType string) (string, error) {
-	token := uuid.New().String()
-	expires := time.Now().Add(24 * time.Hour)
-
-	err := db.AddVerificationEntry(email, password, name, token, tokenType, expires.Format(time.RFC3339))
-	if err != nil {
-		zap.L().Error("Error adding user token:", zap.Error(err))
-		return "", errors.New("failed to generate verification entry")
-	}
-
-	return token, nil
-}
-
-func VerifyHandler(db *database.Database) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		token := r.URL.Query().Get("token")
-		if token == "" {
-			http.Error(w, "token is required", http.StatusBadRequest)
-			return
-		}
-
-		entry, err := db.GetValidRegistrationEntry(token)
-		if err != nil {
-			zap.L().Error("Error getting registration entry by token:", zap.Error(err))
-			http.Error(w, "invalid token", http.StatusUnauthorized)
-			return
-		}
-
-		if entry.TokenType == "registration" {
-			userID, err := RegisterUser(db, entry, token)
-			if err != nil {
-				zap.L().Error("Error registering user:", zap.Error(err))
-				http.Error(w, "failed to register user", http.StatusInternalServerError)
-				return
-			}
-
-			// send automatic login request
-			// to get JWT token ? manually for now
-			jwt, err := auth.GenerateJWT(userID)
-			if err != nil {
-				http.Error(w, "failed to generate jwt", http.StatusInternalServerError)
-				return
-			}
-
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(map[string]string{
-				"token": jwt,
-			})
-		} else {
-			err = ResetPassword(db, entry)
-			if err != nil {
-				zap.L().Error("Error resetting password:", zap.Error(err))
-				http.Error(w, "failed to reset password", http.StatusInternalServerError)
-				return
-			}
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode("password reset successful, you can now login with your new password")
-		}
-
-		err = db.MarkTokenAsUsed(token)
-		if err != nil {
-			zap.L().Error("Error marking token as used:", zap.Error(err))
-			http.Error(w, "failed to verify token", http.StatusInternalServerError)
-			return
-		}
-
-		db.DeleteVerificationEntry(token)
-	}
-
-}
-
-func ResetPassword(db *database.Database, entry models.RegistrationEntry) error {
-	user, err := db.GetUserByEmail(entry.Email)
-	if err != nil || user.ID == 0 {
-		zap.L().Error("Error getting user by email:", zap.Error(err))
-		return errors.New("user not found")
-	}
-
-	err = db.UpdateUserPassword(user.ID, entry.Password)
-	if err != nil {
-		zap.L().Error("Error updating user password:", zap.Error(err))
-		return errors.New("failed to update password")
-	}
-
-	return nil
-}
-
-func RegisterUser(db *database.Database, entry models.RegistrationEntry, token string) (int, error) {
-	newUser := models.User{
-		Name:     entry.Name,
-		Email:    entry.Email,
-		Password: entry.Password,
-		Role:     "student",
-	}
-
-	userID, err := db.AddUser(newUser.Name, newUser.Email, newUser.Password, newUser.Role)
-	if err != nil {
-		zap.L().Error("Error adding new user:", zap.Error(err))
-		return 0, err
-	}
-	zap.L().Error("New user with ID :", zap.String("userId", strconv.Itoa(userID)))
-	return userID, nil
-}
-
-func sendVerificationEmail(email, name, verificationLink string) error {
-	zap.L().Info("Sending verification email to:", zap.String("email", email), zap.String("name", name), zap.String("link", verificationLink))
-	// verifEmail.SendVerificationEmailBrevo(email, name, verificationLink)
-	verifEmail.SendVerificationEmailSendGrid(email, name, verificationLink)
-	return nil
-}
-
-func SendResetPasswordEmail(email, name, verificationLink string) error {
-	zap.L().Info("Sending reset password email to:", zap.String("email", email), zap.String("name", name), zap.String("link", verificationLink))
-	verifEmail.SendResetPasswordEmailBrevo(email, name, verificationLink)
-	return nil
-}
 
 func RegistrationHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -249,7 +58,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		}
 
 		// check members list
-		name, err := CheckMembersList(db, credentials.Email)
+		name, err := utils.CheckMembersList(db, credentials.Email)
 		if err != nil {
 			http.Error(w, "email not allowed", http.StatusForbidden)
 			return
@@ -265,7 +74,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		password := string(hashedPassword)
 
 		// email verification
-		token, err := GenerateVerificationToken(db, credentials.Email, password, name, "registration")
+		token, err := utils.GenerateVerificationToken(db, credentials.Email, password, name, "registration")
 		if err != nil {
 			zap.L().Error("error generating verification token:", zap.Error(err))
 			http.Error(w, "failed to generate verification token", http.StatusInternalServerError)
@@ -274,7 +83,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 
 		verificationLink := fmt.Sprintf("http://localhost:8080/api/verify?token=%s", token)
 
-		err = sendVerificationEmail(credentials.Email, name, verificationLink)
+		err = utils.SendVerificationEmail(credentials.Email, name, verificationLink)
 		if err != nil {
 			zap.L().Error("error sending verification email:", zap.Error(err))
 			http.Error(w, "failed to send verification email", http.StatusInternalServerError)
@@ -286,36 +95,155 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 	}
 }
 
-func SubmitHandler(w http.ResponseWriter, r *http.Request) {
-	var req models.Solution
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		http.Error(w, "invalid request", http.StatusBadRequest)
-		return
+func VerifyHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		token := r.URL.Query().Get("token")
+		if token == "" {
+			http.Error(w, "token is required", http.StatusBadRequest)
+			return
+		}
+
+		entry, err := db.GetValidRegistrationEntry(token)
+		if err != nil {
+			zap.L().Error("Error getting registration entry by token:", zap.Error(err))
+			http.Error(w, "invalid token", http.StatusUnauthorized)
+			return
+		}
+
+		if entry.TokenType == "registration" {
+			userID, err := utils.RegisterUser(db, entry, token)
+			if err != nil {
+				zap.L().Error("Error registering user:", zap.Error(err))
+				http.Error(w, "failed to register user", http.StatusInternalServerError)
+				return
+			}
+
+			// send automatic login request
+			// to get JWT token ? manually for now
+			jwt, err := auth.GenerateJWT(userID)
+			if err != nil {
+				http.Error(w, "failed to generate jwt", http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]string{
+				"token": jwt,
+			})
+		} else {
+			err = utils.ResetPassword(db, entry)
+			if err != nil {
+				zap.L().Error("Error resetting password:", zap.Error(err))
+				http.Error(w, "failed to reset password", http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode("password reset successful, you can now login with your new password")
+		}
+
+		err = db.MarkTokenAsUsed(token)
+		if err != nil {
+			zap.L().Error("Error marking token as used:", zap.Error(err))
+			http.Error(w, "failed to verify token", http.StatusInternalServerError)
+			return
+		}
+
+		db.DeleteVerificationEntry(token)
 	}
 
-	// serialise as json to end to kafka
-	// converts the request to a JSON-formatted byte slice
-	value, err := json.Marshal(req)
-	if err != nil {
-		zap.L().Error("JSON marshal error:", zap.Error(err))
-		http.Error(w, "failed to marshal request", http.StatusInternalServerError)
-		return
-	}
+}
 
-	// write the message to kafka
-	err = kafkaWriter.WriteMessages(context.Background(), kafka.Message{
-		Key:   []byte(r.Context().Value("userID").(string)),
-		Value: value,
-	})
-	if err != nil {
-		zap.L().Error("Kafka write error:", zap.Error(err))
-		http.Error(w, "failed to submit code", http.StatusInternalServerError)
-		return
-	}
+func RequestResetPasswordHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type resetRequest struct {
+			Email    string `json:"email"`
+			Password string `json:"password"`
+		}
 
-	zap.L().Info("code submitted to Kafka for task", zap.String("taskID", strconv.Itoa(req.TaskID)))
-	w.Write([]byte(`{"status": "submitted"}`))
+		var req resetRequest
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			http.Error(w, "Invalid request", http.StatusBadRequest)
+			return
+		}
+
+		if req.Email == "" || req.Password == "" {
+			http.Error(w, "email and password are required", http.StatusBadRequest)
+			return
+		}
+
+		user, err := db.GetUserByEmail(req.Email)
+		if err != nil || user.ID == 0 {
+			http.Error(w, "user not found", http.StatusNotFound)
+			return
+		}
+
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+		if err != nil {
+			http.Error(w, "failed to hash password", http.StatusInternalServerError)
+			return
+		}
+
+		password := string(hashedPassword)
+
+		// Generate a password reset token
+		token, err := utils.GenerateVerificationToken(db, req.Email, password, user.Name, "password_reset")
+		if err != nil {
+			http.Error(w, "failed to generate token", http.StatusInternalServerError)
+			return
+		}
+
+		verificationLink := fmt.Sprintf("http://localhost:8080/api/reset-password?token=%s", token)
+
+		// Send the reset email
+		err = utils.SendResetPasswordEmail(req.Email, user.Name, verificationLink)
+		if err != nil {
+			http.Error(w, "failed to send email", http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode("password reset email sent to " + req.Email)
+	}
+}
+
+func LoginHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type creds struct {
+			Email    string `json:"email"`
+			Password string `json:"password"`
+		}
+
+		var credentials creds
+		err := json.NewDecoder(r.Body).Decode(&credentials)
+		if err != nil {
+			http.Error(w, "Invalid request", http.StatusBadRequest)
+			return
+		}
+
+		if credentials.Email == "" || credentials.Password == "" {
+			http.Error(w, "email and password are required", http.StatusBadRequest)
+			return
+		}
+
+		user, err := utils.LoginUser(db, credentials.Email, credentials.Password)
+		if err != nil {
+			zap.L().Error("Login error:", zap.Error(err))
+			http.Error(w, "failed to login", http.StatusInternalServerError)
+			return
+		}
+
+		// generate JWT token
+		token, err := auth.GenerateJWT(user.ID)
+		if err != nil {
+			zap.L().Error("JWT generation error:", zap.Error(err))
+			http.Error(w, "failed to generate token", http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(map[string]string{
+			"token": token,
+		})
+	}
 }
 
 func GetAllLessonsHandler(db *database.Database) http.HandlerFunc {
@@ -383,56 +311,34 @@ func GetTasksDetailsHandler(db *database.Database) http.HandlerFunc {
 
 }
 
-// the one before email verification
-func RequestResetPasswordHandler(db *database.Database) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		type resetRequest struct {
-			Email    string `json:"email"`
-			Password string `json:"password"`
-		}
-
-		var req resetRequest
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			http.Error(w, "Invalid request", http.StatusBadRequest)
-			return
-		}
-
-		if req.Email == "" || req.Password == "" {
-			http.Error(w, "email and password are required", http.StatusBadRequest)
-			return
-		}
-
-		user, err := db.GetUserByEmail(req.Email)
-		if err != nil || user.ID == 0 {
-			http.Error(w, "user not found", http.StatusNotFound)
-			return
-		}
-
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-		if err != nil {
-			http.Error(w, "failed to hash password", http.StatusInternalServerError)
-			return
-		}
-
-		password := string(hashedPassword)
-
-		// Generate a password reset token
-		token, err := GenerateVerificationToken(db, req.Email, password, user.Name, "password_reset")
-		if err != nil {
-			http.Error(w, "failed to generate token", http.StatusInternalServerError)
-			return
-		}
-
-		verificationLink := fmt.Sprintf("http://localhost:8080/api/reset-password?token=%s", token)
-
-		// Send the reset email
-		err = SendResetPasswordEmail(req.Email, user.Name, verificationLink)
-		if err != nil {
-			http.Error(w, "failed to send email", http.StatusInternalServerError)
-			return
-		}
-
-		json.NewEncoder(w).Encode("password reset email sent to " + req.Email)
+func SubmitHandler(w http.ResponseWriter, r *http.Request) {
+	var req models.Solution
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, "invalid request", http.StatusBadRequest)
+		return
 	}
+
+	// serialise as json to end to kafka
+	// converts the request to a JSON-formatted byte slice
+	value, err := json.Marshal(req)
+	if err != nil {
+		zap.L().Error("JSON marshal error:", zap.Error(err))
+		http.Error(w, "failed to marshal request", http.StatusInternalServerError)
+		return
+	}
+
+	// write the message to kafka
+	err = kafkaWriter.WriteMessages(context.Background(), kafka.Message{
+		Key:   []byte(r.Context().Value("userID").(string)),
+		Value: value,
+	})
+	if err != nil {
+		zap.L().Error("Kafka write error:", zap.Error(err))
+		http.Error(w, "failed to submit code", http.StatusInternalServerError)
+		return
+	}
+
+	zap.L().Info("code submitted to Kafka for task", zap.String("taskID", strconv.Itoa(req.TaskID)))
+	w.Write([]byte(`{"status": "submitted"}`))
 }
