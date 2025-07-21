@@ -70,7 +70,7 @@ func (db *Database) CreateTables() error {
 	}
 
 	query = `
-	CREATE TABLE IF NOT EXISTS registration_entries (
+	CREATE TABLE IF NOT EXISTS awaiting_verification (
 		id SERIAL PRIMARY KEY,
 		email VARCHAR(225) UNIQUE NOT NULL,
 		password TEXT NOT NULL,
@@ -169,7 +169,7 @@ func (db *Database) CreateTables() error {
 func (db *Database) DropTables() error {
 	query := `
 		DROP TABLE IF EXISTS whitelist;
-		DROP TABLE IF EXISTS registration_entries;
+		DROP TABLE IF EXISTS awaiting_verification;
 		DROP TABLE IF EXISTS statuses;
 		DROP TABLE IF EXISTS lessons_tasks;
 		DROP TABLE IF EXISTS lessons;

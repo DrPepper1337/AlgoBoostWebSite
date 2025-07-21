@@ -4,6 +4,8 @@ import (
 	"AlgoBoostWebSite/internal/config"
 	"AlgoBoostWebSite/internal/database"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 
@@ -50,7 +52,12 @@ func main() {
 	}
 	zap.L().Debug("a", zap.Any("ads", result.Tasks))
 
-	_, err = db.AddUser("test", "test@gmail.com", "test123", "admin")
+	const password = "test123"
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return
+	}
+	_, err = db.AddUser("test", "test@gmail.com", string(hashedPassword), "admin")
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}

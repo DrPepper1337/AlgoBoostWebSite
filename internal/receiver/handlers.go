@@ -99,14 +99,14 @@ func CheckMembersList(db *database.Database, email string) (string, error) {
 	return whitelist.Name, nil
 }
 
-func generateVerificationToken(db *database.Database, email, password, name string) (string, error) {
+func GenerateVerificationToken(db *database.Database, email, password, name, tokenType string) (string, error) {
 	token := uuid.New().String()
 	expires := time.Now().Add(24 * time.Hour)
 
-	err := db.AddRegistrationEntry(email, password, name, token, "verfication", expires.Format(time.RFC3339))
+	err := db.AddVerificationEntry(email, password, name, token, tokenType, expires.Format(time.RFC3339))
 	if err != nil {
 		zap.L().Error("Error adding user token:", zap.Error(err))
-		return "", errors.New("failed to generate verification token")
+		return "", errors.New("failed to generate verification entry")
 	}
 
 	return token, nil
@@ -127,21 +127,36 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		// // create new user
-		newUser := models.User{
-			Name:     entry.Name,
-			Email:    entry.Email,
-			Password: entry.Password,
-			Role:     "student",
-		}
+		if entry.TokenType == "registration" {
+			userID, err := RegisterUser(db, entry, token)
+			if err != nil {
+				zap.L().Error("Error registering user:", zap.Error(err))
+				http.Error(w, "failed to register user", http.StatusInternalServerError)
+				return
+			}
 
-		userID, err := db.AddUser(newUser.Name, newUser.Email, newUser.Password, newUser.Role)
-		if err != nil {
-			zap.L().Error("Error adding new user:", zap.Error(err))
-			http.Error(w, "failed to register user", http.StatusInternalServerError)
-			return
+			// send automatic login request
+			// to get JWT token ? manually for now
+			jwt, err := auth.GenerateJWT(userID)
+			if err != nil {
+				http.Error(w, "failed to generate jwt", http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]string{
+				"token": jwt,
+			})
+		} else {
+			err = ResetPassword(db, entry)
+			if err != nil {
+				zap.L().Error("Error resetting password:", zap.Error(err))
+				http.Error(w, "failed to reset password", http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode("password reset successful, you can now login with your new password")
 		}
-		zap.L().Error("New user with ID :", zap.String("userId", strconv.Itoa(userID)))
 
 		err = db.MarkTokenAsUsed(token)
 		if err != nil {
@@ -149,28 +164,55 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 			http.Error(w, "failed to verify token", http.StatusInternalServerError)
 			return
 		}
-		// send automatic login request
-		// to get JWT token ? manually for now
-		jwt, err := auth.GenerateJWT(userID)
-		if err != nil {
-			http.Error(w, "failed to generate jwt", http.StatusInternalServerError)
-			return
-		}
 
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{
-			"token": jwt,
-		})
-
-		// json.NewEncoder(w).Encode(userID)
+		db.DeleteVerificationEntry(token)
 	}
 
+}
+
+func ResetPassword(db *database.Database, entry models.RegistrationEntry) error {
+	user, err := db.GetUserByEmail(entry.Email)
+	if err != nil || user.ID == 0 {
+		zap.L().Error("Error getting user by email:", zap.Error(err))
+		return errors.New("user not found")
+	}
+
+	err = db.UpdateUserPassword(user.ID, entry.Password)
+	if err != nil {
+		zap.L().Error("Error updating user password:", zap.Error(err))
+		return errors.New("failed to update password")
+	}
+
+	return nil
+}
+
+func RegisterUser(db *database.Database, entry models.RegistrationEntry, token string) (int, error) {
+	newUser := models.User{
+		Name:     entry.Name,
+		Email:    entry.Email,
+		Password: entry.Password,
+		Role:     "student",
+	}
+
+	userID, err := db.AddUser(newUser.Name, newUser.Email, newUser.Password, newUser.Role)
+	if err != nil {
+		zap.L().Error("Error adding new user:", zap.Error(err))
+		return 0, err
+	}
+	zap.L().Error("New user with ID :", zap.String("userId", strconv.Itoa(userID)))
+	return userID, nil
 }
 
 func sendVerificationEmail(email, name, verificationLink string) error {
 	zap.L().Info("Sending verification email to:", zap.String("email", email), zap.String("name", name), zap.String("link", verificationLink))
 	// verifEmail.SendVerificationEmailBrevo(email, name, verificationLink)
 	verifEmail.SendVerificationEmailSendGrid(email, name, verificationLink)
+	return nil
+}
+
+func SendResetPasswordEmail(email, name, verificationLink string) error {
+	zap.L().Info("Sending reset password email to:", zap.String("email", email), zap.String("name", name), zap.String("link", verificationLink))
+	verifEmail.SendResetPasswordEmailBrevo(email, name, verificationLink)
 	return nil
 }
 
@@ -223,15 +265,15 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		password := string(hashedPassword)
 
 		// email verification
-		token, err := generateVerificationToken(db, credentials.Email, password, name)
+		token, err := GenerateVerificationToken(db, credentials.Email, password, name, "registration")
 		if err != nil {
 			zap.L().Error("error generating verification token:", zap.Error(err))
 			http.Error(w, "failed to generate verification token", http.StatusInternalServerError)
 			return
 		}
 
-		// verificationLink := fmt.Sprintf("http://algoboost.foo/api/verify/%s", token)
 		verificationLink := fmt.Sprintf("http://localhost:8080/api/verify?token=%s", token)
+
 		err = sendVerificationEmail(credentials.Email, name, verificationLink)
 		if err != nil {
 			zap.L().Error("error sending verification email:", zap.Error(err))
@@ -244,7 +286,6 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 	}
 }
 
-// хандлер api/submit
 func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	var req models.Solution
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -340,4 +381,58 @@ func GetTasksDetailsHandler(db *database.Database) http.HandlerFunc {
 		json.NewEncoder(w).Encode(task)
 	}
 
+}
+
+// the one before email verification
+func RequestResetPasswordHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type resetRequest struct {
+			Email    string `json:"email"`
+			Password string `json:"password"`
+		}
+
+		var req resetRequest
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			http.Error(w, "Invalid request", http.StatusBadRequest)
+			return
+		}
+
+		if req.Email == "" || req.Password == "" {
+			http.Error(w, "email and password are required", http.StatusBadRequest)
+			return
+		}
+
+		user, err := db.GetUserByEmail(req.Email)
+		if err != nil || user.ID == 0 {
+			http.Error(w, "user not found", http.StatusNotFound)
+			return
+		}
+
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+		if err != nil {
+			http.Error(w, "failed to hash password", http.StatusInternalServerError)
+			return
+		}
+
+		password := string(hashedPassword)
+
+		// Generate a password reset token
+		token, err := GenerateVerificationToken(db, req.Email, password, user.Name, "password_reset")
+		if err != nil {
+			http.Error(w, "failed to generate token", http.StatusInternalServerError)
+			return
+		}
+
+		verificationLink := fmt.Sprintf("http://localhost:8080/api/reset-password?token=%s", token)
+
+		// Send the reset email
+		err = SendResetPasswordEmail(req.Email, user.Name, verificationLink)
+		if err != nil {
+			http.Error(w, "failed to send email", http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode("password reset email sent to " + req.Email)
+	}
 }

@@ -52,6 +52,18 @@ func (db *Database) EditUser(id int, name string, email string, password string,
 	return nil
 }
 
+func (db *Database) UpdateUserPassword(id int, newPassword string) error {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Update("users").Set("password", newPassword).Where(sq.Eq{"id": id}).ToSql()
+	if err != nil {
+		return err
+	}
+	row := db.Postgres.QueryRow(context.Background(), sql, args...)
+	var result interface{}
+	err = row.Scan(&result)
+	return nil
+}
+
 func (db *Database) GetUser(id int) (models.User, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	sql, args, err := psql.Select("id", "name", "email", "password", "role").From("users").Where(sq.Eq{"id": id}).ToSql()

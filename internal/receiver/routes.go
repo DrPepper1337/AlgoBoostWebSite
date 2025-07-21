@@ -16,6 +16,8 @@ func SetupRoutes(db *database.Database) http.Handler {
 	r.Post("/api/login", LoginHandler(db))
 	r.Post("/api/register", RegistrationHandler(db))
 	r.Get("/api/verify", VerifyHandler(db))
+	r.Post("/api/request-reset-password", RequestResetPasswordHandler(db))
+	r.Get("/api/reset-password", VerifyHandler(db))
 
 	r.With(middleware.JWTMiddleware).Get("/api/lessons", GetAllLessonsHandler(db))
 

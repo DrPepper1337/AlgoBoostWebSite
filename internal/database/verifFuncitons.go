@@ -7,12 +7,13 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
 )
 
 func (db *Database) GetValidRegistrationEntry(token string) (models.RegistrationEntry, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	sql, args, err := psql.Select("id", "email", "password", "name", "token", "token_type", "expiration").
-		From("registration_entries").Where(sq.Eq{"token": token}).ToSql()
+		From("awaiting_verification").Where(sq.Eq{"token": token}).ToSql()
 	if err != nil {
 		return models.RegistrationEntry{}, err
 	}
@@ -31,9 +32,9 @@ func (db *Database) GetValidRegistrationEntry(token string) (models.Registration
 	return entry, nil
 }
 
-func (db *Database) AddRegistrationEntry(email, password, name, token, tokenType, expiration string) error {
+func (db *Database) AddVerificationEntry(email, password, name, token, tokenType, expiration string) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	sql, args, err := psql.Insert("registration_entries").Columns("email", "password", "name", "token", "token_type", "expiration").
+	sql, args, err := psql.Insert("awaiting_verification").Columns("email", "password", "name", "token", "token_type", "expiration").
 		Values(email, password, name, token, tokenType, expiration).ToSql()
 	if err != nil {
 		return err
@@ -47,13 +48,26 @@ func (db *Database) AddRegistrationEntry(email, password, name, token, tokenType
 
 func (db *Database) MarkTokenAsUsed(token string) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	sql, args, err := psql.Update("registration_entries").Set("used", true).Where(sq.Eq{"token": token}).ToSql()
+	sql, args, err := psql.Update("awaiting_verification").Set("used", true).Where(sq.Eq{"token": token}).ToSql()
 	if err != nil {
 		return err
 	}
 	_, err = db.Postgres.Exec(context.Background(), sql, args...)
 	if err != nil {
 		return errors.New("marking token as used failed")
+	}
+	return nil
+}
+
+func (db *Database) DeleteVerificationEntry(token string) error {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Delete("awaiting_verification").Where(sq.Eq{"token": token}).ToSql()
+	if err != nil {
+		return err
+	}
+	row := db.Postgres.QueryRow(context.Background(), sql, args...)
+	if !errors.Is(row.Scan(), pgx.ErrNoRows) {
+		return errors.New("deleting verification entry failed")
 	}
 	return nil
 }
