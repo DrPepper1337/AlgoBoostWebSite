@@ -58,7 +58,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		}
 
 		// check members list
-		name, err := utils.CheckMembersList(db, credentials.Email)
+		whitelist, err := utils.CheckMembersList(db, credentials.Email)
 		if err != nil {
 			http.Error(w, "email not allowed", http.StatusForbidden)
 			return
@@ -74,7 +74,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		password := string(hashedPassword)
 
 		// email verification
-		token, err := utils.GenerateVerificationToken(db, credentials.Email, password, name, "registration")
+		token, err := utils.GenerateVerificationToken(db, credentials.Email, password, whitelist.Name, whitelist.Role, "registration")
 		if err != nil {
 			zap.L().Error("error generating verification token:", zap.Error(err))
 			http.Error(w, "failed to generate verification token", http.StatusInternalServerError)
@@ -83,7 +83,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 
 		verificationLink := fmt.Sprintf("http://localhost:8080/api/verify?token=%s", token)
 
-		err = utils.SendVerificationEmail(credentials.Email, name, verificationLink)
+		err = utils.SendVerificationEmail(credentials.Email, whitelist.Name, verificationLink)
 		if err != nil {
 			zap.L().Error("error sending verification email:", zap.Error(err))
 			http.Error(w, "failed to send verification email", http.StatusInternalServerError)
@@ -120,7 +120,7 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 
 			// send automatic login request
 			// to get JWT token ? manually for now
-			jwt, err := auth.GenerateJWT(userID)
+			jwt, err := auth.GenerateJWT(userID, entry.Role)
 			if err != nil {
 				http.Error(w, "failed to generate jwt", http.StatusInternalServerError)
 				return
@@ -187,7 +187,7 @@ func RequestResetPasswordHandler(db *database.Database) http.HandlerFunc {
 		password := string(hashedPassword)
 
 		// Generate a password reset token
-		token, err := utils.GenerateVerificationToken(db, req.Email, password, user.Name, "password_reset")
+		token, err := utils.GenerateVerificationToken(db, req.Email, password, user.Name, user.Role, "password_reset")
 		if err != nil {
 			http.Error(w, "failed to generate token", http.StatusInternalServerError)
 			return
@@ -233,7 +233,7 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 		}
 
 		// generate JWT token
-		token, err := auth.GenerateJWT(user.ID)
+		token, err := auth.GenerateJWT(user.ID, user.Role)
 		if err != nil {
 			zap.L().Error("JWT generation error:", zap.Error(err))
 			http.Error(w, "failed to generate token", http.StatusInternalServerError)

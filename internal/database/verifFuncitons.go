@@ -19,7 +19,7 @@ func (db *Database) GetValidRegistrationEntry(token string) (models.Registration
 	}
 	row := db.Postgres.QueryRow(context.Background(), sql, args...)
 	var entry models.RegistrationEntry
-	err = row.Scan(&entry.ID, &entry.Email, &entry.Password, &entry.Name, &entry.Token, &entry.TokenType, &entry.ExpiresAt)
+	err = row.Scan(&entry.ID, &entry.Email, &entry.Password, &entry.Name, &entry.Role, &entry.Token, &entry.TokenType, &entry.ExpiresAt)
 	if err != nil {
 		return models.RegistrationEntry{}, err
 	}
@@ -32,10 +32,10 @@ func (db *Database) GetValidRegistrationEntry(token string) (models.Registration
 	return entry, nil
 }
 
-func (db *Database) AddVerificationEntry(email, password, name, token, tokenType, expiration string) error {
+func (db *Database) AddVerificationEntry(email, password, name, role, token, tokenType, expiration string) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	sql, args, err := psql.Insert("awaiting_verification").Columns("email", "password", "name", "token", "token_type", "expiration").
-		Values(email, password, name, token, tokenType, expiration).ToSql()
+	sql, args, err := psql.Insert("awaiting_verification").Columns("email", "password", "name", "role", "token", "token_type", "expiration").
+		Values(email, password, name, role, token, tokenType, expiration).ToSql()
 	if err != nil {
 		return err
 	}

@@ -33,17 +33,17 @@ func LoginUser(db *database.Database, email, password string) (models.User, erro
 }
 
 // REGISTRATION
-func CheckMembersList(db *database.Database, email string) (string, error) {
+func CheckMembersList(db *database.Database, email string) (models.Whitelist, error) {
 	whitelist, err := db.IsEmailWhitelisted(email)
 	if err != nil {
 		zap.L().Error("Error checking whitelist:", zap.Error(err))
-		return "", errors.New("failed to check whitelist")
+		return models.Whitelist{}, errors.New("failed to check whitelist")
 	}
 	if whitelist.Name == "" {
 		zap.L().Error("Email not allowed:", zap.String("email", email))
-		return "", errors.New("email not allowed")
+		return models.Whitelist{}, errors.New("email not allowed")
 	}
-	return whitelist.Name, nil
+	return whitelist, nil
 }
 
 func RegisterUser(db *database.Database, entry models.RegistrationEntry, token string) (int, error) {
@@ -94,11 +94,11 @@ func SendResetPasswordEmail(email, name, verificationLink string) error {
 }
 
 // OTHER
-func GenerateVerificationToken(db *database.Database, email, password, name, tokenType string) (string, error) {
+func GenerateVerificationToken(db *database.Database, email, password, name, role, tokenType string) (string, error) {
 	token := uuid.New().String()
 	expires := time.Now().Add(24 * time.Hour)
 
-	err := db.AddVerificationEntry(email, password, name, token, tokenType, expires.Format(time.RFC3339))
+	err := db.AddVerificationEntry(email, password, name, role, token, tokenType, expires.Format(time.RFC3339))
 	if err != nil {
 		zap.L().Error("Error adding user token:", zap.Error(err))
 		return "", errors.New("failed to generate verification entry")

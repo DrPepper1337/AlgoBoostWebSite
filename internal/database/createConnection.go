@@ -47,7 +47,8 @@ func (db *Database) CreateTables() error {
 	query := `CREATE TABLE IF NOT EXISTS whitelist (
 		id serial PRIMARY KEY,
 		email varchar(225) NOT NULL UNIQUE,
-		name varchar(255) NOT NULL
+		name varchar(255) NOT NULL,
+		role varchar(255) NOT NULL
 		);`
 	_, err := db.Postgres.Exec(context.Background(), query)
 	if err != nil {
@@ -75,6 +76,7 @@ func (db *Database) CreateTables() error {
 		email VARCHAR(225) UNIQUE NOT NULL,
 		password TEXT NOT NULL,
 		name VARCHAR(255) NOT NULL,
+		role VARCHAR(255) NOT NULL,
 		token TEXT NOT NULL,
 		token_type TEXT NOT NULL,
 		expiration TIMESTAMP NOT NULL,

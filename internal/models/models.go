@@ -8,6 +8,7 @@ type Whitelist struct {
 	ID    int    `json:"id"`
 	Email string `json:"email"`
 	Name  string `json:"name"`
+	Role  string `json:"role"`
 }
 
 type RegistrationEntry struct {
@@ -15,6 +16,7 @@ type RegistrationEntry struct {
 	Email     string    `json:"email"`
 	Password  string    `json:"password"`
 	Name      string    `json:"name"`
+	Role      string    `json:"role"`
 	Token     string    `json:"token"`
 	TokenType string    `json:"token_type"`
 	ExpiresAt time.Time `json:"expires_at"`
