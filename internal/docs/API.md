@@ -8,9 +8,9 @@ Base URL: `http://localhost:8080/api`
 
 - [Login](#login)
 - [Register](#register)
-- [Verify Email](#verify-email)
-- [Get Lessons](#get-lessons)
-- [Get Task](#get-task)
+- [Verify Email](#email-verification)
+- [Lessons](#lessons)
+- [Task](#tasks)
 - [Password Reset](#password-reset)
 - [Admin Endpoints](#admin-endpoints)
 
