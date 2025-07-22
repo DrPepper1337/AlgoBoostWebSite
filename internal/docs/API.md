@@ -4,6 +4,16 @@ Base URL: `http://localhost:8080/api`
 
 > All routes (except registration & login) require authentication via JWT in the `Authorization` header.
 
+## Table of Contents
+
+- [Login](#login)
+- [Register](#register)
+- [Verify Email](#verify-email)
+- [Get Lessons](#get-lessons)
+- [Get Task](#get-task)
+- [Password Reset](#password-reset)
+- [Admin Endpoints](#admin-endpoints)
+
 ---
 
 ## Auth & Registration
