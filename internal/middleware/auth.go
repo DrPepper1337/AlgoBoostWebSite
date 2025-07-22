@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"AlgoBoostWebSite/internal/auth"
+	"AlgoBoostWebSite/internal/utils"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -20,7 +20,7 @@ func MemberMiddleware(next http.Handler) http.Handler {
 
 		tokenStr := strings.TrimPrefix(authHeader, "Bearer ") // removes the "Bearer " prefix if present
 		token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-			return auth.JWTSecret, nil
+			return utils.JWTSecret, nil
 		})
 		if err != nil || !token.Valid {
 			http.Error(w, "invalid token", http.StatusUnauthorized)
@@ -46,7 +46,7 @@ func AdminMiddleware(next http.Handler) http.Handler {
 
 		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
 		token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-			return auth.JWTSecret, nil
+			return utils.JWTSecret, nil
 		})
 		if err != nil || !token.Valid {
 			http.Error(w, "invalid token", http.StatusUnauthorized)

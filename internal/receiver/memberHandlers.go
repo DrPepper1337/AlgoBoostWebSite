@@ -10,7 +10,6 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 
-	"AlgoBoostWebSite/internal/auth"
 	"AlgoBoostWebSite/internal/config"
 	"AlgoBoostWebSite/internal/database"
 	"AlgoBoostWebSite/internal/models"
@@ -120,7 +119,7 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 
 			// send automatic login request
 			// to get JWT token ? manually for now
-			jwt, err := auth.GenerateJWT(userID, entry.Role)
+			jwt, err := utils.GenerateJWT(userID, entry.Role)
 			if err != nil {
 				http.Error(w, "failed to generate jwt", http.StatusInternalServerError)
 				return
@@ -233,7 +232,7 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 		}
 
 		// generate JWT token
-		token, err := auth.GenerateJWT(user.ID, user.Role)
+		token, err := utils.GenerateJWT(user.ID, user.Role)
 		if err != nil {
 			zap.L().Error("JWT generation error:", zap.Error(err))
 			http.Error(w, "failed to generate token", http.StatusInternalServerError)
