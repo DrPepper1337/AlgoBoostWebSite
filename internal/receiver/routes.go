@@ -24,9 +24,6 @@ func SetupRoutes(db *database.Database) http.Handler {
 
 	r.With(middleware.MemberMiddleware).Get("/api/tasks/{taskID}", GetTasksDetailsHandler(db))
 
-	// unused routes
-	// r.Get("api/tasks/{lessonID}", GetTasksByLessonIdHandler(db))
-	// r.Get("api/tasks/{lessonID}", GetTasksByLessonHandler)
 	// user stats and progress handlers and routes as future improvements
 
 	// ADMIN ROUTES

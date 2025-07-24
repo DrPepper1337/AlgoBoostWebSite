@@ -18,25 +18,25 @@ func AddLessonHandler(db *database.Database) http.HandlerFunc {
 		var lesson models.Lesson
 		err := json.NewDecoder(r.Body).Decode(&lesson)
 		if err != nil {
-			http.Error(w, "Invalid request", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
 			return
 		}
 
 		if lesson.Title == "" || lesson.Description == "" {
-			http.Error(w, "title and description are required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "title and description are required", nil)
 			return
 		}
 
 		id, err := db.AddLesson(lesson.Title, lesson.Description)
 		if err != nil {
 			zap.L().Error("Error adding lesson:", zap.Error(err))
-			http.Error(w, "failed to add lesson: "+err.Error(), http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to add lesson: "+err.Error(), nil)
 			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
 		response := map[string]int{"lesson_id": id}
-		json.NewEncoder(w).Encode(response)
+		utils.WriteJSON(w, http.StatusCreated, true, "lesson created successfully", response)
 	}
 }
 
@@ -50,23 +50,23 @@ func AddTaskToLessonHandler(db *database.Database) http.HandlerFunc {
 		var data taskData
 		err := json.NewDecoder(r.Body).Decode(&data)
 		if err != nil {
-			http.Error(w, "Invalid request", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
 			return
 		}
 
 		if data.TaskID == 0 || data.LessonID == 0 {
-			http.Error(w, "task_id and lesson_id are required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "task_id and lesson_id are required", nil)
 			return
 		}
 
 		err = db.AddTaskToLesson(data.TaskID, data.LessonID)
 		if err != nil {
 			zap.L().Error("Error adding task to lesson:", zap.Error(err))
-			http.Error(w, "failed to add task to lesson: "+err.Error(), http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to add task to lesson: "+err.Error(), nil)
 			return
 		}
 
-		utils.WriteJSON(w, http.StatusOK, true, "task added to lesson successfully", nil)
+		utils.WriteJSON(w, http.StatusOK, true, "task with ID "+strconv.Itoa(data.TaskID)+" added to lesson with ID "+strconv.Itoa(data.LessonID)+" successfully", nil)
 	}
 }
 
@@ -80,19 +80,19 @@ func DeleteTaskFromLessonHandler(db *database.Database) http.HandlerFunc {
 		var data taskData
 		err := json.NewDecoder(r.Body).Decode(&data)
 		if err != nil {
-			http.Error(w, "Invalid request", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
 			return
 		}
 
 		if data.TaskID == 0 || data.LessonID == 0 {
-			http.Error(w, "task_id and lesson_id are required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "task_id and lesson_id are required", nil)
 			return
 		}
 
 		err = db.DeleteTaskFromLesson(data.TaskID, data.LessonID)
 		if err != nil {
 			zap.L().Error("Error deleting task from lesson:", zap.Error(err))
-			http.Error(w, "failed to delete task from lesson: "+err.Error(), http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to delete task from lesson: "+err.Error(), nil)
 			return
 		}
 
@@ -108,14 +108,14 @@ func DeleteLessonHandler(db *database.Database) http.HandlerFunc {
 		var data lessonData
 		err := json.NewDecoder(r.Body).Decode(&data)
 		if err != nil {
-			http.Error(w, "Invalid request", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
 			return
 		}
 
 		err = db.DeleteLesson(data.LessonID)
 		if err != nil {
 			zap.L().Error("Error deleting lesson:", zap.Error(err))
-			http.Error(w, "failed to delete lesson: "+err.Error(), http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to delete lesson: "+err.Error(), nil)
 			return
 		}
 
@@ -129,19 +129,19 @@ func AddTaskHandler(db *database.Database) http.HandlerFunc {
 		var task models.Task
 		err := json.NewDecoder(r.Body).Decode(&task)
 		if err != nil {
-			http.Error(w, "Invalid request", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
 			return
 		}
 
 		if task.Title == "" || task.Description == "" {
-			http.Error(w, "title and description are required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "title and description are required", nil)
 			return
 		}
 
 		id, err := db.AddTask(task.Title, task.Description, task.TimeLimit, task.MemoryLimit, task.IsPractice)
 		if err != nil {
 			zap.L().Error("Error adding task:", zap.Error(err))
-			http.Error(w, "failed to add task: "+err.Error(), http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to add task: "+err.Error(), nil)
 			return
 		}
 
@@ -156,23 +156,23 @@ func EditTaskHandler(db *database.Database) http.HandlerFunc {
 		var task models.Task
 		err := json.NewDecoder(r.Body).Decode(&task)
 		if err != nil {
-			http.Error(w, "Invalid request: "+err.Error(), http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
 			return
 		}
 
 		if task.ID == 0 || task.Title == "" || task.Description == "" {
-			http.Error(w, "task_id, name and description are required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "task_id, title, and description are required", nil)
 			return
 		}
 
 		err = db.EditTask(task.ID, task.Title, task.Description, task.TimeLimit, task.MemoryLimit, task.IsPractice)
 		if err != nil {
 			zap.L().Error("Error editing task:", zap.Error(err))
-			http.Error(w, "failed to edit task: "+err.Error(), http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to edit task: "+err.Error(), nil)
 			return
 		}
 
-		utils.WriteJSON(w, http.StatusOK, true, "task edited successfully", nil)
+		utils.WriteJSON(w, http.StatusOK, true, "task with ID "+strconv.Itoa(task.ID)+" edited successfully", nil)
 	}
 }
 
@@ -180,23 +180,23 @@ func DeleteTaskHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		taskID := r.URL.Query().Get("task_id")
 		if taskID == "" {
-			http.Error(w, "task_id is required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "task_id is required", nil)
 			return
 		}
 
 		id, err := strconv.Atoi(taskID)
 		if err != nil {
-			http.Error(w, "invalid task_id", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid task_id", nil)
 			return
 		}
 
 		err = db.DeleteTask(id)
 		if err != nil {
 			zap.L().Error("Error deleting task:", zap.Error(err))
-			http.Error(w, "failed to delete task", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to delete task with ID "+strconv.Itoa(id), nil)
 			return
 		}
 
-		utils.WriteJSON(w, http.StatusNoContent, true, "task deleted successfully", nil)
+		utils.WriteJSON(w, http.StatusNoContent, true, "task with ID "+strconv.Itoa(id)+" deleted successfully", nil)
 	}
 }
