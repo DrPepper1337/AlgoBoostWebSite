@@ -25,7 +25,15 @@ Registers a whitelisted user. If user is not whitelisted, you'll get an error re
 ```bash
 curl -X POST http://localhost:8080/api/register \
   -H "Content-Type: application/json" \
-  -d '{"email": "user@example.com", "password": "yourpassword"}'
+  -d '{"email": "test1@gmail.com", "password": "test123"}'
+```
+
+#### Response
+```json
+{
+    "success":true,
+    "message":"verification email sent to test1@gmail.com"
+}
 ```
 
 > No user is created until email is verified. After clicking the email verification link (expires in 24h), the user is automatically logged in.
@@ -40,8 +48,14 @@ Triggered via email link (auto-submitted POST):
 curl -X POST http://localhost:8080/api/verify?token=<your_token>
 ```
 
-Returns a valid JWT token in the response.
-
+#### Response
+```json
+{
+    "token":"<jwt_token>"}
+{
+    "success":true,"message":"verification successful"
+}
+```
 ---
 
 ### Login
@@ -52,10 +66,18 @@ curl -X POST http://localhost:8080/api/login \
   -d '{"email": "test1@gmail.com", "password": "test123"}'
 ```
 
-**Returns:**
+#### Response
 
 ```json
-{ "token": "<jwt_token>" }
+{
+    "success":true,
+    "message":"login successful",
+    "data":{
+        "role":"admin",
+        "token":"<jwt_token>",
+        "user_id":"1"
+    }
+}
 ```
 
 Use this token for all authenticated requests:
@@ -73,9 +95,16 @@ Use this token for all authenticated requests:
 ```bash
 curl -X POST http://localhost:8080/api/request-reset-password \
   -H "Content-Type: application/json" \
-  -d '{"email": "test1@example.com", "password": "test321"}'
+  -d '{"email": "test1@gmail.com", "password": "test321"}'
 ```
 
+#### Response
+```json
+{
+    "success":true,
+    "message":"reset password email sent to test1@gmail.com"
+}
+```
 A reset link will be emailed. Once clicked:
 
 ### Confirm reset (auto-POST)
@@ -97,30 +126,25 @@ curl http://localhost:8080/api/lessons \
   -H "Authorization: Bearer <jwt_token>"
 ```
 
-**Returns:**
+#### Response
 
 ```json
-[
-  {
-    "id": 1,
-    "title": "Sorting",
-    "description": "Intro to sorting algorithms",
-    "open": true,
-    "tasks": [
-      { "id": 1, "title": "Quicksort", "status": 0 },
-      { "id": 2, "title": "MergeSort", "status": 1 }
-    ]
-  }
-]
-```
-
----
-
-### Get Lesson by ID
-
-```bash
-curl http://localhost:8080/api/lessons/{lessonID} \
-  -H "Authorization: Bearer <jwt_token>"
+[{
+    "success":true,
+    "message":"lessons fetched successfully",
+    "data":[{
+        "id":1,
+        "title":"Lesson 1",
+        "description":"Description 1",
+        "open":true,"
+        tasks":[
+            {
+            "id":1,
+            "title":"Task 1",
+            "status":0
+        }]
+    }]
+}]
 ```
 
 ---
@@ -134,16 +158,20 @@ curl http://localhost:8080/api/tasks/{taskID} \
   -H "Authorization: Bearer <jwt_token>"
 ```
 
-**Returns:**
+#### Response
 
 ```json
 {
-  "id": 1,
-  "title": "banana",
-  "Description": "task description",
-  "time_limit": 10,
-  "memory_limit": "250.000",
-  "is_practice": true
+   "success":true,
+   "message":"task fetched successfully",
+   "data":{
+      "id":1,
+      "title":"Task 1",
+      "Description":"decription 1 (linked to lesson 1)",
+      "time_limit":10,
+      "memory_limit":250,
+      "is_practice":true
+   }
 }
 ```
 
@@ -154,30 +182,41 @@ curl http://localhost:8080/api/tasks/{taskID} \
 > Requires login with an admin role (`Role: "admin"`)
 
 ### Add Lesson
-
 ```bash
 curl -X POST http://localhost:8080/api/admin/add-lesson \
   -H "Authorization: Bearer <admin_jwt_token>" \
   -H "Content-Type: application/json" \
   -d '{"title": "Test Lesson Name", "description": "test description wablabdabda"}'
 ```
+
 #### Response
 ```json
-{"lesson_id":2}
+{
+   "success":true,
+   "message":"lesson created successfully",
+   "data":{
+      "lesson_id":2
+   }
+}
 ```
 ---
-### Add Task to Lesson
 
+### Add Task to Lesson
 ```bash
 curl -X POST http://localhost:8080/api/admin/add-task-to-lesson \
   -H "Authorization: Bearer <admin_jwt_token>" \
   -H "Content-Type: application/json" \
   -d '{"task_id": 1, "lesson_id": 1}'
 ```
+
 #### Response
 ```json
-"task with id 2 added to lesson with id 1 successfully"
+{
+   "success":true,
+   "message":"task with ID 2 added to lesson with ID 1 successfully"
+}
 ```
+
 ---
 ### Delete Task from Lesson
 
@@ -187,9 +226,13 @@ curl -X POST http://localhost:8080/api/admin/delete-task-from-lesson \
   -H "Content-Type: application/json" \
   -d '{"task_id": 1, "lesson_id": 1}'
 ```
+
 #### Response
 ```json
-"task with id 1 deleted from lesson with id 1 successfully"
+{
+   "success":true,
+   "message":"task with id 1 deleted from lesson with id 1 successfully"
+}
 ```
 ---
 ### Delete Lesson
@@ -200,7 +243,13 @@ curl -X POST http://localhost:8080/api/admin/delete-lesson \
   -H "Content-Type: application/json" \
   -d '{"lesson_id": 1}'
 ```
+
+#### Response
 ```json
+{
+   "success":true,
+   "message":"lesson with id 1 deleted successfully"
+}
 ```
 ---
 
