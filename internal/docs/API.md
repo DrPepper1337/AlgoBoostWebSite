@@ -159,9 +159,49 @@ curl http://localhost:8080/api/tasks/{taskID} \
 curl -X POST http://localhost:8080/api/admin/add-lesson \
   -H "Authorization: Bearer <admin_jwt_token>" \
   -H "Content-Type: application/json" \
-  -d '{"name": "Test Lesson Name", "description": "test description wablabdabda"}'
+  -d '{"title": "Test Lesson Name", "description": "test description wablabdabda"}'
 ```
+#### Response
+```json
+{"lesson_id":2}
+```
+---
+### Add Task to Lesson
 
+```bash
+curl -X POST http://localhost:8080/api/admin/add-task-to-lesson \
+  -H "Authorization: Bearer <admin_jwt_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"task_id": 1, "lesson_id": 1}'
+```
+#### Response
+```json
+"task with id 2 added to lesson with id 1 successfully"
+```
+---
+### Delete Task from Lesson
+
+```bash
+curl -X POST http://localhost:8080/api/admin/delete-task-from-lesson \
+  -H "Authorization: Bearer <admin_jwt_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"task_id": 1, "lesson_id": 1}'
+```
+#### Response
+```json
+"task with id 1 deleted from lesson with id 1 successfully"
+```
+---
+### Delete Lesson
+
+```bash
+curl -X POST http://localhost:8080/api/admin/delete-lesson \
+  -H "Authorization: Bearer <admin_jwt_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"lesson_id": 1}'
+```
+```json
+```
 ---
 
 ## Notes for Frontend
@@ -175,7 +215,14 @@ curl -X POST http://localhost:8080/api/admin/add-lesson \
 
 ## Test Users
 
-| Email                                                           | Password | Role   |
-| --------------------------------------------------------------- | -------- | ------ |
-| [test1@gmail.com](mailto:test1@gmail.com)                       | test123  | admin  |
-| [test2@gmail.com](mailto:test2@gmail.com)                       | test123  | member |
+| Email                                     | Password | Role   |
+| ----------------------------------------- | -------- | ------ |
+| [test1@gmail.com](mailto:test1@gmail.com) | test123  | admin  |
+| [test2@gmail.com](mailto:test2@gmail.com) | test123  | member |
+
+## Test Lessons and tasks
+
+| Task Title | Task ID | linked to lesson  |
+| ---------- | ------- | ----------------- |
+| Task 1     | 1       | Lesson 1   (DI 1) |
+| Task 2     | 2       |                   |

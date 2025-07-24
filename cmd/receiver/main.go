@@ -31,27 +31,22 @@ func main() {
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
-	id, err := db.AddTask("banana", "shit", 10, 250, true)
+
+	// task 1 is in lesson 1, but task 2 is just there, unnattached
+	id, err := db.AddTask("Task 1", "decription 1 (linked to lesson 1)", 10, 250, true)
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
-	id1, _ := db.AddLesson("hui", "shit")
+	id1, _ := db.AddLesson("Lesson 1", "Description 1")
 	err = db.AddTaskToLesson(id, id1)
 	db.SetLessonVisability(id1, true)
 
-	db.SetLessonVisability(id1, false)
-	id, err = db.AddTask("apple", "shit1", 0, 0, false)
+	id, err = db.AddTask("Task 2", "unnattached", 0, 0, false)
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
-	db.EditLesson(id1, "her", "shiiit")
-	db.AddTaskToLesson(id, id1)
-	result, err := db.GetLesson(id1)
-	if err != nil {
-		zap.L().Debug(err.Error())
-	}
-	zap.L().Debug("a", zap.Any("ads", result.Tasks))
 
+	// test users
 	const password = "test123"
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {

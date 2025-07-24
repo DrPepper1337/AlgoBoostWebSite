@@ -89,8 +89,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		json.NewEncoder(w).Encode("verification email sent to " + credentials.Email)
-
+		utils.WriteJSON(w, http.StatusOK, true, "verification email sent to "+credentials.Email, nil)
 	}
 }
 
@@ -113,7 +112,7 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 			userID, err := utils.RegisterUser(db, entry, token)
 			if err != nil {
 				zap.L().Error("Error registering user:", zap.Error(err))
-				http.Error(w, "failed to register user", http.StatusInternalServerError)
+				http.Error(w, "failed to register user: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
 
@@ -148,6 +147,9 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 		}
 
 		db.DeleteVerificationEntry(token)
+
+		utils.WriteJSON(w, http.StatusOK, true, "verification successful", nil)
+
 	}
 
 }
@@ -201,7 +203,7 @@ func RequestResetPasswordHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		json.NewEncoder(w).Encode("password reset email sent to " + req.Email)
+		utils.WriteJSON(w, http.StatusOK, true, "reset password email sent to "+req.Email, nil)
 	}
 }
 
@@ -239,8 +241,10 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		json.NewEncoder(w).Encode(map[string]string{
-			"token": token,
+		utils.WriteJSON(w, http.StatusOK, true, "login successful", map[string]string{
+			"token":   token,
+			"user_id": strconv.Itoa(user.ID),
+			"role":    user.Role,
 		})
 	}
 }
@@ -255,7 +259,7 @@ func GetAllLessonsHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		json.NewEncoder(w).Encode(lessons)
+		utils.WriteJSON(w, http.StatusOK, true, "lessons fetched successfully", lessons)
 	}
 }
 
@@ -279,7 +283,7 @@ func GetTasksByLessonIdHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		json.NewEncoder(w).Encode(tasks)
+		utils.WriteJSON(w, http.StatusOK, true, "tasks fetched successfully", tasks)
 	}
 }
 
@@ -305,7 +309,7 @@ func GetTasksDetailsHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		json.NewEncoder(w).Encode(task)
+		utils.WriteJSON(w, http.StatusOK, true, "task fetched successfully", task)
 	}
 
 }
@@ -339,5 +343,5 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	zap.L().Info("code submitted to Kafka for task", zap.String("taskID", strconv.Itoa(req.TaskID)))
-	w.Write([]byte(`{"status": "submitted"}`))
+	utils.WriteJSON(w, http.StatusOK, true, "code submitted successfully", nil)
 }
