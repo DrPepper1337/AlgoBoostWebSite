@@ -12,7 +12,7 @@ import (
 
 func (db *Database) GetValidRegistrationEntry(token string) (models.RegistrationEntry, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	sql, args, err := psql.Select("id", "email", "password", "name", "token", "token_type", "expiration").
+	sql, args, err := psql.Select("id", "email", "password", "name", "role", "token", "token_type", "expiration").
 		From("awaiting_verification").Where(sq.Eq{"token": token}).ToSql()
 	if err != nil {
 		return models.RegistrationEntry{}, err
