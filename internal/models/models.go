@@ -18,7 +18,7 @@ type Task struct { // add topic & difficulty
 	Title       string  `json:"title"`
 	Description string  `json:"Description"`
 	TimeLimit   float64 `json:"time_limit"`
-	MemoryLimit string  `json:"memory_limit"`
+	MemoryLimit float64 `json:"memory_limit"`
 	IsPractice  bool    `json:"is_practice"`
 }
 
@@ -40,14 +40,14 @@ type Solution struct { // add timestamp
 	ID         int     `json:"id"`
 	Compiler   string  `json:"compiler"`
 	Code       string  `json:"code"`
-	Memory     string  `json:"memory"`
+	Memory     float64 `json:"memory"`
 	Time       float64 `json:"time"`
 	StatusCode string  `json:"status_code"`
 	TaskID     int     `json:"task_id"`
 	UserID     int     `json:"user_id"`
 	Status     Status  `json:"status"`
 }
-	
+
 type Status struct {
 	ID         int    `json:"id"`
 	NumOfTest  int    `json:"num_of_test"`

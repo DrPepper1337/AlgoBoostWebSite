@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"strconv"
 
@@ -19,8 +20,8 @@ import (
 )
 
 var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
-	Brokers: []string{"kafka:9092"},
-	Topic:   "submissions",
+	Brokers: []string{os.Getenv("KAFKA_BROKER")},
+	Topic:   os.Getenv("KAFKA_SUBMISSION_TOPIC"),
 })
 
 func LoginUser(db *database.Database, email, password string) (models.User, error) {
@@ -151,11 +152,14 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 	}
 }
 
+//curl --header "Content-Type: application/json" --request POST --data '{"id":"","compiler":"python", code:"print(0)", memory:"", time:"", status_code:"", task_id:"", user_id:""}' http://localhost:8080/api/submit
+
 // хандлер api/submit
 func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	var req models.Solution
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
+		log.Println("JSON marshal error:", err)
 		http.Error(w, "invalid request", http.StatusBadRequest)
 		return
 	}

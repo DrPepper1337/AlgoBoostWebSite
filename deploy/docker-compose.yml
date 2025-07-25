@@ -6,7 +6,7 @@ services:
     networks:
       - service-network
     env_file:
-      - "../configs/.env"
+      - "../configs/Docker.env"
 
 
   kafka:
@@ -17,7 +17,7 @@ services:
     ports:
       - "9092:9092"
     env_file:
-      -  "../configs/.env"
+      -  "../configs/Docker.env"
     depends_on:
       - zookeeper
     healthcheck:
@@ -32,7 +32,7 @@ services:
       dockerfile: "build/solver/Dockerfile"
     container_name: solver
     env_file:
-      - "../configs/.env"
+      - "../configs/Docker.env"
     networks:
       - service-network
     depends_on:
@@ -51,7 +51,7 @@ services:
       dockerfile: "build/receiver/Dockerfile"
     container_name: receiver
     env_file:
-      - "../configs/.env"
+      - "../configs/Docker.env"
     networks:
       - service-network
     depends_on:
@@ -66,7 +66,7 @@ services:
     image: postgres:latest
     container_name: postgres_container
     env_file:
-      - "../configs/.env"
+      - "../configs/Docker.env"
     ports:
       - "5432:5432"
     networks:

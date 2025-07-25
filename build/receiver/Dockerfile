@@ -1,10 +1,6 @@
 FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
-
-RUN apk add --update \
-    curl \
-    && rm -rf /var/cache/apk/* \
     
 COPY ./go.mod ./go.sum ./
 

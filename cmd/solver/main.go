@@ -9,5 +9,4 @@ func main() {
 	config.InitLogger(true)
 	serv := solver.NewSolver()
 	serv.Run()
-
 }
