@@ -1,12 +1,13 @@
 package utils
 
 import (
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var JWTSecret = []byte("we-are-very-secure-fore-sure") // env var in production
+var JWTSecret = []byte(os.Getenv("JWT_SECRET"))
 
 func GenerateJWT(userID int, role string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
