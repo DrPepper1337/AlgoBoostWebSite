@@ -37,6 +37,15 @@ func (db *Database) DeleteTask(id int) error {
 	if !errors.Is(row.Scan(), pgx.ErrNoRows) {
 		return errors.New("deleting task failed")
 	}
+	// delete from lessons_tasks too
+	sql2, args2, err := psql.Delete("lessons_tasks").Where(sq.Eq{"task_id": id}).ToSql()
+	if err != nil {
+		return err
+	}
+	row = db.Postgres.QueryRow(context.Background(), sql2, args2...)
+	if !errors.Is(row.Scan(), pgx.ErrNoRows) {
+		return errors.New("deleting task from lessons_tasks failed")
+	}
 	return nil
 }
 
