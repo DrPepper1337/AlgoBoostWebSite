@@ -178,25 +178,23 @@ func EditTaskHandler(db *database.Database) http.HandlerFunc {
 
 func DeleteTaskHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		taskID := r.URL.Query().Get("task_id")
-		if taskID == "" {
-			utils.WriteJSON(w, http.StatusBadRequest, false, "task_id is required", nil)
-			return
+		type taskData struct {
+			TaskID int `json:"task_id"`
 		}
-
-		id, err := strconv.Atoi(taskID)
+		var data taskData
+		err := json.NewDecoder(r.Body).Decode(&data)
 		if err != nil {
-			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid task_id", nil)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
 			return
 		}
 
-		err = db.DeleteTask(id)
+		err = db.DeleteTask(data.TaskID)
 		if err != nil {
 			zap.L().Error("Error deleting task:", zap.Error(err))
-			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to delete task with ID "+strconv.Itoa(id), nil)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to delete task with ID "+strconv.Itoa(data.TaskID), nil)
 			return
 		}
 
-		utils.WriteJSON(w, http.StatusNoContent, true, "task with ID "+strconv.Itoa(id)+" deleted successfully", nil)
+		utils.WriteJSON(w, http.StatusOK, true, "task with ID "+strconv.Itoa(data.TaskID)+" deleted successfully", nil)
 	}
 }

@@ -33,7 +33,7 @@ type User struct {
 type Task struct { // add topic & difficulty
 	ID          int     `json:"id"`
 	Title       string  `json:"title"`
-	Description string  `json:"Description"`
+	Description string  `json:"description"`
 	TimeLimit   float64 `json:"time_limit"`
 	MemoryLimit float64 `json:"memory_limit"`
 	IsPractice  bool    `json:"is_practice"`

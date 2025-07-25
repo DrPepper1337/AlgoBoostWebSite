@@ -13,6 +13,13 @@ Base URL: `http://localhost:8080/api`
 - [Task](#tasks)
 - [Password Reset](#password-reset)
 - [Admin Endpoints](#admin-endpoints)
+  - [Add Lesson](#add-lesson)
+  - [Add Task to Lesson](#add-task-to-lesson)
+  - [Delete Task from Lesson](#delete-task-from-lesson)
+  - [Delete Lesson](#delete-lesson)
+  - [Add Task](#add-task)
+  - [Edit Task](#edit-task)
+  - [Delete Task](#delete-task)
 
 ---
 
@@ -249,6 +256,65 @@ curl -X POST http://localhost:8080/api/admin/delete-lesson \
 {
    "success":true,
    "message":"lesson with id 1 deleted successfully"
+}
+```
+---
+
+
+### Add Task
+```bash
+curl -X POST http://localhost:8080/api/admin/add-task \
+  -H "Authorization: Bearer <admin_jwt_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "test task 3", "description": "task 3 test description", "time_limit": 150, "memory_limit": 50, "is_practice": true}'
+```
+
+#### Response
+```json
+{
+   "success":true,
+   "message":"task created successfully",
+   "data":{
+      "task_id":3
+   }
+}
+```
+
+---
+
+### Edit Task
+
+```bash
+curl -X POST http://localhost:8080/api/admin/edit-task \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTM0NzUwMjAsInJvbGUiOiJhZG1pbiIsInVzZXJfaWQiOjF9.eMRLLqNxKWNXgOuTU25XIAAYqjTsmZlsJ1HQbivBy-k"  \
+  -H "Content-Type: application/json" \
+  -d '{"id": 3, "title": "test task 3", "description": "task 3 test description", "time_limit": 150, "memory_limit": 80, "is_practice": true}'
+```
+(the memory limit was changed)
+
+#### Response
+```json
+{
+   "success":true,
+   "message":"task with ID 3 edited successfully"
+}
+```
+---
+
+### Delete Task
+
+```bash
+curl -X POST http://localhost:8080/api/admin/delete-task \
+  -H "Authorization: Bearer <admin_jwt_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"task_id": 3}'
+```
+
+#### Response
+```json
+{
+   "success":true,
+   "message":"task with ID 3 deleted successfully"
 }
 ```
 ---
