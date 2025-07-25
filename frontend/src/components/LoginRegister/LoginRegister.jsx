@@ -17,16 +17,18 @@ const LoginRegister = () => {
   const [registerPassword, setRegisterPassword] = useState('');
 
   useEffect(() => {
+  const alreadyVerified = localStorage.getItem("verified");
+
   const onStorageChange = (e) => {
-    if (e.key === 'verified' && e.newValue) {
-      navigate('/lessons');
+    if (e.key === "verified" && e.newValue) {
+      localStorage.removeItem("verified");
+      navigate("/lessons");
     }
   };
 
-  window.addEventListener('storage', onStorageChange);
-  return () => window.removeEventListener('storage', onStorageChange);
+  window.addEventListener("storage", onStorageChange);
+  return () => window.removeEventListener("storage", onStorageChange);
 }, [navigate]);
-
 
 
   const handleLogin = async (e) => {
@@ -67,7 +69,7 @@ const LoginRegister = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (!registerUsername || !registerEmail || !registerPassword) {
+    if (!registerEmail || !registerPassword) {
       alert('Please fill all fields');
       return;
     }
@@ -130,7 +132,12 @@ const LoginRegister = () => {
                 <input type="checkbox" />
                 <span>Remember me</span>
               </label>
-              <a href="#">Forgot Password?</a>
+              <a href="#" onClick={(e) => {
+                e.preventDefault();
+                navigate('/reset-password');
+              }}>
+                Forgot Password?
+              </a>
             </div>
             <button type="submit" className="btn">Login</button>
             <div className="register-link">
@@ -141,16 +148,6 @@ const LoginRegister = () => {
 
           <form onSubmit={handleRegister}>
             <h1>Registration</h1>
-            <div className="input-box">
-              <input
-                type="text"
-                placeholder="Username"
-                value={registerUsername}
-                onChange={(e) => setRegisterUsername(e.target.value)}
-                required
-              />
-              <FaUser className="icon" />
-            </div>
 
             <div className="input-box">
               <input

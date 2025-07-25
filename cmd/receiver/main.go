@@ -102,7 +102,7 @@ func main() {
 		zap.L().Debug(err.Error())
 	}
 
-	err = db.AddEmailToWhitelist("sofia.morgulchik@gmail.com", "test guy")
+	err = db.AddEmailToWhitelist("sofia.morgulchik@gmail.com", "test guy", "member")
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
