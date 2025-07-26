@@ -31,21 +31,18 @@ func SetupRoutes(db *database.Database) http.Handler {
 	r.With(middleware.MemberMiddleware).Get("/api/lessons", GetAllLessonsHandler(db))
 	r.With(middleware.MemberMiddleware).Get("/api/tasks/{taskID}", GetTasksDetailsHandler(db))
 
-	// unused routes
-	// r.Get("api/tasks/{lessonID}", GetTasksByLessonIdHandler(db))
-	// r.Get("api/tasks/{lessonID}", GetTasksByLessonHandler)
 	// user stats and progress handlers and routes as future improvements
 
 	// ADMIN ROUTES
 	r.With(middleware.AdminMiddleware).Post("/api/admin/add-lesson", AddLessonHandler(db))
-	// r.With(middleware.AdminMiddleware).Post("/api/admin/add-task-to-lesson", AddTaskToLessonHandler(db))
-	// r.With(middleware.AdminMiddleware).Post("/api/admin/delete-task-from-lesson", DeleteTaskFromLessonHandler(db))
-	// r.With(middleware.AdminMiddleware).Post("/api/admin/delete-lesson", DeleteLessonHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/add-task-to-lesson", AddTaskToLessonHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-task-from-lesson", DeleteTaskFromLessonHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-lesson", DeleteLessonHandler(db))
 	// // r.With(middleware.AdminMiddleware).Post("/api/admin/edit-lesson", EditLessonHandler(db))
 
-	// r.With(middleware.AdminMiddleware).Post("/api/admin/add-task", AddTaskHandler(db))
-	// r.With(middleware.AdminMiddleware).Post("/api/admin/edit-task", EditTaskHandler(db))
-	// r.With(middleware.AdminMiddleware).Post("/api/admin/delete-task", DeleteTaskHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/add-task", AddTaskHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/edit-task", EditTaskHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-task", DeleteTaskHandler(db))
 
 	return r
 }

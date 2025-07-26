@@ -34,12 +34,12 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		var credentials regCreds
 		err := json.NewDecoder(r.Body).Decode(&credentials)
 		if err != nil {
-			http.Error(w, "Invalid request", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
 			return
 		}
 
 		if credentials.Email == "" || credentials.Password == "" {
-			http.Error(w, "email and password are required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "email and password are required", nil)
 			return
 		}
 
@@ -47,12 +47,12 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		existingUser, err := db.GetUserByEmail(credentials.Email)
 		if err != nil {
 			zap.L().Error("Error checking existing user:", zap.Error(err))
-			http.Error(w, "failed to check existing user", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to check existing user", nil)
 			return
 		}
 
 		if existingUser.ID != 0 {
-			http.Error(w, "email already registered", http.StatusConflict)
+			utils.WriteJSON(w, http.StatusConflict, false, "email already registered", nil)
 			return
 		}
 
@@ -66,7 +66,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		// hashing the password becauase we're professional
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(credentials.Password), bcrypt.DefaultCost)
 		if err != nil {
-			http.Error(w, "failed to hash password", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to hash password", nil)
 			return
 		}
 
@@ -76,7 +76,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		token, err := utils.GenerateVerificationToken(db, credentials.Email, password, whitelist.Name, whitelist.Role, "registration")
 		if err != nil {
 			zap.L().Error("error generating verification token:", zap.Error(err))
-			http.Error(w, "failed to generate verification token", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to generate verification token", nil)
 			return
 		}
 
@@ -85,12 +85,11 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		err = utils.SendVerificationEmail(credentials.Email, whitelist.Name, verificationLink)
 		if err != nil {
 			zap.L().Error("error sending verification email:", zap.Error(err))
-			http.Error(w, "failed to send verification email", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to send verification email", nil)
 			return
 		}
 
-		json.NewEncoder(w).Encode("verification email sent to " + credentials.Email)
-
+		utils.WriteJSON(w, http.StatusOK, true, "verification email sent to "+credentials.Email, nil)
 	}
 }
 
@@ -98,14 +97,14 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		token := r.URL.Query().Get("token")
 		if token == "" {
-			http.Error(w, "token is required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "token is required", nil)
 			return
 		}
 
 		entry, err := db.GetValidRegistrationEntry(token)
 		if err != nil {
 			zap.L().Error("Error getting registration entry by token:", zap.Error(err))
-			http.Error(w, "help invalid token", http.StatusUnauthorized)
+			utils.WriteJSON(w, http.StatusUnauthorized, false, "invalid token", nil)
 			return
 		}
 
@@ -113,7 +112,7 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 			userID, err := utils.RegisterUser(db, entry, token)
 			if err != nil {
 				zap.L().Error("Error registering user:", zap.Error(err))
-				http.Error(w, "failed to register user", http.StatusInternalServerError)
+				utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to register user: "+err.Error(), nil)
 				return
 			}
 
@@ -121,7 +120,7 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 			// to get JWT token ? manually for now
 			jwt, err := utils.GenerateJWT(userID, entry.Role)
 			if err != nil {
-				http.Error(w, "failed to generate jwt", http.StatusInternalServerError)
+				utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to generate jwt: "+err.Error(), nil)
 				return
 			}
 
@@ -133,21 +132,23 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 			err = utils.ResetPassword(db, entry)
 			if err != nil {
 				zap.L().Error("Error resetting password:", zap.Error(err))
-				http.Error(w, "failed to reset password", http.StatusInternalServerError)
+				utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to reset password: "+err.Error(), nil)
 				return
 			}
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode("password reset successful, you can now login with your new password")
+			utils.WriteJSON(w, http.StatusOK, true, "password reset successful, you can now login with your new password", nil)
 		}
 
 		err = db.MarkTokenAsUsed(token)
 		if err != nil {
 			zap.L().Error("Error marking token as used:", zap.Error(err))
-			http.Error(w, "failed to verify token", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to verify token: "+err.Error(), nil)
 			return
 		}
 
 		db.DeleteVerificationEntry(token)
+
+		utils.WriteJSON(w, http.StatusOK, true, "verification successful", nil)
+
 	}
 
 }
@@ -162,24 +163,24 @@ func RequestResetPasswordHandler(db *database.Database) http.HandlerFunc {
 		var req resetRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			http.Error(w, "Invalid request", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "Invalid request", nil)
 			return
 		}
 
 		if req.Email == "" || req.Password == "" {
-			http.Error(w, "email and password are required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "email and password are required", nil)
 			return
 		}
 
 		user, err := db.GetUserByEmail(req.Email)
 		if err != nil || user.ID == 0 {
-			http.Error(w, "user not found", http.StatusNotFound)
+			utils.WriteJSON(w, http.StatusNotFound, false, "user not found", nil)
 			return
 		}
 
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 		if err != nil {
-			http.Error(w, "failed to hash password", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to hash password: "+err.Error(), nil)
 			return
 		}
 
@@ -188,7 +189,7 @@ func RequestResetPasswordHandler(db *database.Database) http.HandlerFunc {
 		// Generate a password reset token
 		token, err := utils.GenerateVerificationToken(db, req.Email, password, user.Name, user.Role, "password_reset")
 		if err != nil {
-			http.Error(w, "failed to generate token", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to generate token: "+err.Error(), nil)
 			return
 		}
 
@@ -197,11 +198,11 @@ func RequestResetPasswordHandler(db *database.Database) http.HandlerFunc {
 		// Send the reset email
 		err = utils.SendResetPasswordEmail(req.Email, user.Name, verificationLink)
 		if err != nil {
-			http.Error(w, "failed to send email", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to send email: "+err.Error(), nil)
 			return
 		}
 
-		json.NewEncoder(w).Encode("password reset email sent to " + req.Email)
+		utils.WriteJSON(w, http.StatusOK, true, "reset password email sent to "+req.Email, nil)
 	}
 }
 
@@ -215,19 +216,19 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 		var credentials creds
 		err := json.NewDecoder(r.Body).Decode(&credentials)
 		if err != nil {
-			http.Error(w, "Invalid request", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "Invalid request: "+err.Error(), nil)
 			return
 		}
 
 		if credentials.Email == "" || credentials.Password == "" {
-			http.Error(w, "email and password are required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "email and password are required", nil)
 			return
 		}
 
 		user, err := utils.LoginUser(db, credentials.Email, credentials.Password)
 		if err != nil {
 			zap.L().Error("Login error:", zap.Error(err))
-			http.Error(w, "failed to login", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to login: "+err.Error(), nil)
 			return
 		}
 
@@ -235,12 +236,14 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 		token, err := utils.GenerateJWT(user.ID, user.Role)
 		if err != nil {
 			zap.L().Error("JWT generation error:", zap.Error(err))
-			http.Error(w, "failed to generate token", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to generate token: "+err.Error(), nil)
 			return
 		}
 
-		json.NewEncoder(w).Encode(map[string]string{
-			"token": token,
+		utils.WriteJSON(w, http.StatusOK, true, "login successful", map[string]string{
+			"token":   token,
+			"user_id": strconv.Itoa(user.ID),
+			"role":    user.Role,
 		})
 	}
 }
@@ -251,11 +254,11 @@ func GetAllLessonsHandler(db *database.Database) http.HandlerFunc {
 
 		lessons, err := db.GetAllLessonsWithTasks(userID)
 		if err != nil {
-			http.Error(w, "failed to fetch lessons", 500)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch lessons: "+err.Error(), nil)
 			return
 		}
 
-		json.NewEncoder(w).Encode(lessons)
+		utils.WriteJSON(w, http.StatusOK, true, "lessons fetched successfully", lessons)
 	}
 }
 
@@ -263,23 +266,23 @@ func GetTasksByLessonIdHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		lessonID := chi.URLParam(r, "lessonID")
 		if lessonID == "" {
-			http.Error(w, "lesson ID is required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "lesson ID is required", nil)
 			return
 		}
 
 		id, err := strconv.Atoi(lessonID)
 		if err != nil {
-			http.Error(w, "invalid lesson ID", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid lesson ID: "+err.Error(), nil)
 			return
 		}
 
 		tasks, err := db.GetTasksByLessonIdHandler(id)
 		if err != nil {
-			http.Error(w, "failed to fetch tasks", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch tasks: "+err.Error(), nil)
 			return
 		}
 
-		json.NewEncoder(w).Encode(tasks)
+		utils.WriteJSON(w, http.StatusOK, true, "tasks fetched successfully", tasks)
 	}
 }
 
@@ -289,23 +292,23 @@ func GetTasksDetailsHandler(db *database.Database) http.HandlerFunc {
 		fmt.Println("Requested URL:", r.URL.Path)
 		fmt.Println("Task ID:", taskID)
 		if taskID == "" {
-			http.Error(w, "task ID is required", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "task ID is required", nil)
 			return
 		}
 
 		id, err := strconv.Atoi(taskID)
 		if err != nil {
-			http.Error(w, "invalid task ID", http.StatusBadRequest)
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid task ID: "+err.Error(), nil)
 			return
 		}
 
 		task, err := db.GetTask(id)
 		if err != nil {
-			http.Error(w, "failed to fetch tasks", http.StatusInternalServerError)
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch tasks: "+err.Error(), nil)
 			return
 		}
 
-		json.NewEncoder(w).Encode(task)
+		utils.WriteJSON(w, http.StatusOK, true, "task fetched successfully", task)
 	}
 
 }
@@ -314,7 +317,7 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	var req models.Solution
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		http.Error(w, "invalid request", http.StatusBadRequest)
+		utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request: "+err.Error(), nil)
 		return
 	}
 
@@ -323,7 +326,7 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	value, err := json.Marshal(req)
 	if err != nil {
 		zap.L().Error("JSON marshal error:", zap.Error(err))
-		http.Error(w, "failed to marshal request", http.StatusInternalServerError)
+		utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to marshal request: "+err.Error(), nil)
 		return
 	}
 
@@ -334,10 +337,10 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		zap.L().Error("Kafka write error:", zap.Error(err))
-		http.Error(w, "failed to submit code", http.StatusInternalServerError)
+		utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to submit code: "+err.Error(), nil)
 		return
 	}
 
 	zap.L().Info("code submitted to Kafka for task", zap.String("taskID", strconv.Itoa(req.TaskID)))
-	w.Write([]byte(`{"status": "submitted"}`))
+	utils.WriteJSON(w, http.StatusOK, true, "code submitted successfully", nil)
 }
