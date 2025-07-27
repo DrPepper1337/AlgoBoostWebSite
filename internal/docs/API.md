@@ -49,10 +49,10 @@ curl -X POST http://localhost:8080/api/register \
 
 ### Email Verification
 
-Triggered via email link (auto-submitted POST):
+Triggered via email link (auto-submitted GET):
 
 ```bash
-curl -X POST http://localhost:8080/api/verify?token=<your_token>
+curl GET http://localhost:8080/api/verify?token=<your_token>
 ```
 
 #### Response
