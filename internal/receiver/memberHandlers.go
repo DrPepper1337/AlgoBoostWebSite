@@ -125,8 +125,10 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 			}
 
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(map[string]string{
-				"token": jwt,
+			utils.WriteJSON(w, http.StatusOK, true, "verification successful", map[string]string{
+				"token":   jwt,
+				"user_id": strconv.Itoa(userID),
+				"role":    entry.Role,
 			})
 		} else {
 			err = utils.ResetPassword(db, entry)
@@ -146,8 +148,6 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 		}
 
 		db.DeleteVerificationEntry(token)
-
-		utils.WriteJSON(w, http.StatusOK, true, "verification successful", nil)
 
 	}
 

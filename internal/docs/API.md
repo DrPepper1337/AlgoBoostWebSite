@@ -58,9 +58,13 @@ curl -X POST http://localhost:8080/api/verify?token=<your_token>
 #### Response
 ```json
 {
-    "token":"<jwt_token>"}
-{
-    "success":true,"message":"verification successful"
+   "success":true,
+   "message":"verification successful",
+   "data":{
+      "role":"member",
+      "token":"<jwt_token>",
+      "user_id":"3"
+   }
 }
 ```
 ---
