@@ -1,9 +1,26 @@
 package models
 
+import (
+	"time"
+)
+
 type Whitelist struct {
 	ID    int    `json:"id"`
 	Email string `json:"email"`
 	Name  string `json:"name"`
+	Role  string `json:"role"`
+}
+
+type RegistrationEntry struct {
+	ID        int       `json:"id"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	Name      string    `json:"name"`
+	Role      string    `json:"role"`
+	Token     string    `json:"token"`
+	TokenType string    `json:"token_type"`
+	ExpiresAt time.Time `json:"expires_at"`
+	Used      bool      `json:"used"`
 }
 type User struct {
 	ID       int    `json:"id"`
@@ -16,9 +33,9 @@ type User struct {
 type Task struct { // add topic & difficulty
 	ID          int     `json:"id"`
 	Title       string  `json:"title"`
-	Description string  `json:"Description"`
+	Description string  `json:"description"`
 	TimeLimit   float64 `json:"time_limit"`
-	MemoryLimit string  `json:"memory_limit"`
+	MemoryLimit float64 `json:"memory_limit"`
 	IsPractice  bool    `json:"is_practice"`
 }
 
