@@ -16,9 +16,8 @@ const LoginRegister = () => {
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
 
-  useEffect(() => {
-  const alreadyVerified = localStorage.getItem("verified");
 
+  useEffect(() => {
   const onStorageChange = (e) => {
     if (e.key === "verified" && e.newValue) {
       localStorage.removeItem("verified");
@@ -30,9 +29,9 @@ const LoginRegister = () => {
   return () => window.removeEventListener("storage", onStorageChange);
 }, [navigate]);
 
-
-  const handleLogin = async (e) => {
+const handleLogin = async (e) => {
   e.preventDefault();
+
   if (!loginEmail || !loginPassword) {
     alert('Please enter both email and password');
     return;
@@ -51,11 +50,17 @@ const LoginRegister = () => {
     });
 
     if (!response.ok) {
-      throw new Error('Login failed');
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Login failed');
     }
 
     const data = await response.json();
-    const token = data.token;
+
+    const token = data?.data?.token;
+
+    if (!token) {
+      throw new Error('Login failed: token not found');
+    }
 
     localStorage.setItem('authToken', token);
 
@@ -89,8 +94,8 @@ const LoginRegister = () => {
         throw new Error(text || 'Registration failed');
       }
 
-      const message = await response.text();
-      alert(message); // e.g. "verification email sent to ..."
+      const data = await response.json();
+      alert(data.message);
 
       setIsRegistering(false);
     } catch (error) {
@@ -101,7 +106,6 @@ const LoginRegister = () => {
 
   return (
     <div className="wrapper">
-      {/* Login Form */}
       <div className="form-box">
         {!isRegistering ? (
           <form onSubmit={handleLogin}>

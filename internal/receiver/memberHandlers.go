@@ -116,16 +116,14 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 				return
 			}
 
-			// send automatic login request
-			// to get JWT token ? manually for now
 			jwt, err := utils.GenerateJWT(userID, entry.Role)
 			if err != nil {
 				utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to generate jwt: "+err.Error(), nil)
 				return
 			}
 
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(map[string]string{
+			// single correct response with JWT included
+			utils.WriteJSON(w, http.StatusOK, true, "verification successful", map[string]string{
 				"token": jwt,
 			})
 		} else {
@@ -141,18 +139,11 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 		err = db.MarkTokenAsUsed(token)
 		if err != nil {
 			zap.L().Error("Error marking token as used:", zap.Error(err))
-			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to verify token: "+err.Error(), nil)
-			return
 		}
 
 		db.DeleteVerificationEntry(token)
-
-		utils.WriteJSON(w, http.StatusOK, true, "verification successful", nil)
-
 	}
-
 }
-
 func RequestResetPasswordHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type resetRequest struct {
