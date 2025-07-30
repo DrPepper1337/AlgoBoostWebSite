@@ -49,18 +49,22 @@ curl -X POST http://localhost:8080/api/register \
 
 ### Email Verification
 
-Triggered via email link (auto-submitted POST):
+Triggered via email link (auto-submitted GET):
 
 ```bash
-curl -X POST http://localhost:8080/api/verify?token=<your_token>
+curl GET http://localhost:8080/api/verify?token=<your_token>
 ```
 
 #### Response
 ```json
 {
-    "token":"<jwt_token>"}
-{
-    "success":true,"message":"verification successful"
+   "success":true,
+   "message":"verification successful",
+   "data":{
+      "role":"member",
+      "token":"<jwt_token>",
+      "user_id":"3"
+   }
 }
 ```
 ---
@@ -114,10 +118,10 @@ curl -X POST http://localhost:8080/api/request-reset-password \
 ```
 A reset link will be emailed. Once clicked:
 
-### Confirm reset (auto-POST)
+### Confirm reset (auto-GET)
 
 ```bash
-curl -X POST http://localhost:8080/api/verify-reset?token=<your_token>
+curl GET http://localhost:8080/api/verify?token=<your_token>
 ```
 
 Then log in using the new password.

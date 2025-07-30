@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 
 const VerifyPage = () => {
   const [message, setMessage] = useState("Verifying...");
-  const navigate = useNavigate();
+  const location = useLocation();
+  const hasFetched = useRef(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
+    const params = new URLSearchParams(location.search);
     const token = params.get("token");
 
     if (!token) {
@@ -14,45 +18,41 @@ const VerifyPage = () => {
       return;
     }
 
-    fetch(`http://localhost:8080/api/verify?token=${token}`, {
-      method: "GET",
-    })
+    const lastVerifiedToken = localStorage.getItem("verifiedToken");
+    if (lastVerifiedToken === token) {
+      setMessage("Verification already completed. You can close this tab.");
+      return;
+    }
+
+    fetch(`http://localhost:8080/api/verify?token=${token}`)
       .then(async (res) => {
-        const text = await res.text();
+        const json = await res.json();
+        console.log("Verification response:", res.status, json);
 
-        let data = {};
-        try {
-          data = text ? JSON.parse(text) : {};
-        } catch {
-          throw new Error("Invalid JSON response");
+        if (!res.ok || !json.success) {
+          throw new Error(json.message || "Verification failed");
         }
 
-        if (!res.ok || !data.success) {
-          throw new Error(data.message || "Verification failed");
+        if (json.data?.token) {
+          localStorage.setItem("authToken", json.data.token);
+          localStorage.setItem("verified", Date.now().toString());
+        } else {
+          localStorage.setItem("passwordResetSuccess", Date.now().toString());
         }
 
-        if (!data.data?.token) {
-          throw new Error("JWT token missing in response");
-        }
-
-        // Save JWT token and mark as verified
-        localStorage.setItem("authToken", data.data.token);
-        localStorage.setItem("verified", Date.now().toString());
-
-        setMessage("Verification successful! You can close this tab.");
+        localStorage.setItem("verifiedToken", token);
+        setMessage(json.message || "Success! You can close this tab.");
       })
-      .catch((error) => {
-  console.error("Verification error:", error);
+      .catch((err) => {
+        console.error("Verification error:", err);
 
-  if (localStorage.getItem("verified")) {
-    setMessage("Verification already completed. You can close this tab.");
-  } else {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("verified");
-    setMessage(`Verification failed: ${error.message || "Try again."}`);
-  }
-});
-  }, [navigate]);
+        if (localStorage.getItem("verifiedToken") === token) {
+          setMessage("Verification already completed. You can close this tab.");
+        } else {
+          setMessage(`Verification failed: ${err.message || "Try again."}`);
+        }
+      });
+  }, [location.search]);
 
   return (
     <div style={{ padding: "2rem", textAlign: "center" }}>

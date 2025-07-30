@@ -59,7 +59,7 @@ func RegisterUser(db *database.Database, entry models.RegistrationEntry, token s
 		zap.L().Error("Error adding new user:", zap.Error(err))
 		return 0, err
 	}
-	zap.L().Error("New user with ID :", zap.String("userId", strconv.Itoa(userID)))
+	zap.L().Info("New user with ID :", zap.String("userId", strconv.Itoa(userID)))
 	return userID, nil
 }
 

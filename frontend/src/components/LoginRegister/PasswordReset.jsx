@@ -9,8 +9,10 @@ const PasswordReset = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+     console.log("🟢 Storage listener mounted in PasswordReset");
   const handleStorageChange = (event) => {
-    if (event.key === 'passwordResetSuccess' && event.newValue === 'true') {
+    if (event.key === 'passwordResetSuccess') {
+      console.log("✅ passwordResetSuccess detected — navigating");
       localStorage.removeItem('passwordResetSuccess');
       navigate('/login');
     }
@@ -34,7 +36,7 @@ const PasswordReset = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: email,
+          email,
           password: newPassword,
         }),
       });
@@ -45,8 +47,8 @@ const PasswordReset = () => {
         throw new Error(text || 'Registration failed');
       }
 
-      const message = await response.text();
-      alert(message); // e.g. "verification email sent to ..."
+      const data = await response.json();
+      alert(data.message);
     } catch (error) {
       alert(error.message);
       console.error('Registration error:', error);

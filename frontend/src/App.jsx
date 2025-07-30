@@ -21,7 +21,7 @@ function App() {
          <Route path="/tasks/:lessonId" element={<TasksPage />} />
          <Route path="/verify" element={<VerifyPage />} />
          <Route path="/reset-password" element={<PasswordReset/>} />
-         <Route path="/reset-password-success" element={<PasswordResetSuccess/>} />
+         {/* <Route path="/reset-password-success" element={<VerifyPage/>} /> */}
 
   </Routes>
 </>

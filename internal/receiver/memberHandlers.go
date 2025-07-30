@@ -122,9 +122,11 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 				return
 			}
 
-			// single correct response with JWT included
+			w.Header().Set("Content-Type", "application/json")
 			utils.WriteJSON(w, http.StatusOK, true, "verification successful", map[string]string{
-				"token": jwt,
+				"token":   jwt,
+				"user_id": strconv.Itoa(userID),
+				"role":    entry.Role,
 			})
 		} else {
 			err = utils.ResetPassword(db, entry)
@@ -184,7 +186,7 @@ func RequestResetPasswordHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		verificationLink := fmt.Sprintf("http://localhost:5173/reset-password-success?token=%s", token)
+		verificationLink := fmt.Sprintf("http://localhost:5173/verify?token=%s", token)
 
 		// Send the reset email
 		err = utils.SendResetPasswordEmail(req.Email, user.Name, verificationLink)

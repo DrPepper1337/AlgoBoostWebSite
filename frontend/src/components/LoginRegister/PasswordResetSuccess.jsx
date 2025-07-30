@@ -1,18 +1,44 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const PasswordResetSuccess = () => {
+  const location = useLocation();
+  const [message, setMessage] = useState('Verifying your password reset token...');
+
   useEffect(() => {
-    localStorage.setItem('passwordResetSuccess', 'true');
-  }, []);
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+
+    if (!token) {
+      setMessage('No reset token provided.');
+      return;
+    }
+
+    fetch(`http://localhost:8080/api/verify?token=${token}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Verification failed');
+        return res.json();
+      })
+      .then(data => {
+        if (data.success) {
+          setMessage(data.message || 'Password reset verified!');
+          localStorage.setItem('passwordResetSuccess', Date.now().toString());
+        } else {
+          setMessage(data.message || 'Verification failed.');
+        }
+      })
+      .catch(err => {
+        setMessage('Error verifying token.');
+        console.error(err);
+      });
+  }, [location.search]);
 
   return (
-    <div className="wrapper">
-      <div className="form-box">
-        <h1>Password Reset Successful!</h1>
-        <p>You can now log in with your new password.</p>
-      </div>
+    <div style={{ padding: "2rem", textAlign: "center" }}>
+      <h1>{message}</h1>
     </div>
   );
 };
 
 export default PasswordResetSuccess;
+
