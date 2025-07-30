@@ -1,0 +1,73 @@
+:root {
+  --space-xs: 8px;
+  --space-sm: 260px;
+  --space-md: 24px;
+  --space-lg: 40px;
+  --space-xl: 64px;
+
+  --radius-sm: 6px;
+  --radius: 12px;
+
+  --color-bg: #000;
+  --color-card: #1a1a1a;
+  --color-btn: #ffa04d;
+  --color-btn-hover: #e9a66c;
+  --color-accent: #e38542;
+  --color-text: #ffffff;
+  --color-text-muted: #cccccc;
+  --color-shadow: rgba(0, 0, 0, 0.4);
+  --color-focus: #ff6b00;
+}
+
+html:has(.lessons-wrapper),
+body:has(.lessons-wrapper),
+#root:has(.lessons-wrapper) {
+  background-color: var(--color-bg) !important;
+}
+
+.lessons-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: relative;
+  height: 3.5rem;
+  z-index: 3000;
+
+}
+
+.user-menu-button {
+  font-size: 2rem;
+}
+.algo-logo {
+      float: right;
+    margin: 4px;
+    height: 10vh;
+    pointer-events: none;
+    opacity: 1;
+}
+
+.sessions-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+@media (min-width: 700px) {
+  .sessions-wrapper {
+    grid-template-columns: 1fr 1fr;
+  }
+}

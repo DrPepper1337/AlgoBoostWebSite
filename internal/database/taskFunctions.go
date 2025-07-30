@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (db *Database) AddTask(title, description string, timeLimit int, memoryLimit int, isPractice bool) (int, error) {
+func (db *Database) AddTask(title, description string, timeLimit float64, memoryLimit float64, isPractice bool) (int, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	sql, args, err := psql.Insert("tasks").Columns("title", "description", "time_limit", "memory_limit", "is_practice").Values(title, description, timeLimit, memoryLimit, isPractice).Suffix("RETURNING id").ToSql()
 	if err != nil {
@@ -37,10 +37,19 @@ func (db *Database) DeleteTask(id int) error {
 	if !errors.Is(row.Scan(), pgx.ErrNoRows) {
 		return errors.New("deleting task failed")
 	}
+	// delete from lessons_tasks too
+	sql2, args2, err := psql.Delete("lessons_tasks").Where(sq.Eq{"task_id": id}).ToSql()
+	if err != nil {
+		return err
+	}
+	row = db.Postgres.QueryRow(context.Background(), sql2, args2...)
+	if !errors.Is(row.Scan(), pgx.ErrNoRows) {
+		return errors.New("deleting task from lessons_tasks failed")
+	}
 	return nil
 }
 
-func (db *Database) EditTask(id int, title, description string, timeLimit, memoryLimit int, isPractice bool) error {
+func (db *Database) EditTask(id int, title, description string, timeLimit float64, memoryLimit float64, isPractice bool) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	sql, args, err := psql.Update("tasks").Set("title", title).Set("description", description).Set("time_limit", timeLimit).Set("memory_limit", memoryLimit).Set("is_practice", isPractice).Where(sq.Eq{"id": id}).ToSql()
 	if err != nil {
