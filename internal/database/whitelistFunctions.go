@@ -39,3 +39,17 @@ func (db *Database) IsEmailWhitelisted(email string) (models.Whitelist, error) {
 	}
 	return w, nil
 }
+
+func (db *Database) DeleteEmailFromWhitelist(email string) error {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Delete("whitelist").Where(sq.Eq{"email": email}).ToSql()
+	if err != nil {
+		return err
+	}
+	row := db.Postgres.QueryRow(context.Background(), sql, args...)
+	if !errors.Is(row.Scan(), pgx.ErrNoRows) {
+		return errors.New("deleting email failed")
+	}
+
+	return nil
+}

@@ -198,3 +198,113 @@ func DeleteTaskHandler(db *database.Database) http.HandlerFunc {
 		utils.WriteJSON(w, http.StatusOK, true, "task with ID "+strconv.Itoa(data.TaskID)+" deleted successfully", nil)
 	}
 }
+
+// USER HANDLERS
+func GetAllUSersHAndler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		users, err := db.GetAllUsers()
+		if err != nil {
+			zap.L().Error("Error getting all users:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to get all users", nil)
+			return
+		}
+		utils.WriteJSON(w, http.StatusOK, true, "users fetched successfully", users)
+	}
+}
+
+func AddEmalToWhitelistHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var whitelist models.Whitelist
+		err := json.NewDecoder(r.Body).Decode(&whitelist)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+			return
+		}
+
+		if whitelist.Email == "" || whitelist.Name == "" || whitelist.Role == "" {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "Email, Name and Role are required", nil)
+			return
+		}
+
+		err = db.AddEmailToWhitelist(whitelist.Email, whitelist.Name, whitelist.Role)
+		if err != nil {
+			zap.L().Error("Error adding email to whitelist:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to add email to whitelist: "+err.Error(), nil)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		utils.WriteJSON(w, http.StatusCreated, true, "email added whitelis successfully", nil)
+	}
+}
+
+func DeleteEmalToWhitelistHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type emailData struct {
+			Email string `json:"email"`
+		}
+		var data emailData
+		err := json.NewDecoder(r.Body).Decode(&data)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+			return
+		}
+
+		err = db.DeleteEmailFromWhitelist(data.Email)
+		if err != nil {
+			zap.L().Error("Error deleting task:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to delete task with email "+data.Email, nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "user with email "+data.Email+" deleted from whitelist successfully", nil)
+	}
+}
+
+func EditUserHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var user models.User
+		err := json.NewDecoder(r.Body).Decode(&user)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+			return
+		}
+
+		if user.ID == 0 || user.Name == "" || user.Password == "" || user.Email == "" || user.Role == "" {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "User ID, Name, Password, email, and Role are required", nil)
+			return
+		}
+
+		err = db.EditUser(user.ID, user.Name, user.Email, user.Password, user.Role)
+		if err != nil {
+			zap.L().Error("Error editing user:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to edit user: "+err.Error(), nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "task with ID "+strconv.Itoa(user.ID)+" edited successfully", nil)
+	}
+}
+
+func DeleteUserHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type userData struct {
+			UserId int `json:"user_id"`
+		}
+		var data userData
+		err := json.NewDecoder(r.Body).Decode(&data)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+			return
+		}
+
+		err = db.DeleteUser(data.UserId)
+		if err != nil {
+			zap.L().Error("Error deleting user:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to delete task with ID "+strconv.Itoa(data.UserId), nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "user with ID "+strconv.Itoa(data.UserId)+" deleted successfully", nil)
+	}
+}

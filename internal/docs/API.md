@@ -323,6 +323,34 @@ curl -X POST http://localhost:8080/api/admin/delete-task \
 ```
 ---
 
+### Get All Users
+```bash
+curl -X POST http://localhost:8080/api/admin/get-all-users \
+  -H "Authorization: Bearer <jwt_token>"  \
+  -H "Content-Type: application/json" \
+```
+### Response
+
+```json
+[
+  {
+    "id":1,
+    "name":"test",
+    "email":"test1@gmail.com",
+    "password":"$2a$10$YwzPOIT4j4RIRCZP3sIVUeKzvI5q1Xhw/H85HyV8sngxo.jaCprWS",
+    "role":"admin"
+  },
+  {
+    "id":2,
+    "name":"test",
+    "email":"test2@gmail.com",
+    "password":"$2a$10$YwzPOIT4j4RIRCZP3sIVUeKzvI5q1Xhw/H85HyV8sngxo.jaCprWS",
+    "role":"member"
+  }
+]
+```
+---
+
 ## Notes for Frontend
 
 * JWT tokens are returned after successful verification or login

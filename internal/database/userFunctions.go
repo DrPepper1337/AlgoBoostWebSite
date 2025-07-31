@@ -104,3 +104,32 @@ func (db *Database) LoginUser(email, password string) (models.User, error) {
 	return user, nil
 
 }
+
+func (db *Database) GetAllUsers() ([]models.User, error) {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Select("id", "name", "email", "password", "role").From("users").ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.Postgres.Query(context.Background(), sql, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []models.User
+	for rows.Next() {
+		var user models.User
+		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Role)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
