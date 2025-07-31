@@ -289,7 +289,7 @@ func EditUserHandler(db *database.Database) http.HandlerFunc {
 func DeleteUserHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type userData struct {
-			UserId int `json:"user_id"`
+			UserId int `json:"id"`
 		}
 		var data userData
 		err := json.NewDecoder(r.Body).Decode(&data)

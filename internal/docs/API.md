@@ -351,6 +351,66 @@ curl -X POST http://localhost:8080/api/admin/get-all-users \
 ```
 ---
 
+### Edit User
+```bash
+curl -X POST http://localhost:8080/api/admin/edit-user \
+  -H "Authorization: Bearer <jwt_token>"  \
+  -H "Content-Type: application/json" \
+  -d '{"id": 2, "name": "test changed", "password":"$2a$10$YwzPOIT4j4RIRCZP3sIVUeKzvI5q1Xhw/H85HyV8sngxo.jaCprWS", "email":"test2@gmail.com", "role":"member"}'
+```
+### Response
+```json
+{
+   "success":true,
+   "message":"task with ID 2 edited successfully"
+}
+```
+---
+### Add Email to Whitelist
+```bash
+curl -X POST http://localhost:8080/api/admin/add-email-to-whitelist \
+  -H "Authorization: Bearer <jwt_token>"  \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test3@gmail.com", "name":"Test3", "role":"member"}'
+```
+### Response
+```json
+{
+  "success":true,
+  "message":"email added whitelis successfully"
+}
+```
+---
+### Delete Email from Whitelist
+```bash
+curl -X POST http://localhost:8080/api/admin/delete-email-from-whitelist \
+  -H "Authorization: Bearer <jwt_token>"  \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test3@gmail.com"}'
+```
+### Response
+```json
+{
+  "success":true,
+  "message":"user with email test3@gmail.com deleted from whitelist successfully"
+}
+```
+---
+### Delete User
+```bash
+curl -X POST http://localhost:8080/api/admin/delete-user \
+  -H "Authorization: Bearer <jwt_token>"  \
+  -H "Content-Type: application/json" \
+  -d '{"id":2}'
+```
+### Response
+```json
+{
+  "success":true,
+  "message":"user with ID 2 deleted successfully"
+}
+```
+---
 ## Notes for Frontend
 
 * JWT tokens are returned after successful verification or login
