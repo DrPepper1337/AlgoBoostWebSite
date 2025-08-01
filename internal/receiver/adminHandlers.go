@@ -282,7 +282,7 @@ func EditUserHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		utils.WriteJSON(w, http.StatusOK, true, "task with ID "+strconv.Itoa(user.ID)+" edited successfully", nil)
+		utils.WriteJSON(w, http.StatusOK, true, "user with ID "+strconv.Itoa(user.ID)+" edited successfully", nil)
 	}
 }
 
