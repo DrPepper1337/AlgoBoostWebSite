@@ -100,17 +100,33 @@ section#top {
 }
 
 .square {
-  transform: translateY(10%);
   background: var(--orange-ombre);
   opacity: 1;
-  width: 40%;
-  height: 50%;
   z-index: 1;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  transform-style: preserve-3d;
+
+}
+
+.tilt-wrap {
+  transform: translateY(10%);
+
+  display: inline-block;
+  transform-style: preserve-3d;
+  width: 40%;
+  height: 50%;
+}
+
+.tilt-group {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 80ms linear;
+  width: 100%;
+  height: 100%;
 }
 
 .square p {
@@ -120,6 +136,16 @@ section#top {
   text-align: center;
   padding: 1rem;
   line-height: 1.5;
+}
+
+.square-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 800px;
 }
 
 .big-logo {

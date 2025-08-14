@@ -1,6 +1,7 @@
 import AnimatedCodeBackground from './components/AnimatedCodeBackground';
 import { useNavigate } from 'react-router-dom';
 import './styles/Home.css';
+import Tilt from "./components/Tilt";
 export default function Home() {
 
   const navigate = useNavigate();
@@ -32,12 +33,14 @@ export default function Home() {
         </header>
 
         <section id="top">
-          <div className="square">
-          <p>Some really good tagline and
-            small into, to summarise the entire
-            landing page. lorem ipsum dhdhd jh
-            hjdhjs sjdjsnd sjdjhshd ksjdks skjdk
-            shdsjd js wkwoq th most erciful thing</p>
+          <div className="square-wrapper">
+            <Tilt className="square" maxTilt={10} perspective={800}>
+              <p>Some really good tagline and
+                small into, to summarise the entire
+                landing page. lorem ipsum dhdhd jh
+                hjdhjs sjdjsnd sjdjhshd ksjdks skjdk
+                shdsjd js wkwoq th most erciful thing</p>
+            </Tilt>
           </div>
           <img src="../public/square-logo.svg" alt="AlgoBoost Logo" className="big-logo" />
 
