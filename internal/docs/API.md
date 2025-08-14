@@ -138,7 +138,7 @@ A reset link will be emailed. Once clicked:
 **Confirm reset (auto-GET)**
 
 ```bash
-curl GET http://localhost:8080/api/verify-reset?token=<your_token>
+curl GET http://localhost:8080/api/verify?token=<your_token>
 ```
 
 Then log in using the new password.

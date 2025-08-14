@@ -17,6 +17,11 @@ const DropDownProfile = ({isActive}) => {
 
     const navigate = useNavigate();
 
+      const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    navigate('/');
+  }
+
     return (
            <div className={`dropdown-menu ${isActive ? 'active' : 'inactive'}`}>
                 <h3>Name<br/>Surname</h3>
@@ -24,7 +29,7 @@ const DropDownProfile = ({isActive}) => {
                     <DropDownItem icon={FaUser} text={"My Profile"} />
                     <DropDownItem icon={FaBookmark} text={"Saved Topics"}/>
                     <DropDownItem icon={FaCog} text={"Settings"} />
-                    <DropDownItem icon={FaSignOutAlt} text="Logout" onClick={() => navigate('/')} />
+                    <DropDownItem icon={FaSignOutAlt} text="Logout" onClick={handleLogout} />
                 </ul>
         </div>
     )

@@ -45,7 +45,13 @@ export default function Lessons() {
           },
         });
 
-        setLessons(res.data);
+        if (!res.data?.success || !Array.isArray(res.data.data)) {
+          console.error('Unexpected response structure:', res.data);
+          return;
+        }
+
+      const lessonsData = res.data.data;
+        setLessons(lessonsData);
       } catch (error) {
         console.error('Failed to fetch lessons:', error);
       }

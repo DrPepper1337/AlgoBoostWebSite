@@ -58,16 +58,14 @@ body:has(.lessons-wrapper),
 }
 
 .sessions-wrapper {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
   max-width: 1200px;
   margin: 2rem auto;
   padding: 0 1rem;
   box-sizing: border-box;
-    justify-items: center;
 }
-
 @media (min-width: 700px) {
   .sessions-wrapper {
     grid-template-columns: 1fr 1fr;

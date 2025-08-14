@@ -164,7 +164,7 @@
 }
 
 .menu-button:hover {
-    stroke: #f18913;
+    stroke: #ff9500;
     /* opacity: 0; */
 }
 
@@ -186,7 +186,7 @@
 
 
 .navbarLink:hover {
-    color: orange;
+    color: #ff9500;
 }
 
 .a-container {
@@ -275,8 +275,8 @@
 }
 
 .login:hover {
-  color: #f18913;
-  border-color: #f18913;
+  color:  #ff9500;
+  border-color:#ff9500;
 
 }
 
@@ -312,13 +312,12 @@
 }
 
 .section h2 {
-  color: #ffb347;
+  color: #ff9500;
   font-size: 2.4rem;
   margin-bottom: 24px;
   font-weight: 600;
   letter-spacing: 1.2px;
 }
-
 
 .section p {
   max-width: 700px;

@@ -4,10 +4,9 @@ import (
 	"AlgoBoostWebSite/internal/config"
 	"AlgoBoostWebSite/internal/database"
 
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 
 	"AlgoBoostWebSite/internal/receiver"
 	"log"
@@ -31,38 +30,79 @@ func main() {
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
-
-	// task 1 is in lesson 1, but task 2 is just there, unnattached
-	id, err := db.AddTask("Task 1", "decription 1 (linked to lesson 1)", 10, 250, true)
-	if err != nil {
-		zap.L().Debug(err.Error())
-	}
-	id1, _ := db.AddLesson("Lesson 1", "Description 1")
-	err = db.AddTaskToLesson(id, id1)
-	db.SetLessonVisability(id1, true)
-
-	id, err = db.AddTask("Task 2", "unnattached", 0, 0, false)
+	// Add Lesson 1: Dynamic Programming
+	dpLessonID, err := db.AddLesson("Dynamic Programming", "hop hey lalalei")
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
 
-	// test users
+	// thoery Task
+	definitionID, err := db.AddTask("What is Dynamic Programming?", "Defition...", 0, 0, false)
+	if err != nil {
+		zap.L().Debug(err.Error())
+	}
+	db.AddTaskToLesson(definitionID, dpLessonID)
+
+	// practice Task 1
+	fibID, err := db.AddTask("Fibonacci", "Compute the nth Fibonacci number using memoization.", 10, 250, true)
+	if err != nil {
+		zap.L().Debug(err.Error())
+	}
+	db.AddTaskToLesson(fibID, dpLessonID)
+
+	// practice Task 2
+	knapsackID, err := db.AddTask("0/1 Knapsack", "Given weights and values, determine max value under capacity limit.", 10, 250, true)
+	if err != nil {
+		zap.L().Debug(err.Error())
+	}
+	db.AddTaskToLesson(knapsackID, dpLessonID)
+
+	// checking
+	result, err := db.GetLesson(dpLessonID)
+	if err != nil {
+		zap.L().Debug(err.Error())
+	}
+	zap.L().Debug("a", zap.Any("ads", result.Tasks))
+
+	// Add Lesson 2: Linked Lists
+	llLessonID, err := db.AddLesson("Linked Lists", "Explore operations like insertion, deletion, and traversal in singly and doubly linked lists.")
+	if err != nil {
+		zap.L().Debug(err.Error())
+	}
+
+	// Add Task 1 to Linked Lists
+	reverseID, err := db.AddTask("Reverse Linked List", "Reverse a singly linked list in-place.", 10, 250, true)
+	if err != nil {
+		zap.L().Debug(err.Error())
+	}
+	db.AddTaskToLesson(reverseID, llLessonID)
+
+	// Add Task 2 to Linked Lists
+	detectCycleID, err := db.AddTask("Detect Cycle", "Check if a linked list contains a cycle using Floyd’s algorithm.", 10, 250, true)
+	if err != nil {
+		zap.L().Debug(err.Error())
+	}
+	db.AddTaskToLesson(detectCycleID, llLessonID)
+
+	// Set lessons visible
+	db.SetLessonVisability(dpLessonID, true)
+	db.SetLessonVisability(llLessonID, true)
+
+	// _, err = db.AddUser("test", "test@gmail.com", "test123", "admin")
+	// if err != nil {
+	// 	zap.L().Debug(err.Error())
+	// }
 	const password = "test123"
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return
 	}
-	_, err = db.AddUser("test", "test1@gmail.com", string(hashedPassword), "admin")
+	_, err = db.AddUser("test", "test@gmail.com", string(hashedPassword), "admin")
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
 
-	_, err = db.AddUser("test", "test2@gmail.com", string(hashedPassword), "member")
-	if err != nil {
-		zap.L().Debug(err.Error())
-	}
-
-	err = db.AddEmailToWhitelist("stasymartinson@gmail.com", "test guy", "member")
+	err = db.AddEmailToWhitelist("sofia.morgulchik@gmail.com", "test guy", "member")
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}

@@ -1,5 +1,5 @@
 import './LoginRegister.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
 
@@ -16,10 +16,24 @@ const LoginRegister = () => {
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
 
-  const handleLogin = async (e) => {
+
+  useEffect(() => {
+  const onStorageChange = (e) => {
+    if (e.key === "verified" && e.newValue) {
+      localStorage.removeItem("verified");
+      navigate("/lessons");
+    }
+  };
+
+  window.addEventListener("storage", onStorageChange);
+  return () => window.removeEventListener("storage", onStorageChange);
+}, [navigate]);
+
+const handleLogin = async (e) => {
   e.preventDefault();
+
   if (!loginEmail || !loginPassword) {
-    alert('Please enter both username and password');
+    alert('Please enter both email and password');
     return;
   }
 
@@ -36,11 +50,17 @@ const LoginRegister = () => {
     });
 
     if (!response.ok) {
-      throw new Error('Login failed');
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Login failed');
     }
 
     const data = await response.json();
-    const token = data.token;
+
+    const token = data?.data?.token;
+
+    if (!token) {
+      throw new Error('Login failed: token not found');
+    }
 
     localStorage.setItem('authToken', token);
 
@@ -51,20 +71,41 @@ const LoginRegister = () => {
   }
 };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    if (registerUsername && registerEmail && registerPassword) {
-      alert('Registered successfully!');
-      setIsRegistering(false);
-      navigate('/lessons');
-    } else {
+
+    if (!registerEmail || !registerPassword) {
       alert('Please fill all fields');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: registerEmail,
+          password: registerPassword,
+        }),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || 'Registration failed');
+      }
+
+      const data = await response.json();
+      alert(data.message);
+
+      setIsRegistering(false);
+    } catch (error) {
+      alert(error.message);
+      console.error('Registration error:', error);
     }
   };
 
   return (
     <div className="wrapper">
-      {/* Login Form */}
       <div className="form-box">
         {!isRegistering ? (
           <form onSubmit={handleLogin}>
@@ -95,7 +136,12 @@ const LoginRegister = () => {
                 <input type="checkbox" />
                 <span>Remember me</span>
               </label>
-              <a href="#">Forgot Password?</a>
+              <a href="#" onClick={(e) => {
+                e.preventDefault();
+                navigate('/reset-password');
+              }}>
+                Forgot Password?
+              </a>
             </div>
             <button type="submit" className="btn">Login</button>
             <div className="register-link">
@@ -106,16 +152,6 @@ const LoginRegister = () => {
 
           <form onSubmit={handleRegister}>
             <h1>Registration</h1>
-            <div className="input-box">
-              <input
-                type="text"
-                placeholder="Username"
-                value={registerUsername}
-                onChange={(e) => setRegisterUsername(e.target.value)}
-                required
-              />
-              <FaUser className="icon" />
-            </div>
 
             <div className="input-box">
               <input
