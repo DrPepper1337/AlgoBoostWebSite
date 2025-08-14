@@ -12,6 +12,7 @@
   --white-bg-text: #E5E5E5;
   --black-bg-text: #090909;
   --dark-grey-bg: #23211E;
+  --light-grey-bg: #7676767b;
 
   /* status colours */
   --color-success: #2ECC71;
@@ -19,7 +20,7 @@
   --color-warning: #F39C12;
 
   /* gradients */
-  --orange-ombre: linear-gradient(135deg, #FF8001 0%, #994D01 100%);
+  --orange-ombre: linear-gradient(180deg, #FF8001 0%, #994D01 100%);
 }
 
 html, body {
