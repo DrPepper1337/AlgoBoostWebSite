@@ -6,7 +6,7 @@ import TasksPage from './components/TasksPage/TasksPage';
 import VerifyPage from './components/LoginRegister/VerifyPage';
 import PasswordReset from './components/LoginRegister/PasswordReset';
 import PasswordResetSuccess from './components/LoginRegister/PasswordResetSuccess';
-import './App.css';
+import './styles/App.css';
 import Home from './Home';
 
 
