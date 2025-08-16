@@ -43,7 +43,19 @@ export default function Home() {
             </Tilt>
           </div>
           <img src="../public/square-logo.svg" alt="AlgoBoost Logo" className="big-logo" />
+        </section>
 
+        <section id="about">
+          <div className="about-text">
+            <h1>
+              Who we are
+            </h1>
+            <h3>And what we usually do</h3>
+            <p>And here is some body copy. Modi qui dero offici- et quati te moluptatem volorrorum reritatio et que non cor. Ibus utatemporum Aximinctecto quiscie nimodio rrorisciam, sitati am, officienis re volluptae dunt, istempelis ne vellitius volorep.</p>
+          </div>
+          <Tilt id="logo-tilt" className="uni-logo" maxTilt={30} perspective={800}>
+            <img src="../public/uni-logo.svg" alt="University Logo" />
+          </Tilt>
         </section>
 
         <div style={{ position: 'relative' }}>
@@ -57,7 +69,7 @@ export default function Home() {
 
         <div className="spacer" />
 
-        <section id="about" className="section">
+        {/* <section id="about" className="section">
           <h2>About Us</h2>
           <p>
             The AlgoBoost Society (ABS) is a community devoted to career readiness, problem-solving, and technical excellence.
@@ -72,7 +84,7 @@ export default function Home() {
             Our society offers a mix of lecture-style sessions, interactive problem-solving tutorials, and mock interviews,
             helping students build both technical proficiency and strategic thinking.
           </p>
-        </section>
+        </section> */}
 
 
         <section id="schedule" className="section">
