@@ -97,12 +97,7 @@ func main() {
 	if err != nil {
 		return
 	}
-	_, err = db.AddUser("test admin", "test1@gmail.com", string(hashedPassword), "admin")
-	if err != nil {
-		zap.L().Debug(err.Error())
-	}
-
-	_, err = db.AddUser("test admin", "test2@gmail.com", string(hashedPassword), "member")
+	_, err = db.AddUser("test", "test@gmail.com", string(hashedPassword), "admin")
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
