@@ -37,6 +37,7 @@
 .reveal-scope.is-revealed .reveal {
     transform: none;
     clip-path: inset(0 0 0 0);
+    overflow: visible;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -45,4 +46,8 @@
         transform: none;
         clip-path: none;
     }
+}
+
+.offer-element {
+    padding-top: 60px
 }

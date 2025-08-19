@@ -5,6 +5,8 @@ import Tilt from "./components/TiltEffect/Tilt";
 import RevealOnScroll from "./components/TextReveal/RevealOnScroll";
 import "./components/TextReveal/Reveal.css";
 import "./components/TiltEffect/Tilt.css";
+import OfferIcon from "./components/LottieIcon/Lottie";
+
 export default function Home() {
 
   const navigate = useNavigate();
@@ -72,24 +74,68 @@ export default function Home() {
           <div className="ombre-bottom"></div>
         </div>
 
-        <div className="spacer" />
+        {/* <div className="spacer" /> */}
 
-        <section id="offer" className="section">
-          {/* <h2>About Us</h2>
-          <p>
-            The AlgoBoost Society (ABS) is a community devoted to career readiness, problem-solving, and technical excellence.
-            We strive to provide a supportive environment for students to hone their coding skills, master data structures &
-            algorithms, and prepare for technical interviews.
-          </p>
-          <p>
-            Whether you’re aiming for a tech internship, a software engineering role, or simply love tackling coding challenges,
-            AlgoBoost is the place for you!
-          </p>
-          <p>
-            Our society offers a mix of lecture-style sessions, interactive problem-solving tutorials, and mock interviews,
-            helping students build both technical proficiency and strategic thinking.
-          </p> */}
-        </section>
+        <RevealOnScroll
+          as="section"
+          id="offer"
+          className="offer-section"
+          threshold={0.4}
+          rootMargin="0px 0px -10% 0px"
+          sectionFirst
+          sectionDur={1000}
+          sectionDir="up"
+        >
+          <h1 className="offer-title reveal" data-sr="up" style={{ "--sr-order": 0 }}>
+            What we offer
+          </h1>
+          <div className="offer-grid">
+            <div className="offer-element reveal" data-sr="up" style={{ "--sr-order": 1 }}>
+              <button className="offer-card">
+                <div className="offer-icon-wrap">
+                  <OfferIcon iconName="calendar" />
+                </div>
+                <p>Weekly sessions to guide you through the process</p>
+              </button>
+            </div>
+
+            <div className="offer-element reveal" data-sr="up" style={{ "--sr-order": 2 }}>
+              <button className="offer-card">
+                <div className="offer-icon-wrap">
+                  <OfferIcon iconName="book" />
+                </div>
+                <p>Really good materials you will definitely use every day</p>
+              </button>
+            </div>
+
+            <div className="offer-element reveal" data-sr="up" style={{ "--sr-order": 3 }}>
+              <button className="offer-card">
+                <div className="offer-icon-wrap">
+                  <OfferIcon iconName="up" />
+                </div>
+                <p>Weekly sessions to guide you through the process</p>
+              </button>
+            </div>
+
+            <div className="offer-element reveal" data-sr="up" style={{ "--sr-order": 4 }}>
+              <button className="offer-card">
+                <div className="offer-icon-wrap">
+                  <OfferIcon iconName="user" />
+                </div>
+                <p>Platform for our members with materials, and practice questions</p>
+              </button>
+            </div>
+
+            <div className="offer-element reveal" data-sr="up" style={{ "--sr-order": 5 }}>
+              <button className="offer-card">
+                <div className="offer-icon-wrap">
+                  <OfferIcon iconName="heart" />
+                </div>
+                <p>Community and occasional snacks. when we have the money.</p>
+              </button>
+            </div>
+          </div>
+        </RevealOnScroll>
 
 
         {/* <section id="schedule" className="section">
