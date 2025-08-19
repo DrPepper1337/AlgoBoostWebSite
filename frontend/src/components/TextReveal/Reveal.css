@@ -1,0 +1,48 @@
+.reveal-scope {
+    position: relative;
+    overflow: clip;
+}
+
+.reveal {
+    will-change: transform, clip-path;
+    --sr-dist: 40px;
+    --sr-dur: 2s;
+    --sr-ease: cubic-bezier(.2, .65, .2, 1);
+    transition:
+        transform var(--sr-dur) var(--sr-ease),
+        clip-path var(--sr-dur) var(--sr-ease);
+    transition-delay: calc(var(--sr-delay, 0ms) + var(--sr-order, 0) * 120ms);
+}
+
+.reveal[data-sr="up"] {
+    transform: translateY(var(--sr-dist));
+    clip-path: inset(0 0 100% 0);
+}
+
+.reveal[data-sr="down"] {
+    transform: translateY(calc(-1 * var(--sr-dist)));
+    clip-path: inset(100% 0 0 0);
+}
+
+.reveal[data-sr="left"] {
+    transform: translateX(var(--sr-dist));
+    clip-path: inset(0 100% 0 0);
+}
+
+.reveal[data-sr="right"] {
+    transform: translateX(calc(-1 * var(--sr-dist)));
+    clip-path: inset(0 0 0 100%);
+}
+
+.reveal-scope.is-revealed .reveal {
+    transform: none;
+    clip-path: inset(0 0 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        transition: none;
+        transform: none;
+        clip-path: none;
+    }
+}

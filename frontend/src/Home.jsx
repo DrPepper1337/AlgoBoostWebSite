@@ -1,7 +1,10 @@
-import AnimatedCodeBackground from './components/AnimatedCodeBackground';
+import AnimatedCodeBackground from './components/CodeAnimate/AnimatedCodeBackground';
 import { useNavigate } from 'react-router-dom';
 import './styles/Home.css';
-import Tilt from "./components/Tilt";
+import Tilt from "./components/TiltEffect/Tilt";
+import RevealOnScroll from "./components/TextReveal/RevealOnScroll";
+import "./components/TextReveal/Reveal.css";
+import "./components/TiltEffect/Tilt.css";
 export default function Home() {
 
   const navigate = useNavigate();
@@ -45,32 +48,34 @@ export default function Home() {
           <img src="../public/square-logo.svg" alt="AlgoBoost Logo" className="big-logo" />
         </section>
 
-        <section id="about">
-          <div className="about-text">
-            <h1>
-              Who we are
-            </h1>
-            <h3>And what we usually do</h3>
-            <p>And here is some body copy. Modi qui dero offici- et quati te moluptatem volorrorum reritatio et que non cor. Ibus utatemporum Aximinctecto quiscie nimodio rrorisciam, sitati am, officienis re volluptae dunt, istempelis ne vellitius volorep.</p>
+        <RevealOnScroll as="section" id="about" threshold={0.5} rootMargin="0px 0px -10% 0px">
+          <div className="about-text reveal" data-sr="up" style={{ "--sr-order": 0, "--sr-dur": "2s" }}>
+            <h1 className="reveal" data-sr="up" style={{ "--sr-order": 0 }}>Who we are</h1>
+            <h3 className="reveal" data-sr="up" style={{ "--sr-order": 1 }}>And what we usually do</h3>
+            <p className="reveal" data-sr="up" style={{ "--sr-order": 2 }}>
+              And here is some body copy. Modi qui dero offici- et quati te moluptatem volorrorum reritatio et que non cor. Ibus utatemporum Aximinctecto quiscie nimodio rrorisciam, sitati am, officienis re volluptae dunt, istempelis ne vellitius volorep.
+            </p>
           </div>
-          <Tilt id="logo-tilt" className="uni-logo" maxTilt={30} perspective={800}>
-            <img src="../public/uni-logo.svg" alt="University Logo" />
-          </Tilt>
-        </section>
+          <div className="reveal" data-sr="up" style={{ "--sr-order": 3 }}>
+            <Tilt id="logo-tilt" className="uni-logo" maxTilt={10} perspective={800}>
+              <img src="../public/uni-logo.svg" alt="University Logo" />
+            </Tilt>
+          </div>
+        </RevealOnScroll>
 
         <div style={{ position: 'relative' }}>
           <div className="ombre-top"></div>
           <div id="background"><AnimatedCodeBackground /></div>
-          <div className="a-container">
+          {/* <div className="a-container">
             <p className="glitch">ALGOBOOST</p>
-          </div>
+          </div> */}
           <div className="ombre-bottom"></div>
         </div>
 
         <div className="spacer" />
 
-        {/* <section id="about" className="section">
-          <h2>About Us</h2>
+        <section id="offer" className="section">
+          {/* <h2>About Us</h2>
           <p>
             The AlgoBoost Society (ABS) is a community devoted to career readiness, problem-solving, and technical excellence.
             We strive to provide a supportive environment for students to hone their coding skills, master data structures &
@@ -83,11 +88,11 @@ export default function Home() {
           <p>
             Our society offers a mix of lecture-style sessions, interactive problem-solving tutorials, and mock interviews,
             helping students build both technical proficiency and strategic thinking.
-          </p>
-        </section> */}
+          </p> */}
+        </section>
 
 
-        <section id="schedule" className="section">
+        {/* <section id="schedule" className="section">
           <h2>Schedule</h2>
           <p><strong>DSA Talks:</strong> Mondays 5–6 PM</p>
           <p><strong>Problem-Solving:</strong> Fridays 5–6 PM</p>
@@ -98,7 +103,7 @@ export default function Home() {
           <p>
             YAP YAP YAP
           </p>
-        </section>
+        </section> */}
       </>
     </div >
   );

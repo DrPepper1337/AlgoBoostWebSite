@@ -1,0 +1,16 @@
+.tilt-wrap {
+    transform-style: preserve-3d;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tilt-group {
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: transform 80ms linear;
+    width: 100%;
+    height: 100%;
+}
