@@ -5,7 +5,8 @@ import Tilt from "./components/TiltEffect/Tilt";
 import RevealOnScroll from "./components/TextReveal/RevealOnScroll";
 import "./components/TextReveal/Reveal.css";
 import "./components/TiltEffect/Tilt.css";
-import OfferIcon from "./components/LottieIcon/Lottie";
+import OfferElement from "./components/OfferElement/OfferElement";
+import './components/OfferElement/Offer.css';
 
 export default function Home() {
 
@@ -31,7 +32,7 @@ export default function Home() {
             <button className="menu-btn" id="register" onClick={() => navigate('/register')}>
               Register
             </button>
-            <button className="menu-btn" id="become-a-member" onClick={() => navigate('https://www.yourunion.net/activities/societies/explore/algoboostsociety')}>
+            <button className="menu-btn" id="become-a-member" onClick={() => window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety')}>
               Become a Member
             </button>
           </div>
@@ -66,15 +67,11 @@ export default function Home() {
         </RevealOnScroll>
 
         <div style={{ position: 'relative' }}>
-          <div className="ombre-top"></div>
+          {/* <div className="ombre-top"></div> */}
           <div id="background"><AnimatedCodeBackground /></div>
-          {/* <div className="a-container">
-            <p className="glitch">ALGOBOOST</p>
-          </div> */}
-          <div className="ombre-bottom"></div>
+          {/* <div className="ombre-bottom"></div> */}
         </div>
 
-        {/* <div className="spacer" /> */}
 
         <RevealOnScroll
           as="section"
@@ -90,53 +87,39 @@ export default function Home() {
             What we offer
           </h1>
           <div className="offer-grid">
-            <div className="offer-element reveal" data-sr="up" style={{ "--sr-order": 1 }}>
-              <button className="offer-card">
-                <div className="offer-icon-wrap">
-                  <OfferIcon iconName="calendar" />
-                </div>
-                <p>Weekly sessions to guide you through the process</p>
-              </button>
-            </div>
-
-            <div className="offer-element reveal" data-sr="up" style={{ "--sr-order": 2 }}>
-              <button className="offer-card">
-                <div className="offer-icon-wrap">
-                  <OfferIcon iconName="book" />
-                </div>
-                <p>Really good materials you will definitely use every day</p>
-              </button>
-            </div>
-
-            <div className="offer-element reveal" data-sr="up" style={{ "--sr-order": 3 }}>
-              <button className="offer-card">
-                <div className="offer-icon-wrap">
-                  <OfferIcon iconName="up" />
-                </div>
-                <p>Weekly sessions to guide you through the process</p>
-              </button>
-            </div>
-
-            <div className="offer-element reveal" data-sr="up" style={{ "--sr-order": 4 }}>
-              <button className="offer-card">
-                <div className="offer-icon-wrap">
-                  <OfferIcon iconName="user" />
-                </div>
-                <p>Platform for our members with materials, and practice questions</p>
-              </button>
-            </div>
-
-            <div className="offer-element reveal" data-sr="up" style={{ "--sr-order": 5 }}>
-              <button className="offer-card">
-                <div className="offer-icon-wrap">
-                  <OfferIcon iconName="heart" />
-                </div>
-                <p>Community and occasional snacks. when we have the money.</p>
-              </button>
-            </div>
+            <OfferElement
+              iconName="calendar"
+              text="Weekly sessions to guide you through the process"
+              order={1}
+            />
+            <OfferElement
+              iconName="book"
+              text="Really good materials you will definitely use every day"
+              order={2}
+            />
+            <OfferElement
+              iconName="up"
+              text="Weekly sessions to guide you through the process"
+              order={3}
+            />
+            <OfferElement
+              iconName="user"
+              text="Platform for our members with materials, and practice questions"
+              order={4}
+            />
+            <OfferElement
+              iconName="heart"
+              text="Community and occasional snacks. when we have the money."
+              order={5}
+            />
           </div>
         </RevealOnScroll>
 
+        <div style={{ position: 'relative' }}>
+          {/* <div className="ombre-top"></div> */}
+          <div id="background"><AnimatedCodeBackground /></div>
+          {/* <div className="ombre-bottom"></div> */}
+        </div>
 
         {/* <section id="schedule" className="section">
           <h2>Schedule</h2>

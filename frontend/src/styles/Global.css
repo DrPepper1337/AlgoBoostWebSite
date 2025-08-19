@@ -13,6 +13,7 @@
   --black-bg-text: #090909;
   --dark-grey-bg: #23211E;
   --light-grey-bg: #7676767b;
+  --dark-grey-transparent: rgba(35, 33, 30, 0.8);
 
   /* status colours */
   --color-success: #2ECC71;
