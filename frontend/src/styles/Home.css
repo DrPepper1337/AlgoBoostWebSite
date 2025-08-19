@@ -212,10 +212,11 @@ section#about {
   z-index: 1;
   overflow: hidden;
   position: relative;
+  margin-top: 0.7vh;
 }
 
 .listingsOfCode {
-  color: rgba(253, 221, 165, 0.529);
+  color: var(--orange-vivid);
   font-family: "JetBrains Mono", monospace;
   user-select: none;
   animation-fill-mode: backwards;

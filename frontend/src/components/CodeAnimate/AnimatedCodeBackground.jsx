@@ -5,7 +5,7 @@ const arOfFunctions = ["def dextra(graph, start):", "shortest_paths = {start: (N
      "shortestPaths.put(start, new Object[]{null, 0});", "String currentNode = start;", "Set<String> visited = new HashSet<>();", "while (currentNode != null) {", "visited.add(currentNode);", "Map<String, Integer> destinations = graph.get(currentNode);", "int weightToCurrentNode = (int) shortestPaths.get(currentNode)[1];", "for (Map.Entry<String, Integer> nextNode : destinations.entrySet()) {", "int weight = weightToCurrentNode + nextNode.getValue();", "if (!shortestPaths.containsKey(nextNode.getKey())) {", "shortestPaths.put(nextNode.getKey(), new Object[]{currentNode, weight});", "} else {", "int currentShortestWeight = (int) shortestPaths.get(nextNode.getKey())[1];", "if (currentShortestWeight > weight) {", "shortestPaths.put(nextNode.getKey(), new Object[]{currentNode, weight});", "}", "}", "}", "String nextNode = null;", "int minWeight = Integer.MAX_VALUE;", "for (Map.Entry<String, Object[]> path : shortestPaths.entrySet()) {", "if (!visited.contains(path.getKey()) && (int) path.getValue()[1] < minWeight) {", "nextNode = path.getKey();", "minWeight = (int) path.getValue()[1];", "}", "}", "currentNode = nextNode;", "}", "return shortestPaths;", "}",
     "shortestPaths[start] = {\"\", 0};", "std::string currentNode = start;", "std::set<std::string> visited;", "while (!currentNode.empty()) {", "visited.insert(currentNode);", "const auto& destinations = graph.at(currentNode);", "int weightToCurrentNode = shortestPaths[currentNode].second;", "for (const auto& nextNode : destinations) {", "int weight = weightToCurrentNode + nextNode.second;", "if (shortestPaths.find(nextNode.first) == shortestPaths.end()) {", "shortestPaths[nextNode.first] = {currentNode, weight};", "} else if (shortestPaths[nextNode.first].second > weight) {", "shortestPaths[nextNode.first] = {currentNode, weight};", "}", "}", "std::string nextNode;", "int minWeight = std::numeric_limits<int>::max();", "for (const auto& path : shortestPaths) {", "if (visited.find(path.first) == shortestPaths.end() && path.second.second < minWeight) {", "nextNode = path.first;", "minWeight = path.second.second;", "}", "}", "currentNode = nextNode;", "}", "return shortestPaths;", "}",
     "print('Hello world')", "fmt.Println('Hello world')", "System.out.println('Hello world')", "Console.WriteLine('Hello world')", "echo 'Hello world'"];
-const arrOfColors = ['#7d7d7d', 'rgba(174, 128, 82, 0.87)'];
+// const arrOfColors = ['#7d7d7d', 'rgba(174, 128, 82, 0.87)'];
 
 
 const generateRandomCodeLine = (context, widthLimit) => {
@@ -50,7 +50,7 @@ const AnimatedCodeBackground = () => {
       if (!context) return;
 
       const newLines = [];
-      for (let i = 1; i < 20; i++) {
+      for (let i = 1; i < 10; i++) {
         const forward = generateRandomCodeLine(context, window.innerWidth * 3);
         const delay = generateRandomCodeLine(context, window.innerWidth * 3);
         newLines.push({
@@ -80,14 +80,14 @@ const AnimatedCodeBackground = () => {
         <div key={id} className="listingsOfCode">
           <span className={direction}>
             {forward.split(/(?<=;|\)|{|})/g).map((chunk, i) => (
-              <span key={i} style={{ color: arrOfColors[Math.floor(Math.random() * arrOfColors.length)] }}>
+              <span key={i}>
                 {chunk}
               </span>
             ))}
           </span>
           <span className={delayDirection}>
             {delay.split(/(?<=;|\)|{|})/g).map((chunk, i) => (
-              <span key={i} style={{ color: arrOfColors[Math.floor(Math.random() * arrOfColors.length)] }}>
+              <span key={i}>
                 {chunk}
               </span>
             ))}
