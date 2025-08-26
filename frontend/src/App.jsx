@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginRegister from './components/LoginRegister/LoginRegister';
 import LessonsPage from './components/LessonsPage/Lessons';
 import TasksPage from './components/TasksPage/TasksPage';

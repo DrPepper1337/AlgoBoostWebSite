@@ -4,32 +4,32 @@ import SessionContainer from "../SessionContainer/SessionContainer";
 import { FaUser, FaChevronRight } from 'react-icons/fa';
 import { useRef, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import logo from '../../assets/algo-logo.png';
+//import logo from '../../assets/algo-logo.png';
 import axios from 'axios';
 import '../../styles/Global.css';
-import { Calendar, Views, dateFnsLocalizer } from 'react-big-calendar';
-import format from 'date-fns/format';
-import parse from 'date-fns/parse';
-import startOfWeek from 'date-fns/startOfWeek';
-import getDay from 'date-fns/getDay';
+// import { Calendar, Views, dateFnsLocalizer } from 'react-big-calendar';
+// import format from 'date-fns/format';
+// import parse from 'date-fns/parse';
+// import startOfWeek from 'date-fns/startOfWeek';
+// import getDay from 'date-fns/getDay';
 import LessonsCalendar from '../LessonsCalendar/LessonsCalendar';
 import '../LessonsCalendar/LessonsCalendar.css';
 
 
-import enUS from "date-fns/locale/en-US";
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+// import enUS from "date-fns/locale/en-US";
+// import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-const locales = {
-    'en-US': enUS,
-};
+// const locales = {
+//     'en-US': enUS,
+// };
 
-const localizer = dateFnsLocalizer({
-    format,
-    parse,
-    startOfWeek,
-    getDay,
-    locales,
-});
+// const localizer = dateFnsLocalizer({
+//     format,
+//     parse,
+//     startOfWeek,
+//     getDay,
+//     locales,
+// });
 
 export default function MemberHub() {
     const navigate = useNavigate();
