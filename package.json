@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "lottie-react": "^2.4.1"
+    "date-fns": "^4.1.0",
+    "lottie-react": "^2.4.1",
+    "react-big-calendar": "^1.19.4"
   }
 }

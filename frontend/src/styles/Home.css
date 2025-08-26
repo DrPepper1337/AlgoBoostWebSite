@@ -1,49 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Silkscreen&display=swap');
 @import './Global.css';
 
-/* header and menu */
-header {
-  position: fixed;
-  top: 0;
-  z-index: 10000;
-  display: grid;
-  grid-template-columns: auto auto auto;
-  align-items: center;
-  background-color: var(--dark-grey-transparent);
-  padding: 0 2rem;
-  backdrop-filter: blur(2px);
-}
-
-.logo-container {
-  justify-self: start;
-  display: flex;
-  align-items: center;
-  left: 1rem;
-  height: 80%;
-  width: 4rem;
-  overflow: hidden;
-}
-
-/* navbar */
-.navbar {
-  justify-self: center;
-  display: flex;
-  gap: clamp(0.2rem, 4rem, 4rem);
-  pointer-events: auto;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.navbarLink {
-  color: white;
-  text-decoration: none;
-  font-size: 1rem;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.navbarLink:hover {
-  color: #ff9500;
-}
-
 /* buttons */
 .menu-buttons {
   justify-self: end;

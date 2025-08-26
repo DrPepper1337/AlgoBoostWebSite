@@ -12,6 +12,7 @@
   --white-bg-text: #E5E5E5;
   --black-bg-text: #090909;
   --dark-grey-bg: #23211E;
+  --grey-bg: #23211E;
   --light-grey-bg: #7676767b;
   --dark-grey-transparent: rgba(35, 33, 30, 0.8);
 
@@ -50,4 +51,49 @@ a {
 }
 a:hover {
   text-decoration: underline;
+}
+
+
+header {
+  position: fixed;
+  top: 0;
+  z-index: 10000;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  background-color: var(--dark-grey-transparent);
+  padding: 0 2rem;
+  backdrop-filter: blur(2px);
+}
+
+.logo-container {
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  left: 1rem;
+  height: 80%;
+  width: 4rem;
+  overflow: hidden;
+}
+
+/* navbar */
+.navbar {
+  justify-self: center;
+  display: flex;
+  gap: clamp(0.2rem, 4rem, 4rem);
+  pointer-events: auto;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.navbarLink, .tab {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.5s ease;
+}
+
+.navbarLink:hover, .tab:hover {
+    text-decoration: none;
+  color: var(--orange-vivid);
+  transform: translateY(-2px);
 }

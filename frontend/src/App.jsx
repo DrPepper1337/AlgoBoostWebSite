@@ -6,6 +6,7 @@ import TasksPage from './components/TasksPage/TasksPage';
 import VerifyPage from './components/LoginRegister/VerifyPage';
 import PasswordReset from './components/LoginRegister/PasswordReset';
 import PasswordResetSuccess from './components/LoginRegister/PasswordResetSuccess';
+import MemberHub from './components/MemberHub/MemberHub';
 import './styles/App.css';
 import Home from './Home';
 
@@ -17,6 +18,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
        <Route path="/login" element={<LoginRegister />} />
+       <Route path="/memberHub" element={<MemberHub />} />
         <Route path="/lessons" element={<LessonsPage />} />
          <Route path="/tasks/:lessonId" element={<TasksPage />} />
          <Route path="/verify" element={<VerifyPage />} />
