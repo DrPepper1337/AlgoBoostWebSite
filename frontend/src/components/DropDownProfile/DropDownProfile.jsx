@@ -1,38 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './DropDownProfile.css';
 import { useNavigate } from 'react-router-dom';
-import {FaCog, FaUser, FaBookmark, FaSignOutAlt} from 'react-icons/fa';
+import { FaCog, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import DropDownItem from './DropDownItem';
 
-function DropDownItem({ icon: Icon, text, onClick }) {
-    return (
-        <li className = 'dropdownItem' onClick={onClick}>
-            <Icon className="icon" />
-            <span>{text}</span>
-        </li>
-    );
+const DropDownProfile = ({ isActive }) => {
+  const navigate = useNavigate();
 
-}
+    const [visible, setVisible] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
-const DropDownProfile = ({isActive}) => {
+  useEffect(() => {
+    if (isActive) {
+      setShouldRender(true);         
+      setTimeout(() => setVisible(true), 10);
+    } else {
+      setVisible(false);             
+      const timeoutId = setTimeout(() => setShouldRender(false), 120); 
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isActive]);
 
-    const navigate = useNavigate();
+  if (!shouldRender) return null;
 
-      const handleLogout = () => {
+  const handleLogout = () => {
     localStorage.removeItem('authToken');
     navigate('/');
-  }
+  };
 
-    return (
-           <div className={`dropdown-menu ${isActive ? 'active' : 'inactive'}`}>
-                <h3>Name<br/>Surname</h3>
-                <ul>
-                    <DropDownItem icon={FaUser} text={"My Profile"} />
-                    <DropDownItem icon={FaBookmark} text={"Saved Topics"}/>
-                    <DropDownItem icon={FaCog} text={"Settings"} />
-                    <DropDownItem icon={FaSignOutAlt} text="Logout" onClick={handleLogout} />
-                </ul>
-        </div>
-    )
 
-}
+  return (
+    <div className={`dropdown-menu ${visible ? 'active' : 'inactive'}`}>
+      <ul>
+        <DropDownItem icon={FaUser} text="My Profile" />
+        <DropDownItem icon={FaCog} text="Settings" />
+        <DropDownItem icon={FaSignOutAlt} text="Logout" onClick={handleLogout} />
+      </ul>
+    </div>
+  );
+};
+
 export default DropDownProfile;

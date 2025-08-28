@@ -29,7 +29,7 @@ export default function Home() {
             <button className="menu-btn" id="login" onClick={() => navigate('/login')}>
               Login
             </button>
-            <button className="menu-btn" id="register" onClick={() => navigate('/register')}>
+            <button className="menu-btn" id="register" onClick={() => navigate('/login?mode=register')}>
               Register
             </button>
             <button className="menu-btn" id="become-a-member" onClick={() => window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety')}>

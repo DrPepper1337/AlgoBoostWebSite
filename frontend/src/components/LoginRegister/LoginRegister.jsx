@@ -1,7 +1,7 @@
 import './LoginRegister.css';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
+import { useNavigate, useLocation } from 'react-router-dom';
+import { FaLock, FaEnvelope } from "react-icons/fa";
 
 const LoginRegister = () => {
 
@@ -12,12 +12,20 @@ const LoginRegister = () => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
-  const [registerUsername, setRegisterUsername] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
-
+  const location = useLocation();
 
   useEffect(() => {
+  const queryParams = new URLSearchParams(location.search);
+  const mode = queryParams.get('mode');
+  
+  if (mode === 'register') {
+    setIsRegistering(true);
+  } else {
+    setIsRegistering(false);
+  }
+
   const onStorageChange = (e) => {
     if (e.key === "verified" && e.newValue) {
       localStorage.removeItem("verified");
@@ -26,8 +34,11 @@ const LoginRegister = () => {
   };
 
   window.addEventListener("storage", onStorageChange);
-  return () => window.removeEventListener("storage", onStorageChange);
-}, [navigate]);
+
+  return () => {
+    window.removeEventListener("storage", onStorageChange);
+  };
+}, [location.search, navigate]);
 
 const handleLogin = async (e) => {
   e.preventDefault();
@@ -145,7 +156,7 @@ const handleLogin = async (e) => {
             </div>
             <button type="submit" className="btn">Login</button>
             <div className="register-link">
-              <p>Don't have an account? <a href="#" onClick={(e) => { e.preventDefault(); setIsRegistering(true); }}> Register</a></p>
+              <p>Don't have an account? <a href="#" onClick={(e) => { e.preventDefault();  navigate('/login?mode=register'); }}> Register</a></p>
             </div>
           </form>
         ) : (

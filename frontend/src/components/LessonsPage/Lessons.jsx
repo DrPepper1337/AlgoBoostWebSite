@@ -73,13 +73,13 @@ export default function Lessons() {
         />
         <div className="user-menu" ref={menuRef}>
           <FaUser
-            className="user-menu-button text-3xl cursor-pointer"
+            className="user-menu-button"
             onClick={() => setOpen(!open)}
           />
-          <DropDownProfile isActive={open} />
+         <DropDownProfile isActive={open} />
         </div>
       </header>
-
+     
     <div className="sessions-wrapper">
   {lessons.map((lesson) => (
     <SessionContainer
