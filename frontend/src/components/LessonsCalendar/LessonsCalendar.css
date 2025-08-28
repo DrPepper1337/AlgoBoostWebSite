@@ -26,19 +26,16 @@
   border-radius: 10px;
   padding: 6px 10px;
   cursor: pointer;
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
 }
 
 .cal-controls button:hover {
   background: #2e2e2e;
 }
 
-.cal-shell {
-  background: #191919;
-  border-radius: 16px;
-  padding: 10px;
-}
-
 .cal-days {
+  margin-left: 4rem;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 6px;
@@ -56,45 +53,21 @@
   font-weight: 500;
 }
 
-.cal-grid {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
-  height: 350px;
-  min-height: 200px;
-  padding: 6px 0 6px 64px;
-}
-
 .col-bg {
   background: #202020;
   border-radius: 12px;
   grid-row: 1 / -1;
   z-index: 0;
+  height: 100%;
 }
 
-.row-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  border-top: 1px solid #2a2a2a;
-  z-index: 1;
-}
-
-.row-line .gutter {
-  position: absolute;
-  left: 8px;
-  top: -10px;
-  color: #9e9e9e;
-  font-size: 12px;
-}
 
 .today-col {
   position: absolute;
   top: 6px;
   bottom: 6px;
   width: 2px;
-  background: #f0f0f0;
+  /* background: #f0f0f0; */
   opacity: .9;
   border-radius: 2px;
   justify-self: center;
@@ -102,42 +75,68 @@
   z-index: 2;
 }
 
-.cal-event {
+.cal-shell {
+  background: #191919;
+  border-radius: 16px;
+  padding: 10px;
+  overflow: hidden;
+  height: 380px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cal-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #444 #191919;
+  padding: 6px 0 6px 64px;
+}
+
+.row-line {
   position: absolute;
   left: 0;
   right: 0;
-  margin: 0 8px;
-  z-index: 3;
+  height: 1px;
+  display: grid;
+  grid-template-columns: 4rem 1fr;
+  align-items: center;
 }
 
+.row-line .gutter {
+  justify-self: start;
+  color: #9e9e9e;
+  font-size: 12px;
+  top: 50%;
+}
+
+.row-line .line {
+  height: 1px;
+  background: #2a2a2a;
+  align-self: center;
+  width: 100%;
+}
+
+.cal-event {
+  position: absolute;
+  margin: 0 9px;
+  z-index: 3;
+}
 .cal-event .pill {
   position: absolute;
   inset: 0;
   display: inline-block;
-  background: linear-gradient(90deg, #ff7a0a, #c85a00);
+  background: linear-gradient(180deg, #ff7a0a, #c85a00);
   color: #111;
   font-weight: 800;
   font-size: 0.9rem;
-  padding: .3rem .6rem;
+  padding: .35rem .6rem;
   border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, .35);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.cal-event .pill {
-  position: absolute;
-  left: 0;
-  right: 0;
-  display: inline-block;
-  background: linear-gradient(90deg, #ff7a0a, #c85a00);
-  color: #111;
-  font-weight: 800;
-  font-size: 0.9rem;
-  padding: .3rem .6rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, .35);
+  box-shadow: 0 6px 12px rgba(0,0,0,.35);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

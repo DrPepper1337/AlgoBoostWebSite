@@ -13,7 +13,7 @@ type HubEvent = {
 
 const LOCALE = enUS;
 const FIRST_DAY = 1;
-const HOURS_START = 9;
+const HOURS_START = 12;
 const HOURS_END = 20;
 
 export default function LessonsCalendar() {
@@ -46,53 +46,60 @@ export default function LessonsCalendar() {
   );
   const days = useMemo(() => Array.from({ length: 5 }, (_, i) => addDays(weekStart, i)), [weekStart]); // Mon–Fri
 
-  const windowStart = setMinutes(setHours(weekStart, HOURS_START), 0);
-  const windowEnd = setMinutes(setHours(weekStart, HOURS_END), 0);
   const windowMinutes = (HOURS_END - HOURS_START) * 60;
+  const gridMinuteHeight = 1;
+  const gridHeight = windowMinutes * gridMinuteHeight;
 
   const laidOut = useMemo(() => {
     return events
-      .filter((e) => days.some((d) => isSameDay(new Date(e.start), d)))
+      .filter(e => {
+        const s = new Date(e.start), t0 = new Date(s);
+        t0.setHours(HOURS_START, 0, 0, 0);
+        const dayIdx = days.findIndex(d => isSameDay(d, s));
+        if (dayIdx < 0) return false;
+        const dStart = new Date(days[dayIdx]);
+        const dEnd = new Date(dStart); dEnd.setDate(dEnd.getDate() + 1);
+        const start = new Date(e.start);
+        const end = new Date(e.end);
+        return start < dEnd && end > dStart;
+      })
       .map((e) => {
         const start = new Date(e.start);
         const end = new Date(e.end);
-        const dayIndex = days.findIndex((d) => isSameDay(d, start)); // 0..4
+        const dayIndex = days.findIndex(d => isSameDay(d, start));
 
         const startClamped = new Date(start);
-        if (startClamped.getHours() < HOURS_START)
-          startClamped.setHours(HOURS_START, 0, 0, 0);
+        if (startClamped.getHours() < HOURS_START) startClamped.setHours(HOURS_START, 0, 0, 0);
         const endClamped = new Date(end);
-        if (endClamped.getHours() > HOURS_END)
-          endClamped.setHours(HOURS_END, 0, 0, 0);
+        if (endClamped.getHours() > HOURS_END) endClamped.setHours(HOURS_END, 0, 0, 0);
 
-        const startMin =
-          (startClamped.getHours() - HOURS_START) * 60 + startClamped.getMinutes();
-        const durMin = Math.max(
-          30,
-          (endClamped.getTime() - startClamped.getTime()) / 60000
-        );
+        const startMin = (startClamped.getHours() - HOURS_START) * 60 + startClamped.getMinutes();
+        const durMin = Math.max(30, (endClamped.getTime() - startClamped.getTime()) / 60000);
 
-        const topPct = (startMin / windowMinutes) * 100;
-        const heightPct = (durMin / windowMinutes) * 100;
+        const topPx = startMin * gridMinuteHeight;
+        const heightPx = durMin * gridMinuteHeight;
 
-        return { ...e, dayIndex, topPct, heightPct };
+        return { ...e, dayIndex, topPx, heightPx };
       });
   }, [events, days]);
 
-  const hourStops = Array.from({ length: HOURS_END - HOURS_START + 1 }, (_, i) => {
-    const topPct = (i / (HOURS_END - HOURS_START)) * 100;
-    const label = `${String(HOURS_START + i).padStart(2, "0")}:00`;
-    return { topPct, label, key: i };
-  });
+  const hourStops = Array.from(
+    { length: HOURS_END - HOURS_START + 1 },
+    (_, i) => {
+      const top = i * 60 * gridMinuteHeight;
+      const label = `${String(HOURS_START + i).padStart(2, "0")}:00`;
+      return { top, label, key: i };
+    }
+  );
 
   return (
     <div className="schedule-card custom-cal">
       <div className="cal-header">
         <h2>Our schedule</h2>
         <div className="cal-controls">
-          <button onClick={() => setAnchor((d) => addDays(d, -7))}>&larr; Prev</button>
+          <button onClick={() => setAnchor((d) => addDays(d, -7))}>&larr;</button>
           <button onClick={() => setAnchor(new Date())}>Today</button>
-          <button onClick={() => setAnchor((d) => addDays(d, 7))}>Next &rarr;</button>
+          <button onClick={() => setAnchor((d) => addDays(d, 7))}>&rarr;</button>
         </div>
       </div>
 
@@ -106,25 +113,26 @@ export default function LessonsCalendar() {
           ))}
         </div>
 
-        <div className="cal-grid">
+        <div className="cal-grid" style={{ height: gridHeight }}>
           {days.map((_, i) => (
-            <div className="col-bg" key={`bg-${i}`} style={{ gridColumn: i + 1 }} />
+            <div className="col-bg" key={`bg-${i}`} style={{ gridColumn: i + 1, height: gridHeight }} />
           ))}
-
-          {hourStops.map(({ key, topPct, label }) => (
-            <div className="row-line" key={`row-${key}`} style={{ top: `${topPct}%` }}>
+          {hourStops.map(({ key, top, label }) => (
+            <div className="row-line" key={key} style={{ top }}>
               <span className="gutter">{label}</span>
+              <span className="line" />
             </div>
           ))}
 
-          {laidOut.map((ev) => (
+          {laidOut.map(ev => (
             <div
               key={ev.id}
               className="cal-event"
               style={{
                 gridColumn: ev.dayIndex + 1,
-                top: `${ev.topPct}%`,
-                height: `${ev.heightPct}%`,
+                top: `${ev.topPx + 15}px`,
+                height: `${ev.heightPx - 15}px`,
+                width: "40%",
               }}
               title={ev.title}
             >
