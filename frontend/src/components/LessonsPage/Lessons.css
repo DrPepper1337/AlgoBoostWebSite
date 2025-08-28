@@ -46,8 +46,14 @@ body:has(.lessons-wrapper),
 
 }
 
+.user-menu {
+  position: relative;      
+  display: inline-block;  
+}
+
 .user-menu-button {
-  font-size: 2rem;
+  font-size: 2rem;          
+  cursor: pointer;
 }
 .algo-logo {
       float: right;
