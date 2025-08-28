@@ -9,6 +9,8 @@ type HubEvent = {
   title: string;
   start: Date | string;
   end: Date | string;
+  location?: string;
+  description?: string;
 };
 
 const LOCALE = enUS;
@@ -19,19 +21,62 @@ const HOURS_END = 20;
 export default function LessonsCalendar() {
   const [events, setEvents] = useState<HubEvent[]>([]);
   const [anchor, setAnchor] = useState<Date>(new Date());
+  const [activeEvent, setActiveEvent] = useState<null | {
+    id: string;
+    title: string;
+    start: Date;
+    end: Date;
+    allDay?: boolean;
+    location?: string;
+    description?: string;
+  }>(null);
+
+  function openEvent(ev: any) {
+    setActiveEvent({
+      id: String(ev.id),
+      title: ev.title,
+      start: new Date(ev.start),
+      end: new Date(ev.end),
+      allDay: ev.allDay,
+      location: ev.location,
+      description: ev.description,
+    });
+  }
+
+  function closeEvent() {
+    setActiveEvent(null);
+  }
+
+  function subscribeToCalendar() {
+    const calendarId = import.meta.env.VITE_GCAL_ID;
+    if (!calendarId) {
+      console.error('Calendar ID not found');
+      return;
+    }
+
+    const subscriptionUrl = `https://calendar.google.com/calendar/u/0?cid=${encodeURIComponent(calendarId)}`;
+    window.open(subscriptionUrl, '_blank');
+  }
 
   useEffect(() => {
     (async () => {
       try {
+        // Set timeMin to 30 days ago to include past events
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
         const evs = await fetchPublicCalendarEvents({
           calendarId: import.meta.env.VITE_GCAL_ID,
           apiKey: import.meta.env.VITE_GCAL_API_KEY,
+          timeMin: thirtyDaysAgo,
         });
         const normalized = evs.map((e: any) => ({
           id: e.id,
           title: e.title ?? e.summary ?? "Untitled",
           start: new Date(e.start),
           end: new Date(e.end),
+          location: e.location,
+          description: e.description,
         }));
         setEvents(normalized);
       } catch (e) {
@@ -79,7 +124,9 @@ export default function LessonsCalendar() {
         const topPx = startMin * gridMinuteHeight;
         const heightPx = durMin * gridMinuteHeight;
 
-        return { ...e, dayIndex, topPx, heightPx };
+        const isPast = end < new Date();
+
+        return { ...e, dayIndex, topPx, heightPx, isPast };
       });
   }, [events, days]);
 
@@ -100,6 +147,13 @@ export default function LessonsCalendar() {
           <button onClick={() => setAnchor((d) => addDays(d, -7))}>&larr;</button>
           <button onClick={() => setAnchor(new Date())}>Today</button>
           <button onClick={() => setAnchor((d) => addDays(d, 7))}>&rarr;</button>
+          <button
+            className="subscribe-btn"
+            onClick={subscribeToCalendar}
+            title="Subscribe to calendar"
+          >
+            Add
+          </button>
         </div>
       </div>
 
@@ -127,14 +181,18 @@ export default function LessonsCalendar() {
           {laidOut.map(ev => (
             <div
               key={ev.id}
-              className="cal-event"
+              className={`cal-event ${ev.isPast ? 'past-event' : ''}`}
               style={{
                 gridColumn: ev.dayIndex + 1,
                 top: `${ev.topPx + 15}px`,
                 height: `${ev.heightPx - 15}px`,
-                width: "40%",
+                width: "clamp(4rem, 7vw, 5rem)",
               }}
               title={ev.title}
+              onClick={() => openEvent(ev)}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && openEvent(ev)}
+              role="button"
+              tabIndex={0}
             >
               <span className="pill">{ev.title}</span>
             </div>
@@ -146,6 +204,32 @@ export default function LessonsCalendar() {
           })()}
         </div>
       </div>
+
+      {activeEvent && (
+        <div className="event-modal-overlay" onClick={closeEvent}>
+          <div className="event-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="event-modal-header">
+              <h4>{activeEvent.title}</h4>
+              <button className="close-btn" onClick={closeEvent}>×</button>
+            </div>
+            <div className="event-modal-content">
+              <div className="event-detail">
+                <strong>Duration:</strong> {activeEvent.start.toLocaleString([], { hour: '2-digit', minute: '2-digit' })} - {activeEvent.end.toLocaleString([], { hour: '2-digit', minute: '2-digit' })}
+              </div>
+              {activeEvent.location && (
+                <div className="event-detail">
+                  <strong>Location:</strong> {activeEvent.location}
+                </div>
+              )}
+              {activeEvent.description && (
+                <div className="event-detail">
+                  <strong>Topic:</strong> {activeEvent.description}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

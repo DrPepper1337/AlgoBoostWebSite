@@ -28,10 +28,27 @@
   cursor: pointer;
   margin-left: 0.2rem;
   margin-right: 0.2rem;
+  transition: all 0.3s ease;
+
 }
 
 .cal-controls button:hover {
   background: #2e2e2e;
+}
+
+.subscribe-btn {
+  background: #444;
+  color: white !important;
+  border: none !important;
+  padding: 8px 12px !important;
+  margin-left: 8px !important;
+  transition: all 0.3s ease;
+}
+
+.subscribe-btn:hover {
+  background: #555;
+  transform: translateY(-1px);
+  /* box-shadow: 0 2px 8px rgba(255, 226, 202, 0.105); */
 }
 
 .cal-days {
@@ -126,6 +143,7 @@
   margin: 0 9px;
   z-index: 3;
 }
+
 .cal-event .pill {
   position: absolute;
   inset: 0;
@@ -133,11 +151,127 @@
   background: linear-gradient(180deg, #ff7a0a, #c85a00);
   color: #111;
   font-weight: 800;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   padding: .35rem .6rem;
   border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0,0,0,.35);
-  white-space: nowrap;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .35);
+  white-space: wrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cal-event .pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, .45);
+}
+
+.cal-event.past-event .pill {
+  background: linear-gradient(180deg, #666666, #444444);
+  color: #cccccc;
+  opacity: 0.7;
+}
+
+.cal-event.past-event .pill:hover {
+  opacity: 0.9;
+}
+
+.event-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(0px);
+  animation: fadeInOverlay 0.4s ease-out forwards;
+}
+
+.event-modal {
+  background: #1c1c1c;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+  min-width: 300px;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow: hidden;
+  border: 1px solid #2a2a2a;
+  transform: scale(0.8) translateY(20px);
+  opacity: 0;
+  animation: slideInModal 0.2s ease-out forwards;
+}
+
+.event-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #2a2a2a;
+  background: #202020;
+}
+
+.event-modal-header h4 {
+  margin: 0;
+  color: #eaeaea;
+  font-size: 2rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #9c9c9c;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  transform: rotate(90deg);
+  color: var(--color-white)
+}
+
+.event-modal-content {
+  padding: 20px;
+  color: #cfcfcf;
+}
+
+.event-detail {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+.event-detail strong {
+  color: #eaeaea;
+  margin-right: 8px;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0px);
+  }
+
+  to {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+}
+
+@keyframes slideInModal {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
