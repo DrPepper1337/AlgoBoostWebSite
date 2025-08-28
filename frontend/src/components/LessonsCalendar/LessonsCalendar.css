@@ -62,28 +62,23 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 6px;
   height: 350px;
-  /* establishes the height basis for % */
   min-height: 200px;
   padding: 6px 0 6px 64px;
 }
 
-/* make each day background span the full grid height and sit at the back */
 .col-bg {
   background: #202020;
   border-radius: 12px;
   grid-row: 1 / -1;
-  /* span all rows */
   z-index: 0;
 }
 
-/* lay each hour line at its own top position */
 .row-line {
   position: absolute;
   left: 0;
   right: 0;
   border-top: 1px solid #2a2a2a;
   z-index: 1;
-  /* top is set inline from JS */
 }
 
 .row-line .gutter {
@@ -94,7 +89,6 @@
   font-size: 12px;
 }
 
-/* today indicator above lines/backgrounds, below events */
 .today-col {
   position: absolute;
   top: 6px;
@@ -108,7 +102,6 @@
   z-index: 2;
 }
 
-/* events are absolutely positioned inside the grid */
 .cal-event {
   position: absolute;
   left: 0;
