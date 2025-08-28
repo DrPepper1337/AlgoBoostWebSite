@@ -13,7 +13,7 @@ type HubEvent = {
 
 const LOCALE = enUS;
 const FIRST_DAY = 1;          // 1 = Monday
-const HOURS_START = 8;        // calendar visible window: 08:00–20:00
+const HOURS_START = 9;        // calendar visible window: 08:00–20:00
 const HOURS_END = 20;
 
 export default function LessonsCalendar() {
@@ -51,37 +51,46 @@ export default function LessonsCalendar() {
   // visible time window
   const windowStart = setMinutes(setHours(weekStart, HOURS_START), 0);
   const windowEnd = setMinutes(setHours(weekStart, HOURS_END), 0);
-  const windowMinutes = differenceInMinutes(windowEnd, windowStart);
+  // total minutes in the visible window (e.g., 08:00–20:00)
+  const windowMinutes = (HOURS_END - HOURS_START) * 60;
 
-  // compute layout for events that fall within this week (Mon–Fri)
   const laidOut = useMemo(() => {
     return events
-      .filter((e) => days.some((d) => isSameDay(e.start as Date, d))) // simple per-day filter; multi-day events truncated below
+      .filter((e) => days.some((d) => isSameDay(new Date(e.start), d)))
       .map((e) => {
-        const d = days.findIndex((d) => isSameDay(d, e.start as Date)); // 0..4
         const start = new Date(e.start);
         const end = new Date(e.end);
+        const dayIndex = days.findIndex((d) => isSameDay(d, start)); // 0..4
 
         // clamp to visible window
         const startClamped = new Date(start);
-        if (startClamped.getHours() < HOURS_START) startClamped.setHours(HOURS_START, 0, 0, 0);
+        if (startClamped.getHours() < HOURS_START)
+          startClamped.setHours(HOURS_START, 0, 0, 0);
         const endClamped = new Date(end);
-        if (endClamped.getHours() > HOURS_END) endClamped.setHours(HOURS_END, 0, 0, 0);
+        if (endClamped.getHours() > HOURS_END)
+          endClamped.setHours(HOURS_END, 0, 0, 0);
 
-        const topMin =
-          differenceInMinutes(
-            setMinutes(setHours(weekStart, startClamped.getHours()), startClamped.getMinutes()),
-            windowStart
-          ) + startClamped.getMinutes() - 0; // minutes from window start
+        // minutes from window start
+        const startMin =
+          (startClamped.getHours() - HOURS_START) * 60 + startClamped.getMinutes();
+        const durMin = Math.max(
+          30, // min height for visibility
+          (endClamped.getTime() - startClamped.getTime()) / 60000
+        );
 
-        const heightMin = Math.max(30, differenceInMinutes(endClamped, startClamped)); // min 30min for visibility
+        const topPct = (startMin / windowMinutes) * 100;
+        const heightPct = (durMin / windowMinutes) * 100;
 
-        const topPct = (topMin / windowMinutes) * 100;
-        const heightPct = (heightMin / windowMinutes) * 100;
-
-        return { ...e, dayIndex: d, topPct, heightPct };
+        return { ...e, dayIndex, topPct, heightPct };
       });
-  }, [events, days, weekStart, windowStart, windowMinutes]);
+  }, [events, days]);
+
+  // hour rows (place each line by percentage)
+  const hourStops = Array.from({ length: HOURS_END - HOURS_START + 1 }, (_, i) => {
+    const topPct = (i / (HOURS_END - HOURS_START)) * 100;
+    const label = `${String(HOURS_START + i).padStart(2, "0")}:00`;
+    return { topPct, label, key: i };
+  });
 
   return (
     <div className="schedule-card custom-cal">
@@ -107,14 +116,15 @@ export default function LessonsCalendar() {
 
         {/* Grid + events */}
         <div className="cal-grid">
-          {/* grid columns background */}
-          {days.map((d, i) => (
-            <div className="col-bg" key={i} />
+          {/* background columns */}
+          {days.map((_, i) => (
+            <div className="col-bg" key={`bg-${i}`} style={{ gridColumn: i + 1 }} />
           ))}
-          {/* hour rows */}
-          {Array.from({ length: HOURS_END - HOURS_START + 1 }, (_, i) => (
-            <div className="row-line" key={i}>
-              <span className="gutter">{`${String(HOURS_START + i).padStart(2, "0")}:00`}</span>
+
+          {/* hour grid lines */}
+          {hourStops.map(({ key, topPct, label }) => (
+            <div className="row-line" key={`row-${key}`} style={{ top: `${topPct}%` }}>
+              <span className="gutter">{label}</span>
             </div>
           ))}
 
@@ -134,7 +144,7 @@ export default function LessonsCalendar() {
             </div>
           ))}
 
-          {/* today indicator (if within Mon–Fri) */}
+          {/* today indicator */}
           {(() => {
             const idx = days.findIndex((d) => isSameDay(d, new Date()));
             return idx >= 0 ? <div className="today-col" style={{ gridColumn: idx + 1 }} /> : null;

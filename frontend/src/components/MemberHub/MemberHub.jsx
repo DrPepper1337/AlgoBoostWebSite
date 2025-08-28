@@ -4,7 +4,6 @@ import SessionContainer from "../SessionContainer/SessionContainer";
 import { FaUser, FaChevronRight } from 'react-icons/fa';
 import { useRef, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import logo from '../../assets/algo-logo.png';
 import axios from 'axios';
 import '../../styles/Global.css';
 import { Calendar, Views, dateFnsLocalizer } from 'react-big-calendar';
@@ -22,14 +21,6 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 const locales = {
     'en-US': enUS,
 };
-
-const localizer = dateFnsLocalizer({
-    format,
-    parse,
-    startOfWeek,
-    getDay,
-    locales,
-});
 
 export default function MemberHub() {
     const navigate = useNavigate();
