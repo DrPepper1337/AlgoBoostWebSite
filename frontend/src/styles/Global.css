@@ -14,6 +14,7 @@
   --dark-grey-bg: #23211E;
   --grey-bg: #23211E;
   --light-grey-bg: #7676767b;
+  --light-grey-bg-2: #23211e9d;
   --dark-grey-transparent: rgba(35, 33, 30, 0.8);
 
   /* status colours */
@@ -90,6 +91,7 @@ header {
   text-decoration: none;
   font-size: 1rem;
   transition: all 0.5s ease;
+
 }
 
 .navbarLink:hover, .tab:hover {

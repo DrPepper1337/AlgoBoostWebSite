@@ -183,6 +183,15 @@ section#about {
   align-items: start;
 }
 
+/* events section */
+
+section#events {
+  /* background: var(--light-grey-bg-2); */
+  color: #fff;
+  padding: clamp(3rem, 6vw, 5rem) 2rem;
+  height: 90vh;
+}
+
 /* old css */
 
 .home-wrapper {

@@ -8,6 +8,7 @@ import "./components/TextReveal/Reveal.css";
 import "./components/TiltEffect/Tilt.css";
 import OfferElement from "./components/OfferElement/OfferElement";
 import './components/OfferElement/Offer.css';
+import EventsCarousel from './components/EventsCarousel/EventsCarousel';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -144,9 +145,10 @@ export default function Home() {
           {/* <div className="ombre-bottom"></div> */}
         </div>
 
-        <>
-          <section id="events" className="section" >
-            <h2>Events</h2>
+                <>
+          <section id="events" className="section">
+            <h2 style={{ textAlign: 'center', fontSize: '3rem', fontWeight: '700', marginBottom: '2rem', color: '#eaeaea' }}>Our Events</h2>
+            <EventsCarousel />
           </section>
 
           <section id="documents" className="section" >
