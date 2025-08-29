@@ -1,4 +1,3 @@
-import React from 'react';
 
 const DropDownItem = ({ icon: Icon, text, onClick }) => {
   return (
