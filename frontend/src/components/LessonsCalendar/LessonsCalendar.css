@@ -139,6 +139,33 @@
   width: 100%;
 }
 
+.current-time-line {
+  position: absolute;
+  height: 2px;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+  gap: 0;
+}
+
+.current-time-triangle {
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 8px solid #ff7a0a;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 4px rgba(255, 122, 10, 0.6));
+}
+
+.current-time-indicator {
+  height: 2px;
+  background: linear-gradient(90deg, #ff7a0a, #c85a00);
+  border-radius: 1px;
+  box-shadow: 0 0 8px rgba(255, 122, 10, 0.5);
+  flex: 1;
+}
+
 .cal-event {
   position: absolute;
   margin: 0 9px;

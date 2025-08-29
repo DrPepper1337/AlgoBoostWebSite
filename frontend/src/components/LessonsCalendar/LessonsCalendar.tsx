@@ -145,6 +145,27 @@ export default function LessonsCalendar() {
     }
   );
 
+  const currentTime = useMemo(() => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+
+    if (currentHour >= HOURS_START && currentHour < HOURS_END) {
+      const minutesFromStart = (currentHour - HOURS_START) * 60 + currentMinute;
+      const topPx = minutesFromStart * gridMinuteHeight;
+
+      const todayIndex = days.findIndex((d) => isSameDay(d, now));
+
+      return {
+        show: true,
+        top: topPx,
+        time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        dayIndex: todayIndex
+      };
+    }
+    return { show: false, top: 0, time: '', dayIndex: -1 };
+  }, [days]);
+
   return (
     <div className="schedule-card custom-cal">
       <div className="cal-header">
@@ -183,6 +204,22 @@ export default function LessonsCalendar() {
               <span className="line" />
             </div>
           ))}
+
+          {/* Current time line */}
+          {currentTime.show && currentTime.dayIndex >= 0 && (
+            <div
+              className="current-time-line"
+              style={{
+                top: currentTime.top,
+                gridColumn: currentTime.dayIndex + 1,
+                left: '9px',
+                right: '9px'
+              }}
+            >
+              <div className="current-time-triangle" />
+              <span className="current-time-indicator" />
+            </div>
+          )}
 
           {laidOut.map(ev => (
             <div
