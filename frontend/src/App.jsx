@@ -1,4 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import LoginRegister from './components/LoginRegister/LoginRegister';
 import LessonsPage from './components/LessonsPage/Lessons';
 import TasksPage from './components/TasksPage/TasksPage';
@@ -13,19 +15,31 @@ import Home from './Home';
 function App() {
 
   return (
-    <>
-    <Routes>
-      <Route path="/" element={<Home />} />
-       <Route path="/login" element={<LoginRegister />} />
-       <Route path="/memberHub" element={<MemberHub />} />
-        <Route path="/lessons" element={<LessonsPage />} />
-         <Route path="/tasks/:lessonId" element={<TasksPage />} />
-         <Route path="/verify" element={<VerifyPage />} />
-         <Route path="/reset-password" element={<PasswordReset/>} />
-         {/* <Route path="/reset-password-success" element={<VerifyPage/>} /> */}
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginRegister />} />
+        <Route path="/verify" element={<VerifyPage />} />
+        <Route path="/reset-password" element={<PasswordReset/>} />
 
-  </Routes>
-</>
+        {/* Protected Routes */}
+        <Route path="/memberHub" element={
+          <ProtectedRoute>
+            <MemberHub />
+          </ProtectedRoute>
+        } />
+        <Route path="/lessons" element={
+          <ProtectedRoute>
+            <LessonsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/tasks/:lessonId" element={
+          <ProtectedRoute>
+            <TasksPage />
+          </ProtectedRoute>
+        } />
+      </Routes>
+    </AuthProvider>
   )
 }
 

@@ -30,8 +30,10 @@ export default function LessonsCalendar() {
     location?: string;
     description?: string;
   }>(null);
+  const [isClosing, setIsClosing] = useState(false);
 
   function openEvent(ev: any) {
+    setIsClosing(false);
     setActiveEvent({
       id: String(ev.id),
       title: ev.title,
@@ -44,7 +46,11 @@ export default function LessonsCalendar() {
   }
 
   function closeEvent() {
-    setActiveEvent(null);
+    setIsClosing(true);
+    setTimeout(() => {
+      setActiveEvent(null);
+      setIsClosing(false);
+    }, 400);
   }
 
   function subscribeToCalendar() {
@@ -61,7 +67,7 @@ export default function LessonsCalendar() {
   useEffect(() => {
     (async () => {
       try {
-        // Set timeMin to 30 days ago to include past events
+        // past events up to 30 days ago
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -206,8 +212,8 @@ export default function LessonsCalendar() {
       </div>
 
       {activeEvent && (
-        <div className="event-modal-overlay" onClick={closeEvent}>
-          <div className="event-modal" onClick={(e) => e.stopPropagation()}>
+        <div className={`event-modal-overlay ${isClosing ? 'closing' : ''}`} onClick={closeEvent}>
+          <div className={`event-modal ${isClosing ? 'closing' : ''}`} onClick={(e) => e.stopPropagation()}>
             <div className="event-modal-header">
               <h4>{activeEvent.title}</h4>
               <button className="close-btn" onClick={closeEvent}>×</button>

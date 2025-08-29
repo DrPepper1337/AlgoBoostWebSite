@@ -6,21 +6,8 @@ import { useRef, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/Global.css';
-// import { Calendar, Views, dateFnsLocalizer } from 'react-big-calendar';
-// import format from 'date-fns/format';
-// import parse from 'date-fns/parse';
-// import startOfWeek from 'date-fns/startOfWeek';
-// import getDay from 'date-fns/getDay';
 import LessonsCalendar from '../LessonsCalendar/LessonsCalendar';
 import '../LessonsCalendar/LessonsCalendar.css';
-
-
-// import enUS from "date-fns/locale/en-US";
-// import 'react-big-calendar/lib/css/react-big-calendar.css';
-
-// const locales = {
-//     'en-US': enUS,
-// };
 
 export default function MemberHub() {
     const navigate = useNavigate();
@@ -86,13 +73,10 @@ export default function MemberHub() {
                 <div className="code-glow" aria-hidden />
             </section>
 
-            {/* Two-column content */}
             <section className="hub-content">
-                {/* Schedule */}
 
                 <LessonsCalendar lessons={lessons} />
 
-                {/* Recent lessons */}
                 <div className="recent-card">
                     <h2>Recent lessons</h2>
 
@@ -114,45 +98,6 @@ export default function MemberHub() {
                                 <FaChevronRight className="chev" />
                             </button>
                         ))}
-
-                        {/* fallback if no API data yet */}
-                        {!recentLessons.length && (
-                            <>
-                                <div className="lesson-item disabled">
-                                    <div className="lesson-meta">
-                                        <h3>Greedy Algorithms</h3>
-                                        <p className="muted">A brief description of what greedy algorithms are…</p>
-                                        <div className="progress">
-                                            <div className="bar" style={{ width: '70%' }} />
-                                            <span className="ratio">2/3</span>
-                                        </div>
-                                    </div>
-                                    <FaChevronRight className="chev" />
-                                </div>
-                                <div className="lesson-item disabled">
-                                    <div className="lesson-meta">
-                                        <h3>Depth‑First Search</h3>
-                                        <p className="muted">A brief description of what depth first search is…</p>
-                                        <div className="progress">
-                                            <div className="bar" style={{ width: '33%' }} />
-                                            <span className="ratio">1/3</span>
-                                        </div>
-                                    </div>
-                                    <FaChevronRight className="chev" />
-                                </div>
-                                <div className="lesson-item disabled">
-                                    <div className="lesson-meta">
-                                        <h3>Bubble Sort</h3>
-                                        <p className="muted">A brief description of what bubble sort algos are…</p>
-                                        <div className="progress">
-                                            <div className="bar" style={{ width: '100%' }} />
-                                            <span className="ratio">3/3</span>
-                                        </div>
-                                    </div>
-                                    <FaChevronRight className="chev" />
-                                </div>
-                            </>
-                        )}
                     </div>
                 </div>
             </section>

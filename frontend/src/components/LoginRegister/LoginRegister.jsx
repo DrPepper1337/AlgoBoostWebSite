@@ -1,11 +1,12 @@
 import './LoginRegister.css';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { FaLock, FaEnvelope } from "react-icons/fa";
-
 const LoginRegister = () => {
 
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [isRegistering, setIsRegistering] = useState(false);
 
@@ -19,7 +20,7 @@ const LoginRegister = () => {
   useEffect(() => {
   const queryParams = new URLSearchParams(location.search);
   const mode = queryParams.get('mode');
-  
+
   if (mode === 'register') {
     setIsRegistering(true);
   } else {
@@ -73,8 +74,7 @@ const handleLogin = async (e) => {
       throw new Error('Login failed: token not found');
     }
 
-    localStorage.setItem('authToken', token);
-
+    login(token); // Use the login function from AuthContext
     navigate('/lessons');
   } catch (error) {
     alert(error.message);

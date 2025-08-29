@@ -1,5 +1,6 @@
 import AnimatedCodeBackground from './components/CodeAnimate/AnimatedCodeBackground';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
 import './styles/Home.css';
 import Tilt from "./components/TiltEffect/Tilt";
 import RevealOnScroll from "./components/TextReveal/RevealOnScroll";
@@ -9,8 +10,8 @@ import OfferElement from "./components/OfferElement/OfferElement";
 import './components/OfferElement/Offer.css';
 
 export default function Home() {
-
   const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
   return (
     <div className="home-wrapper">
       <>
@@ -20,21 +21,43 @@ export default function Home() {
           </div>
           <nav className="navbar">
             <a className="navbarLink" href="#about">About us</a>
-            <a className="navbarLink" href="#offer">What we offer</a>
-            <a className="navbarLink" href="#events">Events</a>
-            <a className="navbarLink" href="#documents">Documents</a>
-            <a className="navbarLink" href="#">Partnership</a>
+            <>
+              <a className="navbarLink" href="#offer">What we offer</a>
+              <a className="navbarLink" href="#events">Events</a>
+              <a className="navbarLink" href="#documents">Documents</a>
+              <a className="navbarLink" href="#partnership">Partnership</a>
+            </>
+
           </nav>
           <div className="menu-buttons">
-            <button className="menu-btn" id="login" onClick={() => navigate('/login')}>
-              Login
-            </button>
-            <button className="menu-btn" id="register" onClick={() => navigate('/login?mode=register')}>
-              Register
-            </button>
-            <button className="menu-btn" id="become-a-member" onClick={() => window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety')}>
-              Become a Member
-            </button>
+            {!isAuthenticated ? (
+              <>
+                <button className="menu-btn" id="login" onClick={() => navigate('/login')}>
+                  Login
+                </button>
+                <button className="menu-btn" id="register" onClick={() => navigate('/login?mode=register')}>
+                  Register
+                </button>
+                <button className="menu-btn" id="become-a-member" onClick={() => window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety')}>
+                  Become a Member
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="menu-btn" onClick={() => navigate('/memberHub')}>
+                  Member Hub
+                </button>
+                <button className="menu-btn" onClick={() => navigate('/lessons')}>
+                  Lessons
+                </button>
+                <button className="menu-btn" id="logout" onClick={() => {
+                  logout();
+                  navigate('/');
+                }}>
+                  Logout
+                </button>
+              </>
+            )}
           </div>
         </header>
 
@@ -120,6 +143,21 @@ export default function Home() {
           <div id="background"><AnimatedCodeBackground /></div>
           {/* <div className="ombre-bottom"></div> */}
         </div>
+
+        <>
+          <section id="events" className="section" >
+            <h2>Events</h2>
+          </section>
+
+          <section id="documents" className="section" >
+            <h2>Documents</h2>
+          </section>
+
+          <section id="partnership" className="section" >
+            <h2>Partnership</h2>
+          </section>
+        </>
+
 
         {/* <section id="schedule" className="section">
           <h2>Schedule</h2>
