@@ -76,8 +76,8 @@ section#top {
 .square p {
   transform: translateY(20%);
   color: var(--black-bg-text);
-  font-size: 1.6rem;
-  font-weight: 550;
+  font-size: 1.2rem;
+  font-weight: 300;
   text-align: center;
   padding: 1rem;
   line-height: 1.5;
@@ -143,7 +143,7 @@ section#about {
 .about-text p {
   font-weight: 400;
   margin-right: 8rem;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 .uni-logo {
@@ -159,10 +159,10 @@ section#about {
 
 /* what we offer section */
 .offer-section {
-  background: var(--black-bg-text);
+  /* background: var(--dark-grey-bg); */
   color: #fff;
   padding: clamp(3rem, 6vw, 5rem) 2rem;
-  height: 90vh;
+  height: 80vh;
 }
 
 .offer-title {
@@ -184,14 +184,101 @@ section#about {
   align-items: start;
 }
 
+.offer-card .lottie-icon {
+  width: 4rem;
+  height: 4rem;
+}
+
 /* events section */
 
 section#events {
   /* background: var(--light-grey-bg-2); */
   color: #fff;
   padding: clamp(3rem, 6vw, 5rem) 2rem;
-  height: 90vh;
+  height: 100vh;
 }
+
+/* documents section */
+section#documents {
+  background: var(--orange-ombre);
+  color: var(--black-bg-text);
+  padding: clamp(3rem, 6vw, 5rem) 2rem;
+  height: 100vh;
+  text-align: center;
+}
+
+.docs-container {
+  flex-direction: row;
+  display: flex;
+  margin-top: 2rem;
+  height: 70%;
+  align-items: center;
+  justify-content: center;
+  gap: 5rem;
+}
+
+.doc-card {
+  background: var(--brownish);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  height: 90%;
+  max-width: 40%;
+  min-width: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.doc-icon-wrap {
+  border-radius: 50%;
+  height: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doc-card h5, .doc-card p {
+  color: white;
+  margin-right: 7rem;
+  margin-left: 7rem;
+}
+
+.doc-icon-wrap .lottie-icon {
+  width: 5rem;
+  height: 5rem;
+  color: white;
+  filter: brightness(0) invert(1);
+}
+
+.doc-card {
+  background: var(--brownish);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  height: 90%;
+  max-width: 40%;
+  min-width: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.doc-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.doc-card p {
+  font-size: 1.1rem;
+  font-weight: 300;
+  line-height: 1.2;
+  margin-top: 1rem;
+}
+
+
 
 /* old css */
 

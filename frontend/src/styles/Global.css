@@ -1,9 +1,8 @@
-
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700&display=swap');
 @import url('https://fonts.cdnfonts.com/css/vipnagorgialla');
 
 :root {
-    /* dark themne only for now */
+  /* dark themne only for now */
   --orange-vivid: #FF8001;
   --paler-orange: #ff800181;
   --brownish: #763B01;
@@ -26,30 +25,53 @@
   --orange-ombre: linear-gradient(180deg, #FF8001 0%, #994D01 100%);
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   font-family: 'M PLUS 1p', sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Vipnagorgialla', sans-serif;
   font-weight: normal;
+  font-weight: 100;
 }
 
 h1 {
   font-size: 5rem;
 }
+
 h2 {
   font-size: 4rem;
 }
+
 h3 {
   font-size: 3rem;
+}
+
+h4 {
+  font-size: 2rem;
+  font-family: 'M PLUS 1p', sans-serif;
+  font-weight: 700;
+}
+
+h5 {
+  font-family: 'M PLUS 1p', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+
 }
 
 a {
   text-decoration: none;
 }
+
 a:hover {
   text-decoration: underline;
 }
@@ -81,12 +103,13 @@ header {
 .navbar {
   justify-self: center;
   display: flex;
-  gap: clamp(0.2rem, 4rem, 4rem);
+  gap: clamp(0.4rem, 6rem, 7rem);
   pointer-events: auto;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.navbarLink, .tab {
+.navbarLink,
+.tab {
   color: white;
   text-decoration: none;
   font-size: 1rem;
@@ -94,8 +117,9 @@ header {
 
 }
 
-.navbarLink:hover, .tab:hover {
-    text-decoration: none;
+.navbarLink:hover,
+.tab:hover {
+  text-decoration: none;
   color: var(--orange-vivid);
   transform: translateY(-2px);
 }

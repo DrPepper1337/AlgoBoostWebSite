@@ -9,10 +9,34 @@ import "./components/TiltEffect/Tilt.css";
 import OfferElement from "./components/OfferElement/OfferElement";
 import './components/OfferElement/Offer.css';
 import EventsCarousel from './components/EventsCarousel/EventsCarousel';
+import OfferIcon from "./components/LottieIcon/Lottie";
+import { useState } from "react";
+import sponsorshipPDF from './assets/documents/sponsorship_proposal.pdf';
+import constitutionPDF from './assets/documents/Constitution of AlgoBoost Society.pdf';
 
 export default function Home() {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
+  const [isHovered, setIsHovered] = useState(false);
+
+  const downloadSponsorshipProposal = () => {
+    const link = document.createElement('a');
+    link.href = sponsorshipPDF;
+    link.download = 'AlgoBoost_Sponsorship_Proposal.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const downloadConstitution = () => {
+    const link = document.createElement('a');
+    link.href = constitutionPDF;
+    link.download = 'AlgoBoost_Society_Constitution.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="home-wrapper">
       <>
@@ -65,8 +89,9 @@ export default function Home() {
         <section id="top">
           <div className="square-wrapper">
             <Tilt className="square" maxTilt={10} perspective={800}>
-              <p>Want to get better at coding challenges and ace that technical interview?<br/><br/>
-              You are in the right place!</p>
+              <p>Want to get better at coding challenges and ace that technical interview? You are in the right place!
+                We are here to help you succeed through workshops, tutorials, mock interviews and hackathons.
+              </p>
             </Tilt>
           </div>
           <img src="../public/square-logo.svg" alt="AlgoBoost Logo" className="big-logo" />
@@ -77,7 +102,7 @@ export default function Home() {
             <h1 className="reveal" data-sr="up" style={{ "--sr-order": 0 }}>Who we are</h1>
             <h3 className="reveal" data-sr="up" style={{ "--sr-order": 1 }}>And what we usually do</h3>
             <p className="reveal" data-sr="up" style={{ "--sr-order": 2 }}>
-              <br/>AlgoBoost helps you master data structures and algorithms while preparing for technical interviews in a supprtive and collaborative environment.<br/><br/>
+              AlgoBoost helps you master data structures and algorithms while preparing for technical interviews in a supportive and collaborative environment.
               From workshops and tutorials to mock interviews and hackathons, we make sure LeetCode is never boring again!
             </p>
           </div>
@@ -93,7 +118,6 @@ export default function Home() {
           <div id="background"><AnimatedCodeBackground /></div>
           {/* <div className="ombre-bottom"></div> */}
         </div>
-
 
         <RevealOnScroll
           as="section"
@@ -137,27 +161,43 @@ export default function Home() {
           </div>
         </RevealOnScroll>
 
-        <div style={{ position: 'relative' }}>
-          {/* <div className="ombre-top"></div> */}
-          <div id="background"><AnimatedCodeBackground /></div>
-          {/* <div className="ombre-bottom"></div> */}
-        </div>
-
-                <>
           <section id="events" className="section">
-            <h2 style={{ textAlign: 'center', fontSize: '3rem', fontWeight: '700', marginBottom: '2rem', color: '#eaeaea' }}>Our Events</h2>
+            <h1 style={{ textAlign: 'center', fontWeight: '700', marginBottom: '2rem', color: '#eaeaea' }}>Our Events</h1>
             <EventsCarousel />
           </section>
 
           <section id="documents" className="section" >
-            <h2>Documents</h2>
+            <h1 style={{ textAlign: 'center', fontWeight: '700', marginBottom: '2rem', color: '#eaeaea' }}>Our Documents</h1>
+            <div className="docs-container">
+              <div className="doc-card"
+                onClick={downloadSponsorshipProposal}
+                onMouseEnter={() => { setIsHovered(true); }}
+                onMouseLeave={() => { setIsHovered(false); }}>
+                <div className="doc-icon-wrap">
+                  <OfferIcon id="sponsorship" iconName={"sponsorship"} isHovered={isHovered} />
+                </div>
+                  <h5>Sponsorship Proposal</h5>
+                  <p>Click to download our sponsorship proposal and learn about partnership opportunities with AlgoBoost Society.</p>
+              </div>
+              <div className="doc-card"
+                onClick={downloadConstitution}
+                onMouseEnter={() => { setIsHovered(true); }}
+                onMouseLeave={() => { setIsHovered(false); }}>
+                <div className="doc-icon-wrap">
+                  <OfferIcon id="constitution" iconName={"constitution"} isHovered={isHovered} />
+                </div>
+                <h5>Constitution</h5>
+                <p>Click to download the official AlgoBoost Society constitution and learn about our structure and governance.</p>
+              </div>
+            </div>
           </section>
 
-          <section id="partnership" className="section" >
-            <h2>Partnership</h2>
+          <section id="footer" className="section">
+            <p>© 2025 AlgoBoost Society. All rights reserved.</p>
+            <p>Contact us: <a href="mailto:algoboost@st-andrews.ac.uk">algoboost@st-andrews.ac.uk</a></p>
           </section>
+
         </>
-      </>
-    </div >
+    </div>
   );
 }
