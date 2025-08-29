@@ -6,7 +6,7 @@
 .reveal {
     will-change: transform, clip-path;
     --sr-dist: 40px;
-    --sr-dur: 2s;
+    --sr-dur: 1s;
     --sr-ease: cubic-bezier(.2, .65, .2, 1);
     transition:
         transform var(--sr-dur) var(--sr-ease),

@@ -9,10 +9,10 @@ const PasswordReset = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-     console.log("🟢 Storage listener mounted in PasswordReset");
+     console.log("Storage listener mounted in PasswordReset");
   const handleStorageChange = (event) => {
     if (event.key === 'passwordResetSuccess') {
-      console.log("✅ passwordResetSuccess detected — navigating");
+      console.log("passwordResetSuccess detected — navigating");
       localStorage.removeItem('passwordResetSuccess');
       navigate('/login');
     }

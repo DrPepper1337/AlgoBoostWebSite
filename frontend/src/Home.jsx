@@ -25,7 +25,7 @@ export default function Home() {
               <a className="navbarLink" href="#offer">What we offer</a>
               <a className="navbarLink" href="#events">Events</a>
               <a className="navbarLink" href="#documents">Documents</a>
-              <a className="navbarLink" href="#partnership">Partnership</a>
+              {/* <a className="navbarLink" href="#partnership">Partnership</a> */}
             </>
 
           </nav>
@@ -157,20 +157,6 @@ export default function Home() {
             <h2>Partnership</h2>
           </section>
         </>
-
-
-        {/* <section id="schedule" className="section">
-          <h2>Schedule</h2>
-          <p><strong>DSA Talks:</strong> Mondays 5–6 PM</p>
-          <p><strong>Problem-Solving:</strong> Fridays 5–6 PM</p>
-        </section>
-
-        <section id="resources" className="section">
-          <h2>Resources</h2>
-          <p>
-            YAP YAP YAP
-          </p>
-        </section> */}
       </>
     </div >
   );

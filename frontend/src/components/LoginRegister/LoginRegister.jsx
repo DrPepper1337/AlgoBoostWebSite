@@ -75,7 +75,7 @@ const handleLogin = async (e) => {
     }
 
     login(token); // Use the login function from AuthContext
-    navigate('/lessons');
+    navigate('/memberHub');
   } catch (error) {
     alert(error.message);
     console.error('Login error:', error);
