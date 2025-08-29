@@ -64,11 +64,8 @@ export default function Home() {
         <section id="top">
           <div className="square-wrapper">
             <Tilt className="square" maxTilt={10} perspective={800}>
-              <p>Some really good tagline and
-                small into, to summarise the entire
-                landing page. lorem ipsum dhdhd jh
-                hjdhjs sjdjsnd sjdjhshd ksjdks skjdk
-                shdsjd js wkwoq th most erciful thing</p>
+              <p>Want to get better at coding challenges and ace that technical interview?<br/><br/>
+              You are in the right place!</p>
             </Tilt>
           </div>
           <img src="../public/square-logo.svg" alt="AlgoBoost Logo" className="big-logo" />
@@ -79,7 +76,8 @@ export default function Home() {
             <h1 className="reveal" data-sr="up" style={{ "--sr-order": 0 }}>Who we are</h1>
             <h3 className="reveal" data-sr="up" style={{ "--sr-order": 1 }}>And what we usually do</h3>
             <p className="reveal" data-sr="up" style={{ "--sr-order": 2 }}>
-              And here is some body copy. Modi qui dero offici- et quati te moluptatem volorrorum reritatio et que non cor. Ibus utatemporum Aximinctecto quiscie nimodio rrorisciam, sitati am, officienis re volluptae dunt, istempelis ne vellitius volorep.
+              <br/>AlgoBoost helps you master data structures and algorithms while preparing for technical interviews in a supprtive and collaborative environment.<br/><br/>
+              From workshops and tutorials to mock interviews and hackathons, we make sure LeetCode is never boring again!
             </p>
           </div>
           <div className="reveal" data-sr="up" style={{ "--sr-order": 3 }}>
@@ -117,22 +115,22 @@ export default function Home() {
             />
             <OfferElement
               iconName="book"
-              text="Really good materials you will definitely use every day"
+              text="High-quality materials you might actually use"
               order={2}
             />
             <OfferElement
               iconName="up"
-              text="Weekly sessions to guide you through the process"
+              text="Space to build your algorithmic skills and confidence"
               order={3}
             />
             <OfferElement
               iconName="user"
-              text="Platform for our members with materials, and practice questions"
+              text="Platform with practice questions, resources, and an events timetable"
               order={4}
             />
             <OfferElement
               iconName="heart"
-              text="Community and occasional snacks. when we have the money."
+              text="Community and occasional snacks. Yes we are bribing you"
               order={5}
             />
           </div>

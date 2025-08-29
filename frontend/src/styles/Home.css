@@ -76,7 +76,8 @@ section#top {
 .square p {
   transform: translateY(20%);
   color: var(--black-bg-text);
-  font-size: 1.2rem;
+  font-size: 1.6rem;
+  font-weight: 550;
   text-align: center;
   padding: 1rem;
   line-height: 1.5;

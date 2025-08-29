@@ -3,11 +3,13 @@ import './DropDownProfile.css';
 import { useNavigate } from 'react-router-dom';
 import { FaCog, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import DropDownItem from './DropDownItem';
+import { useAuth } from '../../contexts/AuthContext';
 
 const DropDownProfile = ({ isActive }) => {
   const navigate = useNavigate();
+   const {logout} = useAuth();
 
-    const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ const DropDownProfile = ({ isActive }) => {
   if (!shouldRender) return null;
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
+    logout();
     navigate('/');
   };
 
