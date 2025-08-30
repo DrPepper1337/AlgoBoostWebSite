@@ -16,9 +16,9 @@ export default function EventsCarousel() {
     const [run, setRun] = useState(false);
     const [entering, setEntering] = useState(false);
 
-    const leftIdx = (current + eventTypes.length - 1) % eventTypes.length;
+    const rightIdx = (current + eventTypes.length - 1) % eventTypes.length;
     const centerIdx = current;
-    const rightIdx = (current + 1) % eventTypes.length;
+    const leftIdx = (current + 1) % eventTypes.length;
 
     const goRight = () => {
         if (dir) return;
@@ -26,7 +26,7 @@ export default function EventsCarousel() {
         setEntering(false);
         requestAnimationFrame(() => setRun(true));
         setTimeout(() => {
-            setCurrent(leftIdx);
+            setCurrent(rightIdx);
             setDir(null);
             setRun(false);
             setEntering(true);
@@ -40,7 +40,7 @@ export default function EventsCarousel() {
         setEntering(false);
         requestAnimationFrame(() => setRun(true));
         setTimeout(() => {
-            setCurrent(rightIdx);
+            setCurrent(leftIdx);
             setDir(null);
             setRun(false);
             setEntering(true);
@@ -55,10 +55,10 @@ export default function EventsCarousel() {
             { key: `R-${eventTypes[rightIdx].id}`, idx: rightIdx, slot: 'right' },
         ];
 
-        if (dir === 'right') {
-            base.push({ key: `G-R-${eventTypes[rightIdx].id}`, idx: rightIdx, slot: 'ghost-enter-left' });
-        } else if (dir === 'left') {
-            base.push({ key: `G-L-${eventTypes[leftIdx].id}`, idx: leftIdx, slot: 'ghost-enter-right' });
+        if (dir === 'left') {
+            base.push({ key: `G-R-${eventTypes[rightIdx].id}`, idx: leftIdx, slot: 'ghost-enter-left' });
+        } else if (dir === 'right') {
+            base.push({ key: `G-L-${eventTypes[leftIdx].id}`, idx: rightIdx, slot: 'ghost-enter-right' });
         }
         return base;
     }, [dir, leftIdx, centerIdx, rightIdx]);
@@ -66,7 +66,7 @@ export default function EventsCarousel() {
     const getClass = (slot) => {
         if (!dir) return slotClass[slot].atRest;
 
-        if (dir === 'right') {
+        if (dir === 'left') {
             if (!run) return slotClassRight.start[slot];
             return slotClassRight.end[slot];
         } else { // dir === 'left'

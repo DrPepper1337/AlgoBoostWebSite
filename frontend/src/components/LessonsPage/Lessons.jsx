@@ -4,10 +4,8 @@ import SessionContainer from "../SessionContainer/SessionContainer";
 import { FaUser, FaLaptopCode, FaBook } from 'react-icons/fa';
 import { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/algo-logo.png';
 import axios from 'axios';
-
-
+import '../../styles/Global.css';
 
 export default function Lessons() {
 
@@ -66,11 +64,9 @@ export default function Lessons() {
     <div className="lessons-wrapper">
 
       <header className="header">
-        <img
-          src={logo}
-          alt="Logo"
-          className="algo-logo"
-        />
+            <div className="logo-container">
+            <img src="../public/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
+          </div>
         <div className="user-menu" ref={menuRef}>
           <FaUser
             className="user-menu-button"
@@ -79,8 +75,12 @@ export default function Lessons() {
          <DropDownProfile isActive={open} />
         </div>
       </header>
-     
-    <div className="sessions-wrapper">
+
+      <h2>Coming Soon!</h2>
+      
+      {/*for now */}
+
+    {/* <div className="sessions-wrapper">
   {lessons.map((lesson) => (
     <SessionContainer
       key={lesson.id}
@@ -88,7 +88,7 @@ export default function Lessons() {
       onLearnClick={() => navigate(`/tasks/${lesson.id}`, { state: { lesson } })}
     />
   ))}
-</div>
+</div> */}
     </div>
   );
 
