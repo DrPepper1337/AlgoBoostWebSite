@@ -9,15 +9,12 @@ import "./components/TiltEffect/Tilt.css";
 import OfferElement from "./components/OfferElement/OfferElement";
 import './components/OfferElement/Offer.css';
 import EventsCarousel from './components/EventsCarousel/EventsCarousel';
-import OfferIcon from "./components/LottieIcon/Lottie";
-import { useState } from "react";
-import sponsorshipPDF from './assets/documents/sponsorship_proposal.pdf';
-import constitutionPDF from './assets/documents/Constitution of AlgoBoost Society.pdf';
+import DocElement from './components/DocElement/DocElement';
+
 
 export default function Home() {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
-  const [isHovered, setIsHovered] = useState(false);
 
   const downloadSponsorshipProposal = () => {
     const link = document.createElement('a');
@@ -161,43 +158,40 @@ export default function Home() {
           </div>
         </RevealOnScroll>
 
-          <section id="events" className="section">
-            <h1 style={{ textAlign: 'center', fontWeight: '700', marginBottom: '2rem', color: '#eaeaea' }}>Our Events</h1>
-            <EventsCarousel />
-          </section>
+        <section id="events" className="section">
+          <h1 style={{ textAlign: 'center', marginBottom: '2rem', color: '#eaeaea' }}>Our Events</h1>
+          <EventsCarousel />
+        </section>
 
-          <section id="documents" className="section" >
-            <h1 style={{ textAlign: 'center', fontWeight: '700', marginBottom: '2rem', color: '#eaeaea' }}>Our Documents</h1>
-            <div className="docs-container">
-              <div className="doc-card"
-                onClick={downloadSponsorshipProposal}
-                onMouseEnter={() => { setIsHovered(true); }}
-                onMouseLeave={() => { setIsHovered(false); }}>
-                <div className="doc-icon-wrap">
-                  <OfferIcon id="sponsorship" iconName={"sponsorship"} isHovered={isHovered} />
-                </div>
-                  <h5>Sponsorship Proposal</h5>
-                  <p>Click to download our sponsorship proposal and learn about partnership opportunities with AlgoBoost Society.</p>
-              </div>
-              <div className="doc-card"
-                onClick={downloadConstitution}
-                onMouseEnter={() => { setIsHovered(true); }}
-                onMouseLeave={() => { setIsHovered(false); }}>
-                <div className="doc-icon-wrap">
-                  <OfferIcon id="constitution" iconName={"constitution"} isHovered={isHovered} />
-                </div>
-                <h5>Constitution</h5>
-                <p>Click to download the official AlgoBoost Society constitution and learn about our structure and governance.</p>
-              </div>
-            </div>
-          </section>
+        <RevealOnScroll as="section" id="documents" className="section"
+          threshold={0.4}
+          rootMargin="0px 0px -10% 0px"
+          sectionFirst
+          sectionDur={1000}
+          sectionDir="up">
+          <h1 className="reveal" data-sr="up" style={{ textAlign: 'center', marginBottom: '2rem', color: '#eaeaea', "--sr-order": 0 }}>Our Documents</h1>
+          <div className="docs-container">
+            <DocElement
+              iconName="sponsorship"
+              title="Sponsorship Proposal"
+              text="Click to download our sponsorship proposal and learn about partnership opportunities with AlgoBoost Society."
+              document="sponsorship"
+            />
+            <DocElement
+              iconName="constitution"
+              title="Constitution"
+              text="Click to download the official AlgoBoost Society constitution and learn about our structure and governance."
+              document="constitution"
+            />
+          </div>
+        </RevealOnScroll>
 
-          <section id="footer" className="section">
-            <p>© 2025 AlgoBoost Society. All rights reserved.</p>
-            <p>Contact us: <a href="mailto:algoboost@st-andrews.ac.uk">algoboost@st-andrews.ac.uk</a></p>
-          </section>
+        <section id="footer" className="section">
+          <p>© 2025 AlgoBoost Society. All rights reserved.</p>
+          <p>Contact us: <a href="mailto:algoboost@st-andrews.ac.uk">algoboost@st-andrews.ac.uk</a></p>
+        </section>
 
-        </>
+      </>
     </div>
   );
 }

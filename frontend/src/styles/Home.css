@@ -167,11 +167,8 @@ section#about {
 
 .offer-title {
   text-align: center;
-  /* font-weight: 900; */
   line-height: 1;
-  /* letter-spacing: -0.02em; */
   margin: 0 0 clamp(2rem, 4vw, 3rem);
-  /* font-size: clamp(2.25rem, 6vw, 5.25rem);  */
 }
 
 .offer-grid {
@@ -216,69 +213,6 @@ section#documents {
   justify-content: center;
   gap: 5rem;
 }
-
-.doc-card {
-  background: var(--brownish);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  height: 90%;
-  max-width: 40%;
-  min-width: 40%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.doc-icon-wrap {
-  border-radius: 50%;
-  height: 30%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.doc-card h5, .doc-card p {
-  color: white;
-  margin-right: 7rem;
-  margin-left: 7rem;
-}
-
-.doc-icon-wrap .lottie-icon {
-  width: 5rem;
-  height: 5rem;
-  color: white;
-  filter: brightness(0) invert(1);
-}
-
-.doc-card {
-  background: var(--brownish);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  height: 90%;
-  max-width: 40%;
-  min-width: 40%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.doc-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-
-.doc-card p {
-  font-size: 1.1rem;
-  font-weight: 300;
-  line-height: 1.2;
-  margin-top: 1rem;
-}
-
-
 
 /* old css */
 
