@@ -31,10 +31,11 @@ const DropDownProfile = ({ isActive }) => {
   };
 
 
+
   return (
     <div className={`dropdown-menu ${visible ? 'active' : 'inactive'}`}>
       <ul>
-        <DropDownItem icon={FaUser} text="My Profile" />
+        <DropDownItem icon={FaUser} text="My Profile" onClick={() => navigate('/userProfile')}/>
         <DropDownItem icon={FaCog} text="Settings" />
         <DropDownItem icon={FaSignOutAlt} text="Logout" onClick={handleLogout} />
       </ul>
