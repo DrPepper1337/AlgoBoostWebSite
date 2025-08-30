@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700&display=swap');
-@import url('https://fonts.cdnfonts.com/css/vipnagorgialla');
+@import url('https://db.onlinewebfonts.com/c/434a0ac4bbdfb02f671f73db6014c18e?family=Vipnagorgialla+V3');
 
 :root {
   /* dark themne only for now */
@@ -39,12 +39,13 @@ h4,
 h5,
 h6 {
   font-family: 'Vipnagorgialla', sans-serif;
-  font-weight: normal;
+  /* font-weight: normal; */
   font-weight: 100;
 }
 
 h1 {
   font-size: 5rem;
+  font-weight: 600;
 }
 
 h2 {
