@@ -4,15 +4,15 @@ import constitutionPDF from '../../assets/documents/Constitution of AlgoBoost So
 import OfferIcon from "../LottieIcon/Lottie";
 import './DocElement.css';
 
-export default function DocElement({ iconName, title, text, document }) {
+export default function DocElement({ iconName, title, text, document: documentType }) {
     const [isHovered, setIsHovered] = useState(false);
 
     const downloadDocument = () => {
         const link = document.createElement('a');
-        if (document === 'sponsorship') {
+        if (documentType === 'sponsorship') {
             link.href = sponsorshipPDF;
             link.download = 'AlgoBoost_Sponsorship_Proposal.pdf';
-        } else if (document === 'constitution') {
+        } else if (documentType === 'constitution') {
             link.href = constitutionPDF;
             link.download = 'AlgoBoost_Society_Constitution.pdf';
         } else {
