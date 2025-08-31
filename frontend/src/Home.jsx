@@ -16,23 +16,23 @@ export default function Home() {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
 
-  const downloadSponsorshipProposal = () => {
-    const link = document.createElement('a');
-    link.href = sponsorshipPDF;
-    link.download = 'AlgoBoost_Sponsorship_Proposal.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  // const downloadSponsorshipProposal = () => {
+  //   const link = document.createElement('a');
+  //   link.href = sponsorshipPDF;
+  //   link.download = 'AlgoBoost_Sponsorship_Proposal.pdf';
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
 
-  const downloadConstitution = () => {
-    const link = document.createElement('a');
-    link.href = constitutionPDF;
-    link.download = 'AlgoBoost_Society_Constitution.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  // const downloadConstitution = () => {
+  //   const link = document.createElement('a');
+  //   link.href = constitutionPDF;
+  //   link.download = 'AlgoBoost_Society_Constitution.pdf';
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
 
   return (
     <div className="home-wrapper">

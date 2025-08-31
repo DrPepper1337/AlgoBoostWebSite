@@ -1,14 +1,52 @@
-import './UserProfile.css'
+// import './UserProfile.css'
 import '../MemberHub/MemberHub.css';
-import '../../styles/Global.css';
 import DropDownProfile from '../DropDownProfile/DropDownProfile';
 import { useRef, useState} from 'react';
 import { FaUser, FaChevronRight } from 'react-icons/fa';
-import { useNavigate, Link } from 'react-router-dom';
+import {Link } from 'react-router-dom';
+import axios from 'axios';
+import { useEffect} from 'react';
+
+
 export default function UserProfile() {
 
     const menuRef = useRef(null);
     const [open, setOpen] = useState(false);
+
+    const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem('authToken'); 
+        if (!token) {
+          console.error('No auth token found');
+          return;
+        }
+
+        const res = await axios.get('http://localhost:8080/api/current-user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.data?.success || !res.data.data) {
+          console.error('Unexpected response structure:', res.data);
+          return;
+        }
+
+        setUser(res.data.data); // set the user info (name, email, role, etc.)
+      } catch (error) {
+        console.error('Failed to fetch current user:', error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+    if (!user) return <div>Loading user info...</div>;
+
+
     return (
         <div className="hub-wrapper">
         <header>
@@ -31,7 +69,7 @@ export default function UserProfile() {
                 <section className="welcome-banner">
                     <div className="welcome-text">
                         <h1>
-                            <span>Your Profile</span><br />
+                            <span>Welcome, {user.name}! </span><br />
                         </h1>
                     </div>
                     <div className="code-glow" aria-hidden />
