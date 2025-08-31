@@ -3,7 +3,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginRegister from './components/LoginRegister/LoginRegister';
 import LessonsPage from './components/LessonsPage/Lessons';
-import TasksPage from './components/TasksPage/TasksPage';
+import TasksPageTemp from './components/TasksPage/TasksPageTemp';
 import VerifyPage from './components/LoginRegister/VerifyPage';
 import PasswordReset from './components/LoginRegister/PasswordReset';
 import PasswordResetSuccess from './components/LoginRegister/PasswordResetSuccess';
@@ -12,6 +12,7 @@ import UserProfile from './components/UserProfile/UserProfileTemp';
 import './styles/App.css';
 import Home from './Home';
 import Header from './components/HeaderNavBar/Header';
+import SettingsPage from './components/SettingsPage/SettingsPage';
 
 
 function MainLayout() {
@@ -35,7 +36,7 @@ function App() {
           <Route path="/login" element={<LoginRegister />} />
           <Route path="/verify" element={<VerifyPage />} />
           <Route path="/reset-password" element={<PasswordReset/>} />
-
+         
           {/* Protected Routes */}
           <Route path="/memberHub" element={
             <ProtectedRoute>
@@ -47,6 +48,11 @@ function App() {
               <UserProfile/>
             </ProtectedRoute>
           } />
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <SettingsPage/>
+            </ProtectedRoute>
+          } />
           <Route path="/lessons" element={
             <ProtectedRoute>
               <LessonsPage />
@@ -54,7 +60,7 @@ function App() {
           } />
           <Route path="/tasks/:lessonId" element={
             <ProtectedRoute>
-              <TasksPage />
+              <TasksPageTemp />
             </ProtectedRoute>
           } />
         </Route>

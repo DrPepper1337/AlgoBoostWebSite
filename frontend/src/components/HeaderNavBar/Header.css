@@ -1,20 +1,34 @@
 /* --- HEADER NAV BAR STYLES --- */
 .site-header {
-    position: relative; /* needed for absolute positioning */
+    position: fixed;
+    top: 0; 
     display: flex;
     align-items: center;
-    justify-content: space-between; /* logo left, menu-buttons right */
+    justify-content: space-between; 
     padding: 0 2rem;
     width: 100%;
     box-sizing: border-box;
 }
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 
 .menu-buttons {
   justify-self: end;
   right: 1rem;
   display: flex;
   align-items: right;
-  gap: 1rem;
+  gap: 3rem;
   font-size: 0.9rem;
 }
 
@@ -32,12 +46,11 @@
 .nav-container {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 3rem;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
     justify-content: center;
-    gap: 2rem; 
     white-space: nowrap;       
   width: max-content; 
 }
@@ -45,7 +58,8 @@
 .navbar {
   justify-self: center;
   display: flex;
-  gap: clamp(1rem, 4vw, 3rem); 
+  /* gap: clamp(1rem, 4vw, 3rem);  */
+  gap: 3rem;
   pointer-events: auto;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
@@ -91,8 +105,6 @@
   width: 4rem;
   overflow: hidden;
 }
-
-
 
 .navbarLink:hover {
   text-decoration: none;

@@ -43,19 +43,35 @@ export default function Header() {
   // The entire <header> JSX is moved here from Home.jsx
   return (
     <header className="site-header">
-  <div className="logo-container">
-    <img src="/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
+  <div className="header-inner">
+    <div className="logo-container">
+      <img src="/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
+    </div>
+    
+    <button
+      className="menu-toggle"
+      onClick={() => setMenuOpen(!isMenuOpen)}
+      aria-label="Toggle menu"
+    >
+      <div className={`hamburger ${isMenuOpen ? 'open' : ''}`}></div>
+    </button>
+
+    <div className="right-controls">
+      {!isAuthenticated ? (
+        <div className="menu-buttons">
+          <button className="menu-btn" id="login" onClick={() => { navigate('/login'); handleLinkClick(); }}>Login</button>
+          <button className="menu-btn" id="register" onClick={() => { navigate('/login?mode=register'); handleLinkClick(); }}>Register</button>
+          <button className="menu-btn" id="become-a-member" onClick={() => { window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety'); handleLinkClick(); }}>Become a Member</button>
+        </div>
+      ) : (
+        <div className="user-menu" ref={menuRef}>
+          <FaUser className="user-menu-button" onClick={() => setOpen((prev) => !prev)} />
+          {open && <DropDownProfile isActive={open} />}
+        </div>
+      )}
+    </div>
   </div>
 
-  <button
-    className="menu-toggle"
-    onClick={() => setMenuOpen(!isMenuOpen)}
-    aria-label="Toggle menu"
-  >
-    <div className={`hamburger ${isMenuOpen ? 'open' : ''}`}></div>
-  </button>
-
-    
   <div className={`nav-container ${isMenuOpen ? 'open' : ''}`}>
     {isHomePage && (
       <nav className="navbar">
@@ -68,47 +84,13 @@ export default function Header() {
 
     {isAuthenticated && (
       <nav className="navbar">
-        <button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>
-          Welcome Page
-        </button>
-        <button className="navbarLink" onClick={() => { navigate('/memberHub'); handleLinkClick(); }}>
-          Member Hub
-        </button>
-        <button className="navbarLink" onClick={() => { navigate('/lessons'); handleLinkClick(); }}>
-          Lessons
-        </button>
-        <button className="navbarLink" id="logout" onClick={() => {
-          logout();
-          navigate('/');
-          handleLinkClick();
-        }}>
-          Logout
-        </button>
+        <button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>Welcome Page</button>
+        <button className="navbarLink" onClick={() => { navigate('/memberHub'); handleLinkClick(); }}>Member Hub</button>
+        <button className="navbarLink" onClick={() => { navigate('/lessons'); handleLinkClick(); }}>Lessons</button>
+        <button className="navbarLink" id="logout" onClick={() => { logout(); navigate('/'); handleLinkClick(); }}>Logout</button>
       </nav>
     )}
   </div>
-
-  {!isAuthenticated ? (
-    <div className="menu-buttons">
-      <button className="menu-btn" id="login" onClick={() => { navigate('/login'); handleLinkClick(); }}>
-        Login
-      </button>
-      <button className="menu-btn" id="register" onClick={() => { navigate('/login?mode=register'); handleLinkClick(); }}>
-        Register
-      </button>
-      <button className="menu-btn" id="become-a-member" onClick={() => { window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety'); handleLinkClick(); }}>
-        Become a Member
-      </button>
-    </div>
-  ) : (
-    <div className="user-menu" ref={menuRef}>
-      <FaUser
-        className="user-menu-button"
-        onClick={() => setOpen((prev) => !prev)}
-      />
-      {open && <DropDownProfile isActive={open} />}
-    </div>
-  )}
 </header>
 
   );

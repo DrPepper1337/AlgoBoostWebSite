@@ -27,7 +27,7 @@ const DropDownProfile = ({ isActive }) => {
     <div className={`dropdown-menu ${visible ? 'active' : 'inactive'}`}>
       <ul>
         <DropDownItem icon={FaUser} text="My Profile" onClick={() => navigate('/userProfile')}/>
-        <DropDownItem icon={FaCog} text="Settings" />
+        <DropDownItem icon={FaCog} text="Settings" onClick={() => navigate('/settings')}/>
       </ul>
     </div>
   );
