@@ -24,12 +24,10 @@
 
 
 .menu-buttons {
-  justify-self: end;
-  right: 1rem;
   display: flex;
   align-items: right;
-  gap: 3rem;
   font-size: 0.9rem;
+  gap: 1rem;
 }
 
 .menu-btn {
@@ -44,15 +42,14 @@
 }
 
 .nav-container {
-    display: flex;
-    align-items: center;
-    gap: 3rem;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    justify-content: center;
-    white-space: nowrap;       
-  width: max-content; 
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  flex: 1;
 }
 
 .navbar {
