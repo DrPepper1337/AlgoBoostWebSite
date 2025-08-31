@@ -90,6 +90,17 @@ header {
   backdrop-filter: blur(2px);
 }
 
+/* --- HEADER NAV BAR STYLES --- */
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0rem 2rem;
+    position: fixed;
+    top: 0;
+    box-sizing: border-box;
+}
+
 .logo-container {
   justify-self: start;
   display: flex;
@@ -100,44 +111,126 @@ header {
   overflow: hidden;
 }
 
-/* navbar */
+.nav-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
 .navbar {
   justify-self: center;
   display: flex;
-  gap: clamp(0.4rem, 6rem, 7rem);
+  gap: clamp(1rem, 4vw, 3rem); 
   pointer-events: auto;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.navbarLink,
-.tab {
-  color: white;
+.navbarLink {
   text-decoration: none;
+  color: white;
+  font-weight: 200;
   font-size: 1rem;
   transition: all 0.5s ease;
-
 }
 
-.navbarLink:hover,
-.tab:hover {
+.navbarLink:hover {
   text-decoration: none;
   color: var(--orange-vivid);
   transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
-  .navbar {
-    /* Stack the navigation links vertically */
-    flex-direction: column;
-    /* Adjust alignment for a vertical layout */
-    align-items: center;
-    /* Reduce the gap for vertical spacing */
-    gap: 1.5rem;
-  }
-
-  .navbarLink:hover,
-  .tab:hover {
-    /* Optional: Remove or adjust hover transform on mobile for better touch experience */
-    transform: none;
-  }
+.menu-buttons {
+  display: flex;
+  gap: 1rem;
 }
+
+.menu-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #007bff;
+  background-color: transparent;
+  color: #007bff;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.menu-btn:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+#register, #become-a-member {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Hide hamburger on desktop */
+.menu-toggle {
+    display: none;
+}
+
+/* 
+ * --- Mobile Styles (max-width: 992px) --- 
+ */
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: block;
+        background: none;
+        border: none;
+        cursor: pointer;
+        z-index: 1001; /* Ensure it's above the nav container */
+    }
+
+    .hamburger {
+        position: relative;
+        width: 25px;
+        height: 3px;
+        background-color: transparent;
+        transition: all 0.3s ease;
+    }
+    .hamburger::before, .hamburger::after {
+        content: '';
+        position: absolute;
+        width: 25px;
+        height: 3px;
+        background-color: white;
+        transition: all 0.3s ease;
+    }
+    .hamburger::before { top: -8px; }
+    .hamburger::after { top: 8px; }
+
+    .hamburger.open { background-color: transparent; }
+    .hamburger.open::before { transform: rotate(45deg); top: 0; }
+    .hamburger.open::after { transform: rotate(-45deg); top: 0; }
+
+    .nav-container {
+        display: none; /* Hide the nav container by default */
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 300px;
+        height: 100vh;
+        background-color: var(--dark-grey-bg);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        box-shadow: -3px 0 10px rgba(0,0,0,0.1);
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .nav-container.open {
+        display: flex;
+        transform: translateX(0);
+    }
+
+    .navbar, .menu-buttons {
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        gap: 1rem;
+    }
+}
+
+

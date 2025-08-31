@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import AnimatedCodeBackground from './components/CodeAnimate/AnimatedCodeBackground';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
@@ -15,6 +16,12 @@ import DocElement from './components/DocElement/DocElement';
 export default function Home() {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
+
+  const [isMenuOpen, setMenuOpen] = useState(false);
+
+  const handleLinkClick = () => {
+      setMenuOpen(false); // Close menu when a link is clicked
+  };
 
   const downloadSponsorshipProposal = () => {
     const link = document.createElement('a');
@@ -37,50 +44,57 @@ export default function Home() {
   return (
     <div className="home-wrapper">
       <>
-        <header>
-          <div className="logo-container">
-            <img src="../public/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
-          </div>
-          <nav className="navbar">
-            <a className="navbarLink" href="#about">About us</a>
-            <>
-              <a className="navbarLink" href="#offer">What we offer</a>
-              <a className="navbarLink" href="#events">Events</a>
-              <a className="navbarLink" href="#documents">Documents</a>
-              {/* <a className="navbarLink" href="#partnership">Partnership</a> */}
-            </>
+        <header className="site-header">
+            <div className="logo-container">
+                <img src="/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
+            </div>
 
-          </nav>
-          <div className="menu-buttons">
-            {!isAuthenticated ? (
-              <>
-                <button className="menu-btn" id="login" onClick={() => navigate('/login')}>
-                  Login
-                </button>
-                <button className="menu-btn" id="register" onClick={() => navigate('/login?mode=register')}>
-                  Register
-                </button>
-                <button className="menu-btn" id="become-a-member" onClick={() => window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety')}>
-                  Become a Member
-                </button>
-              </>
-            ) : (
-              <>
-                <button className="menu-btn" onClick={() => navigate('/memberHub')}>
-                  Member Hub
-                </button>
-                <button className="menu-btn" onClick={() => navigate('/lessons')}>
-                  Lessons
-                </button>
-                <button className="menu-btn" id="logout" onClick={() => {
-                  logout();
-                  navigate('/');
-                }}>
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
+            <button className="menu-toggle" onClick={() => setMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
+                <div className={`hamburger ${isMenuOpen ? 'open' : ''}`}></div>
+            </button>
+
+            {/* This is the container that is toggled on mobile */}
+            <div className={`nav-container ${isMenuOpen ? 'open' : ''}`}>
+                
+                <nav className="navbar">
+                    <a className="navbarLink" href="#about" onClick={handleLinkClick}>About us</a>
+                    <a className="navbarLink" href="#offer" onClick={handleLinkClick}>What we offer</a>
+                    <a className="navbarLink" href="#events" onClick={handleLinkClick}>Events</a>
+                    <a className="navbarLink" href="#documents" onClick={handleLinkClick}>Documents</a>
+                </nav>
+
+                <div className="menu-buttons">
+                    {!isAuthenticated ? (
+                        <>
+                            <button className="menu-btn" id="login" onClick={() => { navigate('/login'); handleLinkClick(); }}>
+                                Login
+                            </button>
+                            <button className="menu-btn" id="register" onClick={() => { navigate('/login?mode=register'); handleLinkClick(); }}>
+                                Register
+                            </button>
+                            <button className="menu-btn" id="become-a-member" onClick={() => { window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety'); handleLinkClick(); }}>
+                                Become a Member
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button className="menu-btn" onClick={() => { navigate('/memberHub'); handleLinkClick(); }}>
+                                Member Hub
+                            </button>
+                            <button className="menu-btn" onClick={() => { navigate('/lessons'); handleLinkClick(); }}>
+                                Lessons
+                            </button>
+                            <button className="menu-btn" id="logout" onClick={() => {
+                                logout();
+                                navigate('/');
+                                handleLinkClick();
+                            }}>
+                                Logout
+                            </button>
+                        </>
+                    )}
+                </div>
+            </div>
         </header>
 
         <section id="top">
