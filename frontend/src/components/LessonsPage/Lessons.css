@@ -13,13 +13,6 @@
   text-align: center;
 }
 
-.user-menu {
-  grid-column: 3;
-  justify-self: end;
-  position: relative;      
-  display: inline-block;  
-}
-
 .user-menu-button {
   font-size: 2rem;          
   cursor: pointer;

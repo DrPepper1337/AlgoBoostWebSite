@@ -6,6 +6,7 @@
     padding: 0rem 2rem;
     position: fixed;
     top: 0;
+    gap: 1rem;
     box-sizing: border-box;
 }
 
@@ -28,6 +29,29 @@
   cursor: pointer;
   transition: all 0.3s ease, color 0.3s ease;
 }
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.navbar {
+  justify-self: center;
+  display: flex;
+  gap: clamp(1rem, 4vw, 3rem); 
+  pointer-events: auto;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.navbarLink {
+  text-decoration: none;
+  color: white;
+  font-weight: 200;
+  font-size: 1rem;
+  transition: all 0.5s ease;
+}
+
 
 #register,
 #login {
@@ -62,27 +86,7 @@
   overflow: hidden;
 }
 
-.nav-container {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-}
 
-.navbar {
-  justify-self: center;
-  display: flex;
-  gap: clamp(1rem, 4vw, 3rem); 
-  pointer-events: auto;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.navbarLink {
-  text-decoration: none;
-  color: white;
-  font-weight: 200;
-  font-size: 1rem;
-  transition: all 0.5s ease;
-}
 
 .navbarLink:hover {
   text-decoration: none;
@@ -101,6 +105,12 @@
 /* Hide hamburger on desktop */
 .menu-toggle {
     display: none;
+}
+
+.user-menu-button {
+    font-size: 22px;
+    cursor: pointer;
+    color: #f7a14a;
 }
 
 /* 
