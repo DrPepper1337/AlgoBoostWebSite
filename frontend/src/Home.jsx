@@ -25,14 +25,14 @@ export default function Home() {
     document.body.removeChild(link);
   };
 
-  // const downloadConstitution = () => {
-  //   const link = document.createElement('a');
-  //   link.href = constitutionPDF;
-  //   link.download = 'AlgoBoost_Society_Constitution.pdf';
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  // };
+  const downloadConstitution = () => {
+    const link = document.createElement('a');
+    link.href = constitutionPDF;
+    link.download = 'AlgoBoost_Society_Constitution.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="home-wrapper">

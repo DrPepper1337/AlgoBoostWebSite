@@ -10,7 +10,7 @@ import '../LessonsCalendar/LessonsCalendar.css';
 
 export default function MemberHub() {
     const navigate = useNavigate();
-    const [open, setOpen] = useState(false);
+    const [setOpen] = useState(false);
     const [lessons, setLessons] = useState([]);
     const menuRef = useRef(null);
 
@@ -45,23 +45,6 @@ export default function MemberHub() {
 
     return (
         <div className="hub-wrapper">
-            {/* <header>
-                <div className="logo-container">
-                    <img src="../public/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
-                </div>
-                <nav className="navbar">
-                    <Link to="/" className="tab">Welcome Page</Link>
-                    <span className="tab active">Member Home Page</span>
-                    <Link to="/resources" className="tab">Resources</Link>
-                    <Link to="/lessons" className="tab">Lessons</Link>
-                    <Link to="/contact" className="tab">Contact</Link>
-                </nav>
-                <div className="user-menu" ref={menuRef}>
-                    <FaUser className="user-menu-button" onClick={() => setOpen(!open)} />
-                    <DropDownProfile isActive={open} />
-                </div>
-            </header> */}
-            {/* Welcome banner */}
             <section className="welcome-banner">
                 <div className="welcome-text">
                     <h1>

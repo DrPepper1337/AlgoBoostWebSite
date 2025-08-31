@@ -1,12 +1,11 @@
 /* --- HEADER NAV BAR STYLES --- */
 .site-header {
+    position: relative; /* needed for absolute positioning */
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0rem 2rem;
-    position: fixed;
-    top: 0;
-    gap: 1rem;
+    justify-content: space-between; /* logo left, menu-buttons right */
+    padding: 0 2rem;
+    width: 100%;
     box-sizing: border-box;
 }
 
@@ -34,6 +33,13 @@
     display: flex;
     align-items: center;
     gap: 2rem;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    justify-content: center;
+    gap: 2rem; 
+    white-space: nowrap;       
+  width: max-content; 
 }
 
 .navbar {
