@@ -124,3 +124,20 @@ header {
   color: var(--orange-vivid);
   transform: translateY(-2px);
 }
+
+@media (max-width: 768px) {
+  .navbar {
+    /* Stack the navigation links vertically */
+    flex-direction: column;
+    /* Adjust alignment for a vertical layout */
+    align-items: center;
+    /* Reduce the gap for vertical spacing */
+    gap: 1.5rem;
+  }
+
+  .navbarLink:hover,
+  .tab:hover {
+    /* Optional: Remove or adjust hover transform on mobile for better touch experience */
+    transform: none;
+  }
+}

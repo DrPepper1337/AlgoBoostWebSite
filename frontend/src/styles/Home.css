@@ -413,6 +413,33 @@ section#documents {
 
 }
 
+.footer-links {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    font-size: 1.1rem;
+}
+
+.footer-links a {
+    color: var(--white-bg-text);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: var(--orange-vivid);
+    text-decoration: underline;
+}
+
+.footer-copyright p {
+    margin: 0;
+    font-size: 0.7rem;
+    color: var(--orange-vivid);
+    text-align: center;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
   .section {
@@ -425,6 +452,17 @@ section#documents {
 
   .section p {
     font-size: 1.05rem;
+  }
+
+  .footer-copyright p {
+    font-size: 0.7rem;
+  }
+
+  .footer-links {
+    /* This changes the layout from a row to a column */
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 1.1rem;
   }
 }
 

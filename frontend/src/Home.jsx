@@ -187,8 +187,16 @@ export default function Home() {
         </RevealOnScroll>
 
         <section id="footer" className="section">
-          <p>© 2025 AlgoBoost Society. All rights reserved.</p>
-          <p>Contact us: <a href="mailto:algoboost@st-andrews.ac.uk">algoboost@st-andrews.ac.uk</a></p>
+          <div className='footer-links'>
+            <a href="https://linktr.ee/algoboost">LinkTree</a>
+            <a href="https://www.instagram.com/algoboost_usta?igsh=MXFrYXFxNmRhbWhhMw%3D%3D&utm_source=qr">Instagram</a>
+            <a href="https://www.linkedin.com/company/algoboost-society/?viewAsMember=true">LinkedIn</a>
+            <a href="mailto:algoboost@st-andrews.ac.uk">algoboost@st-andrews.ac.uk</a>
+          </div>
+          <div className="footer-copyright">
+            <p>&copy; 2025 St Andrews Algoboost Society. All Rights Reserved.</p>
+          </div>
+          
         </section>
 
       </>
