@@ -55,10 +55,11 @@
 .navbar {
   justify-self: center;
   display: flex;
-  /* gap: clamp(1rem, 4vw, 3rem);  */
-  gap: 3rem;
+  gap: clamp(1rem, 4vw, 3rem); 
+  /* gap: 3rem; */
   pointer-events: auto;
   transition: transform 0.3s ease, opacity 0.3s ease;
+  white-space: nowrap;   
 }
 
 .navbarLink {
