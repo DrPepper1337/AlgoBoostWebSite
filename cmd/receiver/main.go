@@ -107,7 +107,7 @@ func main() {
 		zap.L().Debug(err.Error())
 	}
 
-	err = db.AddEmailToWhitelist("sofia.morgulchik@gmail.com", "test guy", "member")
+	err = db.AddEmailToWhitelist("sofia.morgulchik@gmail.com", "soph", "member")
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
@@ -116,6 +116,7 @@ func main() {
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
+
 
 	// initialises the receiver
 	r := receiver.SetupRoutes(db)

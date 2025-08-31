@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {useMemo, useState } from 'react';
 import './EventsCarousel.css';
 import dsaTalkImage from '../../assets/DSA_talk.webp';
 import tutorialsImage from '../../assets/tutorials.jpg';
@@ -56,9 +56,9 @@ export default function EventsCarousel() {
         ];
 
         if (dir === 'left') {
-            base.push({ key: `G-R-${eventTypes[rightIdx].id}`, idx: leftIdx, slot: 'ghost-enter-left' });
+            base.push({ key: `G-R-${eventTypes[leftIdx].id}`, idx: rightIdx, slot: 'ghost-enter-left' });
         } else if (dir === 'right') {
-            base.push({ key: `G-L-${eventTypes[leftIdx].id}`, idx: rightIdx, slot: 'ghost-enter-right' });
+            base.push({ key: `G-L-${eventTypes[rightIdx].id}`, idx: leftIdx, slot: 'ghost-enter-right' });
         }
         return base;
     }, [dir, leftIdx, centerIdx, rightIdx]);
