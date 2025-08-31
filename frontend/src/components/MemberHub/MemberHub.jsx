@@ -5,7 +5,6 @@ import { FaUser, FaChevronRight } from 'react-icons/fa';
 import { useRef, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import '../../styles/Global.css';
 import LessonsCalendar from '../LessonsCalendar/LessonsCalendar';
 import '../LessonsCalendar/LessonsCalendar.css';
 
@@ -46,7 +45,7 @@ export default function MemberHub() {
 
     return (
         <div className="hub-wrapper">
-            <header>
+            {/* <header>
                 <div className="logo-container">
                     <img src="../public/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
                 </div>
@@ -61,7 +60,7 @@ export default function MemberHub() {
                     <FaUser className="user-menu-button" onClick={() => setOpen(!open)} />
                     <DropDownProfile isActive={open} />
                 </div>
-            </header>
+            </header> */}
             {/* Welcome banner */}
             <section className="welcome-banner">
                 <div className="welcome-text">

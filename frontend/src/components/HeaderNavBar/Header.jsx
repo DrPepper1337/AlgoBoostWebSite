@@ -1,12 +1,34 @@
-import React, { useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { FaUser, FaChevronRight } from 'react-icons/fa';
 import './Header.css';
+import '../MemberHub/MemberHub.css';
+import DropDownProfile from '../DropDownProfile/DropDownProfile';
+
 
 export default function Header() {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  // Close dropdown if clicking outside the user-menu div
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Cleanup event listener on unmount
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+   
 
   const handleLinkClick = () => {
     setMenuOpen(false); // Close menu when a link is clicked
@@ -63,6 +85,12 @@ export default function Header() {
           )}
         </div>
       </div>
+       {isAuthenticated && (
+      <div className="user-menu" ref={menuRef}>
+        <FaUser className="user-menu-button" onClick={() => setOpen(!open)} />
+        <DropDownProfile isActive={open} />
+      </div>
+    )}
     </header>
   );
 }

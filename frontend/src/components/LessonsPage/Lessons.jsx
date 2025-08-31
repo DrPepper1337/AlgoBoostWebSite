@@ -1,11 +1,12 @@
 import './Lessons.css';
+import '../MemberHub/MemberHub.css';
 import DropDownProfile from '../DropDownProfile/DropDownProfile';
 import SessionContainer from "../SessionContainer/SessionContainer";
 import { FaUser, FaLaptopCode, FaBook } from 'react-icons/fa';
 import { useRef, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import '../HeaderNavBar/Header.css';
 import axios from 'axios';
-import '../../styles/Global.css';
 
 export default function Lessons() {
 
@@ -58,38 +59,42 @@ export default function Lessons() {
     fetchLessons();
   }, []);
 
-
-  return (
-
+    return (
     <div className="lessons-wrapper">
-
-      <header className="header">
-            <div className="logo-container">
-            <img src="../public/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
-          </div>
-        <div className="user-menu" ref={menuRef}>
-          <FaUser
-            className="user-menu-button"
-            onClick={() => setOpen(!open)}
-          />
-         <DropDownProfile isActive={open} />
-        </div>
+      <header>
+      <div className="logo-container">
+                    <img src="../public/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
+                </div>
+                <nav className="navbar">
+                    <Link to="/" className="tab">Welcome Page</Link>
+                    <span className="tab active">Member Home Page</span>
+                    <Link to="/resources" className="tab">Resources</Link>
+                    <Link to="/lessons" className="tab">Lessons</Link>
+                    <Link to="/contact" className="tab">Contact</Link>
+                </nav>
+                <div className="user-menu" ref={menuRef}>
+                    <FaUser className="user-menu-button" onClick={() => setOpen(!open)} />
+                    <DropDownProfile isActive={open} />
+                </div>
       </header>
 
-      <h2 >Coming Soon!</h2>
-      
-      {/*for now */}
+        <h2>Coming Soon!</h2>
 
-    {/* <div className="sessions-wrapper">
-  {lessons.map((lesson) => (
-    <SessionContainer
-      key={lesson.id}
-      topic={lesson.title}
-      onLearnClick={() => navigate(`/tasks/${lesson.id}`, { state: { lesson } })}
-    />
-  ))}
-</div> */}
+      {/* Uncomment when lessons are ready */}
+      {/*
+      <div className="sessions-wrapper">
+        {lessons.map((lesson) => (
+          <SessionContainer
+            key={lesson.id}
+            topic={lesson.title}
+            onLearnClick={() => navigate(`/tasks/${lesson.id}`, { state: { lesson } })}
+          />
+        ))}
+      </div>
+      */}
     </div>
   );
-
 }
+
+
+  

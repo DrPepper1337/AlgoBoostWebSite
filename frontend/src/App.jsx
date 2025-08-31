@@ -8,7 +8,7 @@ import VerifyPage from './components/LoginRegister/VerifyPage';
 import PasswordReset from './components/LoginRegister/PasswordReset';
 import PasswordResetSuccess from './components/LoginRegister/PasswordResetSuccess';
 import MemberHub from './components/MemberHub/MemberHub';
-import UserProfile from './components/UserProfile/UserProfile';
+import UserProfile from './components/UserProfile/UserProfileTemp';
 import './styles/App.css';
 import Home from './Home';
 import Header from './components/HeaderNavBar/Header';
