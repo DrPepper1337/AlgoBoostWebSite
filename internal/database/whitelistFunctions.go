@@ -39,3 +39,22 @@ func (db *Database) IsEmailWhitelisted(email string) (models.Whitelist, error) {
 	}
 	return w, nil
 }
+
+func (db *Database) GetUserEmailByID(userID int) (string, error) {
+    psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+    sql, args, err := psql.Select("email").From("users").Where(sq.Eq{"id": userID}).ToSql()
+    if err != nil {
+        return "", err
+    }
+
+    var email string
+    err = db.Postgres.QueryRow(context.Background(), sql, args...).Scan(&email)
+    if err != nil {
+        if errors.Is(err, pgx.ErrNoRows) {
+            return "", errors.New("user not found")
+        }
+        return "", err
+    }
+
+    return email, nil
+}

@@ -25,64 +25,18 @@ export default function Home() {
     document.body.removeChild(link);
   };
 
-  const downloadConstitution = () => {
-    const link = document.createElement('a');
-    link.href = constitutionPDF;
-    link.download = 'AlgoBoost_Society_Constitution.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  // const downloadConstitution = () => {
+  //   const link = document.createElement('a');
+  //   link.href = constitutionPDF;
+  //   link.download = 'AlgoBoost_Society_Constitution.pdf';
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
 
   return (
     <div className="home-wrapper">
       <>
-        <header>
-          <div className="logo-container">
-            <img src="../public/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
-          </div>
-          <nav className="navbar">
-            <a className="navbarLink" href="#about">About us</a>
-            <>
-              <a className="navbarLink" href="#offer">What we offer</a>
-              <a className="navbarLink" href="#events">Events</a>
-              <a className="navbarLink" href="#documents">Documents</a>
-              {/* <a className="navbarLink" href="#partnership">Partnership</a> */}
-            </>
-
-          </nav>
-          <div className="menu-buttons">
-            {!isAuthenticated ? (
-              <>
-                <button className="menu-btn" id="login" onClick={() => navigate('/login')}>
-                  Login
-                </button>
-                <button className="menu-btn" id="register" onClick={() => navigate('/login?mode=register')}>
-                  Register
-                </button>
-                <button className="menu-btn" id="become-a-member" onClick={() => window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety')}>
-                  Become a Member
-                </button>
-              </>
-            ) : (
-              <>
-                <button className="menu-btn" onClick={() => navigate('/memberHub')}>
-                  Member Hub
-                </button>
-                <button className="menu-btn" onClick={() => navigate('/lessons')}>
-                  Lessons
-                </button>
-                <button className="menu-btn" id="logout" onClick={() => {
-                  logout();
-                  navigate('/');
-                }}>
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
-        </header>
-
         <section id="top">
           <div className="square-wrapper">
             <Tilt className="square" maxTilt={10} perspective={800}>
