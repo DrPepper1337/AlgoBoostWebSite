@@ -14,6 +14,21 @@ import Home from './Home';
 import Header from './components/HeaderNavBar/Header';
 import SettingsPage from './components/SettingsPage/SettingsPage';
 
+const setFavicon = () => {
+  const favicon = document.getElementById('favicon');
+  if (!favicon) return;
+
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+   console.log('Dark mode:', isDark);
+  favicon.href = isDark
+    ? '/logo-no-text.svg'
+    : '/logo-no-text-light.svg';
+};
+
+setFavicon();
+console.log('hell§o');
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFavicon);
+
 
 function MainLayout() {
   return (
@@ -27,6 +42,8 @@ function MainLayout() {
 }
 
 function App() {
+
+  
 
   return (
     <AuthProvider>
