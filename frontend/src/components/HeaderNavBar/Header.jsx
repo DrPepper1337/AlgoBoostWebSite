@@ -16,6 +16,10 @@ export default function Header() {
   const location = useLocation();
   const menuRef = useRef(null);
 
+
+  const isHomePage = ['/', '/login', '/login?mode=register', '/reset-password'].includes(location.pathname);
+
+  
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -33,12 +37,16 @@ export default function Header() {
     setMenuOpen(false);
     setOpen(false);
   }, [location]);
+
+  if (location.pathname === '/verify') {
+    return null;
+  }
    
 
   const handleLinkClick = () => {
     setMenuOpen(false); 
   };
-   const isHomePage = location.pathname === '/' || location.pathname === '/login' || location.pathname === '/login?mode=register' || location.pathname === '/login?mode=reset';
+
 
   // The entire <header> JSX is moved here from Home.jsx
   return (

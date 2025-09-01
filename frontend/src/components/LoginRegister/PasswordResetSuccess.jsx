@@ -35,7 +35,7 @@ const PasswordResetSuccess = () => {
 
   return (
     <div style={{ padding: "2rem", textAlign: "center" }}>
-      <h1>{message}</h1>
+      <h3>{message}</h3>
     </div>
   );
 };

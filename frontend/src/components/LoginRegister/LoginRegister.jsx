@@ -30,7 +30,7 @@ const LoginRegister = () => {
   const onStorageChange = (e) => {
     if (e.key === "verified" && e.newValue) {
       localStorage.removeItem("verified");
-      navigate("/lessons");
+      navigate('/');
     }
   };
 
