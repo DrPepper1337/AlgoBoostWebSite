@@ -1,6 +1,6 @@
 import { Routes, Route, Outlet } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute, { AdminRoute } from './components/ProtectedRoute';
 import LoginRegister from './components/LoginRegister/LoginRegister';
 import LessonsPage from './components/LessonsPage/Lessons';
 import TasksPageTemp from './components/TasksPage/TasksPageTemp';
@@ -9,26 +9,12 @@ import PasswordReset from './components/LoginRegister/PasswordReset';
 import PasswordResetSuccess from './components/LoginRegister/PasswordResetSuccess';
 import MemberHub from './components/MemberHub/MemberHub';
 import UserProfile from './components/UserProfile/UserProfileTemp';
+// import ManageUsers from './components/ManageUsers/ManageUsers';
+// import ManageLessons from './components/ManageLessons/ManageLessons';
 import './styles/App.css';
 import Home from './Home';
 import Header from './components/HeaderNavBar/Header';
 import SettingsPage from './components/SettingsPage/SettingsPage';
-
-const setFavicon = () => {
-  const favicon = document.getElementById('favicon');
-  if (!favicon) return;
-
-  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-   console.log('Dark mode:', isDark);
-  favicon.href = isDark
-    ? '/logo-no-text.svg'
-    : '/logo-no-text-light.svg';
-};
-
-setFavicon();
-console.log('hell§o');
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFavicon);
-
 
 function MainLayout() {
   return (
@@ -42,9 +28,6 @@ function MainLayout() {
 }
 
 function App() {
-
-  
-
   return (
     <AuthProvider>
       <Routes>
@@ -52,22 +35,22 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginRegister />} />
           <Route path="/verify" element={<VerifyPage />} />
-          <Route path="/reset-password" element={<PasswordReset/>} />
-         
+          <Route path="/reset-password" element={<PasswordReset />} />
+
           {/* Protected Routes */}
           <Route path="/memberHub" element={
             <ProtectedRoute>
               <MemberHub />
             </ProtectedRoute>
           } />
-            <Route path="/userProfile" element={
+          <Route path="/userProfile" element={
             <ProtectedRoute>
-              <UserProfile/>
+              <UserProfile />
             </ProtectedRoute>
           } />
           <Route path="/settings" element={
             <ProtectedRoute>
-              <SettingsPage/>
+              <SettingsPage />
             </ProtectedRoute>
           } />
           <Route path="/lessons" element={
@@ -81,6 +64,19 @@ function App() {
             </ProtectedRoute>
           } />
         </Route>
+
+        {/* Admin Routes */}
+        <Route path="/manageLessons" element={
+          <AdminRoute>
+            {/* <ManageLessons /> */}
+          </AdminRoute>
+        } />
+        <Route path="/manageUsers" element={
+          <AdminRoute>
+            {/* <ManageUsers /> */}
+          </AdminRoute>
+        } />
+
       </Routes>
     </AuthProvider>
   )

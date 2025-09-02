@@ -22,4 +22,26 @@ const ProtectedRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/" replace />;
 };
 
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, loading, user } = useAuth();
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        color: '#eaeaea',
+        backgroundColor: '#1c1c1c'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  return isAuthenticated && user?.role === 'admin' ? children : <Navigate to="/" replace />;
+};
+
 export default ProtectedRoute;
+export { AdminRoute };

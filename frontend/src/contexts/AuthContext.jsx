@@ -12,20 +12,36 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem('authToken');
-      setIsAuthenticated(!!token);
+      const userData = localStorage.getItem('userData');
+
+      if (token && userData) {
+        try {
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+        } catch (error) {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userData');
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
       setLoading(false);
     };
 
     checkAuth();
 
-    // listenn for storage changes (login/logout from other tabs)
     const handleStorageChange = (e) => {
-      if (e.key === 'authToken') {
+      if (e.key === 'authToken' || e.key === 'userData') {
         checkAuth();
       }
     };
@@ -37,18 +53,23 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const login = (token) => {
+  const login = (token, userData) => {
     localStorage.setItem('authToken', token);
+    localStorage.setItem('userData', JSON.stringify(userData));
+    setUser(userData);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');
+    setUser(null);
     setIsAuthenticated(false);
   };
 
   const value = {
     isAuthenticated,
+    user,
     login,
     logout,
     loading

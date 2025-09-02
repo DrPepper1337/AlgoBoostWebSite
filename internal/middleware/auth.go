@@ -10,6 +10,14 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type contextKey string
+
+const (
+	userIDKey contextKey = "userID"
+	roleKey   contextKey = "role"
+	nameKey   contextKey = "name"
+)
+
 func MemberMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
@@ -30,8 +38,11 @@ func MemberMiddleware(next http.Handler) http.Handler {
 		claims := token.Claims.(jwt.MapClaims)
 		// claims is the data in the JWT payload map
 		userID := int(claims["user_id"].(float64))
-
-		ctx := context.WithValue(r.Context(), "userID", userID)
+		role, _ := claims["role"].(string)
+		name, _ := claims["username"].(string)
+		ctx := context.WithValue(r.Context(), userIDKey, userID)
+		ctx = context.WithValue(ctx, roleKey, role)
+		ctx = context.WithValue(ctx, nameKey, name)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -63,4 +74,20 @@ func AdminMiddleware(next http.Handler) http.Handler {
 		// maybe send admin user id as well in context ??
 		next.ServeHTTP(w, r)
 	})
+}
+
+// Helper functions to extract values from context
+func GetUserIDFromContext(ctx context.Context) (int, bool) {
+	userID, ok := ctx.Value(userIDKey).(int)
+	return userID, ok
+}
+
+func GetRoleFromContext(ctx context.Context) (string, bool) {
+	role, ok := ctx.Value(roleKey).(string)
+	return role, ok
+}
+
+func GetUserNameFromContext(ctx context.Context) (string, bool) {
+	username, ok := ctx.Value("username").(string)
+	return username, ok
 }

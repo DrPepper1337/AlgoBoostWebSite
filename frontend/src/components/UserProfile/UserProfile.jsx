@@ -18,24 +18,21 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const token = localStorage.getItem('authToken'); 
+        const token = localStorage.getItem('authToken');
         if (!token) {
           console.error('No auth token found');
           return;
         }
 
-        const res = await axios.get('http://localhost:8080/api/current-user', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!res.data?.success || !res.data.data) {
-          console.error('Unexpected response structure:', res.data);
-          return;
+        const userData = localStorage.getItem('userData');
+        if (userData) {
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+        } else {
+          console.error('No user data found in localStorage');
         }
 
-        setUser(res.data.data); // set the user info (name, email, role, etc.)
+        // setUser(res.data.data); // set the user info (name, email, role, etc.)
       } catch (error) {
         console.error('Failed to fetch current user:', error);
       }

@@ -69,12 +69,17 @@ const handleLogin = async (e) => {
     const data = await response.json();
 
     const token = data?.data?.token;
+    const userData = {
+      id: parseInt(data?.data?.user_id),
+      name: data?.data?.name,
+      role: data?.data?.role
+    };
 
     if (!token) {
       throw new Error('Login failed: token not found');
     }
 
-    login(token); // Use the login function from AuthContext
+    login(token, userData);
     navigate('/memberHub');
   } catch (error) {
     alert(error.message);

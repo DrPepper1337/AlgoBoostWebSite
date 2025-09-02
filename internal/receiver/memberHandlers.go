@@ -12,6 +12,7 @@ import (
 
 	"AlgoBoostWebSite/internal/config"
 	"AlgoBoostWebSite/internal/database"
+	"AlgoBoostWebSite/internal/middleware"
 	"AlgoBoostWebSite/internal/models"
 	"AlgoBoostWebSite/internal/utils"
 
@@ -236,6 +237,7 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 		utils.WriteJSON(w, http.StatusOK, true, "login successful", map[string]string{
 			"token":   token,
 			"user_id": strconv.Itoa(user.ID),
+			"name":    user.Name,
 			"role":    user.Role,
 		})
 	}
@@ -243,7 +245,11 @@ func LoginHandler(db *database.Database) http.HandlerFunc {
 
 func GetAllLessonsHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID := r.Context().Value("userID").(int)
+		userID, ok := middleware.GetUserIDFromContext(r.Context())
+		if !ok {
+			utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
+			return
+		}
 
 		lessons, err := db.GetAllLessonsWithTasks(userID)
 		if err != nil {
@@ -324,8 +330,14 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// write the message to kafka
+	userID, ok := middleware.GetUserIDFromContext(r.Context())
+	if !ok {
+		utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
+		return
+	}
+
 	err = kafkaWriter.WriteMessages(context.Background(), kafka.Message{
-		Key:   []byte(r.Context().Value("userID").(string)),
+		Key:   []byte(strconv.Itoa(userID)),
 		Value: value,
 	})
 	if err != nil {
@@ -338,26 +350,34 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, true, "code submitted successfully", nil)
 }
 func GetCurrentUserHandler(db *database.Database) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-        userIDRaw := r.Context().Value("userID")
-        userID, ok := userIDRaw.(int)
-        if !ok {
-            utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
-            return
-        }
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, ok := middleware.GetUserIDFromContext(r.Context())
+		if !ok {
+			utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
+			return
+		}
 
-        email, err := db.GetUserEmailByID(userID)
-        if err != nil {
-            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to get user email: "+err.Error(), nil)
-            return
-        }
+		// Get user info from whitelist (includes role)
+		email, err := db.GetUserEmailByID(userID)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to get user email: "+err.Error(), nil)
+			return
+		}
 
-        whitelistEntry, err := db.IsEmailWhitelisted(email)
-        if err != nil {
-            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch whitelist info: "+err.Error(), nil)
-            return
-        }
+		whitelistEntry, err := db.IsEmailWhitelisted(email)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch whitelist info: "+err.Error(), nil)
+			return
+		}
 
-        utils.WriteJSON(w, http.StatusOK, true, "user info fetched successfully", whitelistEntry)
-    }
+		// Return user data with role
+		userData := map[string]interface{}{
+			"id":    userID,
+			"email": whitelistEntry.Email,
+			"name":  whitelistEntry.Name,
+			"role":  whitelistEntry.Role,
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "user info fetched successfully", userData)
+	}
 }
