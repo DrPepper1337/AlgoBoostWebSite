@@ -160,7 +160,7 @@ const handleLogin = async (e) => {
               </a>
             </div>
             <button type="submit" className="btn">Login</button>
-            <div className="register-link">
+            <div className="register-login-link">
               <p>Don't have an account? <a href="#" onClick={(e) => { e.preventDefault();  navigate('/login?mode=register'); }}> Register</a></p>
             </div>
           </form>
@@ -190,7 +190,12 @@ const handleLogin = async (e) => {
               />
               <FaLock className="icon" />
             </div>
+            
             <button type="submit" className="btn">Register</button>
+
+            <div className="register-login-link">
+              <p>Already have an account? <a href="#" onClick={(e) => { e.preventDefault();  navigate('/login?mode=login'); }}> Login</a></p>
+            </div>
 
           </form>
         )}

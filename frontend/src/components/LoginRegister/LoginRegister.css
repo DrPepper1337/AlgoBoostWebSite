@@ -119,20 +119,20 @@ form button {
     font-weight: 700;
 }
 
-form .register-link {
+form .register-login-link {
     font-size: 14.5px;
     text-align: center;
     margin: 20px 0 15px;
 }
 
-.register-link p a{
+.register-login-link p a{
     color: black;
     text-decoration: none;
     text-decoration: none;
     font-weight: 600;
 }
 
- .register-link p a:hover {
+.register-login-link p a:hover {
     text-decoration: underline;
 }
 
