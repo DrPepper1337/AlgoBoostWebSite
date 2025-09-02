@@ -38,11 +38,19 @@ func SetupRoutes(db *database.Database) http.Handler {
 	r.With(middleware.AdminMiddleware).Post("/api/admin/add-task-to-lesson", AddTaskToLessonHandler(db))
 	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-task-from-lesson", DeleteTaskFromLessonHandler(db))
 	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-lesson", DeleteLessonHandler(db))
-	// // r.With(middleware.AdminMiddleware).Post("/api/admin/edit-lesson", EditLessonHandler(db))
 
 	r.With(middleware.AdminMiddleware).Post("/api/admin/add-task", AddTaskHandler(db))
 	r.With(middleware.AdminMiddleware).Post("/api/admin/edit-task", EditTaskHandler(db))
 	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-task", DeleteTaskHandler(db))
+
+	r.With(middleware.AdminMiddleware).Get("/api/admin/admins", GetAdminsHandler(db))
+	r.With(middleware.AdminMiddleware).Get("/api/admin/members", GetMembersHandler(db))
+	r.With(middleware.AdminMiddleware).Get("/api/admin/whitelist", GetWhitelistHandler(db))
+
+	r.With(middleware.AdminMiddleware).Post("/api/admin/edit-user", EditUserHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-user", DeleteUserHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/add-email-to-whitelist", AddEmailToWhitelistHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-email-from-whitelist", DeleteEmailFromWhitelistHandler(db))
 
 	return r
 }

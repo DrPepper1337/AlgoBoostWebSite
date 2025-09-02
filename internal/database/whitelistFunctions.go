@@ -41,20 +41,63 @@ func (db *Database) IsEmailWhitelisted(email string) (models.Whitelist, error) {
 }
 
 func (db *Database) GetUserEmailByID(userID int) (string, error) {
-    psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-    sql, args, err := psql.Select("email").From("users").Where(sq.Eq{"id": userID}).ToSql()
-    if err != nil {
-        return "", err
-    }
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Select("email").From("users").Where(sq.Eq{"id": userID}).ToSql()
+	if err != nil {
+		return "", err
+	}
 
-    var email string
-    err = db.Postgres.QueryRow(context.Background(), sql, args...).Scan(&email)
-    if err != nil {
-        if errors.Is(err, pgx.ErrNoRows) {
-            return "", errors.New("user not found")
-        }
-        return "", err
-    }
+	var email string
+	err = db.Postgres.QueryRow(context.Background(), sql, args...).Scan(&email)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return "", errors.New("user not found")
+		}
+		return "", err
+	}
 
-    return email, nil
+	return email, nil
+}
+
+func (db *Database) DeleteEmailFromWhitelist(email string) error {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Delete("whitelist").Where(sq.Eq{"email": email}).ToSql()
+	if err != nil {
+		return err
+	}
+	cmdTag, err := db.Postgres.Exec(context.Background(), sql, args...)
+	if err != nil {
+		return errors.New("deleting email from whitelist failed")
+	}
+	if cmdTag.RowsAffected() == 0 {
+		return errors.New("email not found in whitelist")
+	}
+	return nil
+}
+
+func (db *Database) GetWhitelist() ([]models.Whitelist, error) {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Select("id", "email", "name", "role").From("whitelist").ToSql()
+	if err != nil {
+		return nil, err
+	}
+	rows, err := db.Postgres.Query(context.Background(), sql, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var whitelist []models.Whitelist
+	for rows.Next() {
+		var w models.Whitelist
+		err := rows.Scan(&w.ID, &w.Email, &w.Name, &w.Role)
+		if err != nil {
+			return nil, err
+		}
+		whitelist = append(whitelist, w)
+	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
+	}
+	return whitelist, nil
 }

@@ -40,15 +40,18 @@ func (db *Database) DeleteUser(id int) error {
 	return nil
 }
 
-func (db *Database) EditUser(id int, name string, email string, password string, role string) error {
+func (db *Database) EditUser(id int, property string, value interface{}) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	sql, args, err := psql.Update("users").Set("name", name).Set("email", email).Set("password", password).Set("role", role).Where(sq.Eq{"id": id}).ToSql()
+	sql, args, err := psql.Update("users").Set(property, value).Where(sq.Eq{"id": id}).ToSql()
 	if err != nil {
 		return err
 	}
 	row := db.Postgres.QueryRow(context.Background(), sql, args...)
 	var result interface{}
 	err = row.Scan(&result)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -86,7 +89,7 @@ func (db *Database) GetUserByEmail(email string) (models.User, error) {
 	var result models.User
 	err = row.Scan(&result.ID, &result.Name, &result.Email, &result.Password, &result.Role)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return models.User{}, nil // user not found
+		return models.User{}, nil
 	}
 	return result, err
 }
@@ -103,4 +106,60 @@ func (db *Database) LoginUser(email, password string) (models.User, error) {
 
 	return user, nil
 
+}
+
+func (db *Database) GetMembers() ([]models.User, error) {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Select("id", "name", "email", "role").From("users").Where(sq.Eq{"role": "member"}).ToSql()
+	if err != nil {
+		return nil, err
+	}
+	rows, err := db.Postgres.Query(context.Background(), sql, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []models.User
+	for rows.Next() {
+		var user models.User
+		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Role)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
+	}
+
+	return users, nil
+}
+
+func (db *Database) GetAdmins() ([]models.User, error) {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Select("id", "name", "email", "role").From("users").Where(sq.Eq{"role": "admin"}).ToSql()
+	if err != nil {
+		return nil, err
+	}
+	rows, err := db.Postgres.Query(context.Background(), sql, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []models.User
+	for rows.Next() {
+		var user models.User
+		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Role)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	if rows.Err() != nil {
+		return nil, rows.Err()
+	}
+
+	return users, nil
 }

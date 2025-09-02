@@ -198,3 +198,158 @@ func DeleteTaskHandler(db *database.Database) http.HandlerFunc {
 		utils.WriteJSON(w, http.StatusOK, true, "task with ID "+strconv.Itoa(data.TaskID)+" deleted successfully", nil)
 	}
 }
+
+func GetAdminsHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		admins, err := db.GetAdmins()
+		if err != nil {
+			zap.L().Error("Error fetching admins:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch admins", nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "admins fetched successfully", admins)
+	}
+}
+
+func GetMembersHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		members, err := db.GetMembers()
+		if err != nil {
+			zap.L().Error("Error fetching members:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch members", nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "members fetched successfully", members)
+	}
+}
+
+func GetWhitelistHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		whitelist, err := db.GetWhitelist()
+		if err != nil {
+			zap.L().Error("Error fetching whitelist:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch whitelist", nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "whitelist fetched successfully", whitelist)
+	}
+}
+
+func EditUserHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type userData struct {
+			UserID   int    `json:"user_id"`
+			Property string `json:"property"`
+			Value    string `json:"value"`
+		}
+		var data userData
+		err := json.NewDecoder(r.Body).Decode(&data)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+			return
+		}
+
+		if data.UserID == 0 || data.Property == "" || data.Value == "" {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "user_id, property, and value are required", nil)
+			return
+		}
+
+		err = db.EditUser(data.UserID, data.Property, data.Value)
+		if err != nil {
+			zap.L().Error("Error editing user:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to edit user: "+err.Error(), nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "user with ID "+strconv.Itoa(data.UserID)+" edited successfully", nil)
+	}
+}
+
+func DeleteUserHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type userData struct {
+			UserID int `json:"user_id"`
+		}
+		var data userData
+		err := json.NewDecoder(r.Body).Decode(&data)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+			return
+		}
+
+		if data.UserID == 0 {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "user_id is required", nil)
+			return
+		}
+
+		err = db.DeleteUser(data.UserID)
+		if err != nil {
+			zap.L().Error("Error deleting user:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to delete user: "+err.Error(), nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "user with ID "+strconv.Itoa(data.UserID)+" deleted successfully", nil)
+	}
+}
+
+func AddEmailToWhitelistHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type emailData struct {
+			Email string `json:"email"`
+			Name  string `json:"name"`
+			Role  string `json:"role"`
+		}
+		var data emailData
+		err := json.NewDecoder(r.Body).Decode(&data)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+			return
+		}
+
+		if data.Email == "" {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "email is required", nil)
+			return
+		}
+
+		err = db.AddEmailToWhitelist(data.Email, data.Name, data.Role)
+		if err != nil {
+			zap.L().Error("Error adding email to whitelist:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to add email to whitelist: "+err.Error(), nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "email "+data.Email+" added to whitelist successfully", nil)
+	}
+}
+
+func DeleteEmailFromWhitelistHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type emailData struct {
+			Email string `json:"email"`
+		}
+		var data emailData
+		err := json.NewDecoder(r.Body).Decode(&data)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+			return
+		}
+
+		if data.Email == "" {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "email is required", nil)
+			return
+		}
+
+		err = db.DeleteEmailFromWhitelist(data.Email)
+		if err != nil {
+			zap.L().Error("Error deleting email from whitelist:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to delete email from whitelist: "+err.Error(), nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "email "+data.Email+" deleted from whitelist successfully", nil)
+	}
+}
