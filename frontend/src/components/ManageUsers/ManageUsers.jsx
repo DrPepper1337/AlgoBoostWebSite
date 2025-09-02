@@ -35,24 +35,56 @@ export default function ManageUsers() {
             const token = localStorage.getItem('authToken');
             if (!token) return;
 
+            // Get original data to compare changes
+            const originalUser = [...admins, ...members].find(u => u.id === userId);
+            if (!originalUser) {
+                alert('User not found');
+                return;
+            }
 
-            const prop = editData.name.trim() ? 'name' : 'role';
-            const value = editData.name.trim() ? editData.name.trim() : editData.role.toLowerCase();
+            const updates = [];
 
-            const response = await axios.post('http://localhost:8080/api/admin/edit-user', {
-                user_id: userId,
-                property: prop,
-                value: value
-            }, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            // Check if name changed
+            if (editData.name.trim() !== originalUser.name) {
+                updates.push({
+                    property: 'name',
+                    value: editData.name.trim()
+                });
+            }
 
-            if (response.data.success) {
-                alert('User updated successfully');
+            // Check if role changed
+            if (editData.role.toLowerCase() !== originalUser.role) {
+                updates.push({
+                    property: 'role',
+                    value: editData.role.toLowerCase()
+                });
+            }
+
+            if (updates.length === 0) {
+                alert('No changes detected');
                 setEditingUser(null);
                 setEditData({});
-                fetchAllData();
+                return;
             }
+
+            for (const update of updates) {
+                const response = await axios.post('http://localhost:8080/api/admin/edit-user', {
+                    user_id: userId,
+                    property: update.property,
+                    value: update.value
+                }, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (!response.data.success) {
+                    throw new Error(`Failed to update ${update.property}`);
+                }
+            }
+
+            alert('User updated successfully');
+            setEditingUser(null);
+            setEditData({});
+            fetchAllData();
         } catch (error) {
             console.error('Failed to edit user:', error);
             alert('Failed to edit user: ' + (error.response?.data?.message || error.message));
@@ -193,7 +225,7 @@ export default function ManageUsers() {
                                         <input
                                             type="text"
                                             value={editData.name}
-                                            onChange={(e) => setEditData({...editData, name: e.target.value})}
+                                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                                             className="edit-input"
                                         />
                                     ) : (
@@ -205,7 +237,7 @@ export default function ManageUsers() {
                                     {editingUser === a.id ? (
                                         <select
                                             value={editData.role}
-                                            onChange={(e) => setEditData({...editData, role: e.target.value})}
+                                            onChange={(e) => setEditData({ ...editData, role: e.target.value })}
                                             className="edit-select"
                                         >
                                             <option value="admin">admin</option>
@@ -266,7 +298,7 @@ export default function ManageUsers() {
                                         <input
                                             type="text"
                                             value={editData.name}
-                                            onChange={(e) => setEditData({...editData, name: e.target.value})}
+                                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                                             className="edit-input"
                                         />
                                     ) : (
@@ -278,7 +310,7 @@ export default function ManageUsers() {
                                     {editingUser === m.id ? (
                                         <select
                                             value={editData.role}
-                                            onChange={(e) => setEditData({...editData, role: e.target.value})}
+                                            onChange={(e) => setEditData({ ...editData, role: e.target.value })}
                                             className="edit-select"
                                         >
                                             <option value="admin">admin</option>
@@ -339,7 +371,7 @@ export default function ManageUsers() {
                                         <input
                                             type="text"
                                             value={editData.name}
-                                            onChange={(e) => setEditData({...editData, name: e.target.value})}
+                                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                                             className="edit-input"
                                         />
                                     ) : (
@@ -351,7 +383,7 @@ export default function ManageUsers() {
                                     {editingWhitelist === w.id ? (
                                         <select
                                             value={editData.role}
-                                            onChange={(e) => setEditData({...editData, role: e.target.value})}
+                                            onChange={(e) => setEditData({ ...editData, role: e.target.value })}
                                             className="edit-select"
                                         >
                                             <option value="admin">admin</option>

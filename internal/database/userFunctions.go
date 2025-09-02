@@ -46,12 +46,17 @@ func (db *Database) EditUser(id int, property string, value interface{}) error {
 	if err != nil {
 		return err
 	}
-	row := db.Postgres.QueryRow(context.Background(), sql, args...)
-	var result interface{}
-	err = row.Scan(&result)
+
+	result, err := db.Postgres.Exec(context.Background(), sql, args...)
 	if err != nil {
 		return err
 	}
+
+	rowsAffected := result.RowsAffected()
+	if rowsAffected == 0 {
+		return errors.New("no rows updated - user may not exist")
+	}
+
 	return nil
 }
 
@@ -61,9 +66,17 @@ func (db *Database) UpdateUserPassword(id int, newPassword string) error {
 	if err != nil {
 		return err
 	}
-	row := db.Postgres.QueryRow(context.Background(), sql, args...)
-	var result interface{}
-	err = row.Scan(&result)
+
+	result, err := db.Postgres.Exec(context.Background(), sql, args...)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected := result.RowsAffected()
+	if rowsAffected == 0 {
+		return errors.New("no rows updated - user may not exist")
+	}
+
 	return nil
 }
 
