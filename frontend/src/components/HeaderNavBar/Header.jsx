@@ -1,14 +1,14 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { FaUser, FaChevronRight } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa';
 import './Header.css';
 import '../../styles/Global.css';
 import DropDownProfile from '../DropDownProfile/DropDownProfile';
 
 export default function Header() {
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, deleteUserDataFromLocalStorage } = useAuth();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const location = useLocation();
@@ -96,7 +96,7 @@ export default function Header() {
                 <button className="navbarLink admin-link" onClick={() => { navigate('/admin/manage-lessons'); handleLinkClick(); }}>Manage Lessons</button>
               </>
             )}
-            <button className="navbarLink" id="logout" onClick={() => { logout(); navigate('/'); handleLinkClick(); }}>Logout</button>
+            <button className="navbarLink" id="logout" onClick={() => { deleteUserDataFromLocalStorage(); navigate('/'); handleLinkClick(); }}>Logout</button>
           </nav>
         )}
       </div>

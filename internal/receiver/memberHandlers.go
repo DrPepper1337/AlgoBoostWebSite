@@ -349,35 +349,3 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	zap.L().Info("code submitted to Kafka for task", zap.String("taskID", strconv.Itoa(req.TaskID)))
 	utils.WriteJSON(w, http.StatusOK, true, "code submitted successfully", nil)
 }
-func GetCurrentUserHandler(db *database.Database) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		userID, ok := middleware.GetUserIDFromContext(r.Context())
-		if !ok {
-			utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
-			return
-		}
-
-		// Get user info from whitelist (includes role)
-		email, err := db.GetUserEmailByID(userID)
-		if err != nil {
-			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to get user email: "+err.Error(), nil)
-			return
-		}
-
-		whitelistEntry, err := db.IsEmailWhitelisted(email)
-		if err != nil {
-			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch whitelist info: "+err.Error(), nil)
-			return
-		}
-
-		// Return user data with role
-		userData := map[string]interface{}{
-			"id":    userID,
-			"email": whitelistEntry.Email,
-			"name":  whitelistEntry.Name,
-			"role":  whitelistEntry.Role,
-		}
-
-		utils.WriteJSON(w, http.StatusOK, true, "user info fetched successfully", userData)
-	}
-}

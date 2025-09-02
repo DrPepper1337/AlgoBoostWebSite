@@ -6,7 +6,7 @@ import { FaLock, FaEnvelope } from "react-icons/fa";
 const LoginRegister = () => {
 
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { saveUserDataInLocalStorage } = useAuth();
 
   const [isRegistering, setIsRegistering] = useState(false);
 
@@ -79,7 +79,7 @@ const handleLogin = async (e) => {
       throw new Error('Login failed: token not found');
     }
 
-    login(token, userData);
+    saveUserDataInLocalStorage(token, userData);
     navigate('/memberHub');
   } catch (error) {
     alert(error.message);

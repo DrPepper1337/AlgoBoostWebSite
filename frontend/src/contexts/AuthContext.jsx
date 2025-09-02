@@ -53,14 +53,14 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const login = (token, userData) => {
+  const saveUserDataInLocalStorage = (token, userData) => {
     localStorage.setItem('authToken', token);
     localStorage.setItem('userData', JSON.stringify(userData));
     setUser(userData);
     setIsAuthenticated(true);
   };
 
-  const logout = () => {
+  const deleteUserDataFromLocalStorage = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
     setUser(null);
@@ -70,8 +70,8 @@ export const AuthProvider = ({ children }) => {
   const value = {
     isAuthenticated,
     user,
-    login,
-    logout,
+    saveUserDataInLocalStorage,
+    deleteUserDataFromLocalStorage,
     loading
   };
 
