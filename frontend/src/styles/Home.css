@@ -244,22 +244,75 @@ section#events {
 
 /* documents section */
 section#documents {
-  background: var(--orange-ombre);
-  color: var(--black-bg-text);
-  padding: clamp(3rem, 6vw, 5rem) 2rem;
-  height: 100vh;
-  text-align: center;
+    background: var(--orange-ombre);
+    color: var(--black-bg-text);
+    padding: clamp(3rem, 6vw, 5rem) 2rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow-x: hidden;
+}
+
+section#documents h1 {
+    font-size: clamp(2.5rem, 10vw, 4.5rem);
+    max-width: 100%;
 }
 
 .docs-container {
-  flex-direction: row;
-  display: flex;
-  margin-top: 2rem;
-  height: 70%;
-  align-items: center;
-  justify-content: center;
-  gap: 5rem;
+    display: grid;
+    grid-template-columns: repeat(2, clamp(540px, 46vw, 700px));
+    grid-auto-rows: 1fr;
+    gap: 0;
+    align-items: center;
+    justify-items: center;
+    width: 100%;
 }
+
+.docs-container > * {
+    min-height: 400px;
+    background: #3a2e24;
+    color: #eaeaea;
+    padding: 2rem;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    box-sizing: border-box;
+}
+
+.docs-container > .doc-card {
+  max-width: 400px;
+  padding: 1px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+    /* Switch to a single, centered column */
+    .docs-container {
+        grid-template-columns: 1fr !important;
+        place-items: center !important;
+        gap: 2rem;
+    }
+
+    .docs-container > * {
+        width: 80% !important;
+        min-height: 220px;
+        max-height: 220px;
+        padding: 0rem 6rem 0rem 6rem !important;
+    }
+
+    /* Force the descriptive text to be hidden */
+    .docs-container > * p {
+        display: none !important;
+    }
+}
+
 
 /* old css */
 
