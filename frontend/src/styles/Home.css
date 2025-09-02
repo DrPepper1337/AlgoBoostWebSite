@@ -58,19 +58,18 @@ section#top {
 }
 
 .square {
-  background: var(--orange-ombre);
-  opacity: 1;
-  z-index: 1;
-  /* border-radius: 10px; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  transform-style: preserve-3d;
-  max-width: 35rem;
-  max-height: 24rem;
-  transform: translateY(10%);
-
+    background: var(--orange-ombre);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    transform-style: preserve-3d;
+    width: 70vw; /* Use viewport width for responsive scaling */
+    max-width: 35rem;
+    height: 48vw; /* Maintain aspect ratio */
+    max-height: 24rem;
+    position: relative;
+    top: 6%; /* Adjust vertical position */
 }
 
 .square p {
@@ -95,13 +94,33 @@ section#top {
 }
 
 .big-logo {
-  position: absolute;
-  top: 19%;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  width: 25%;
-  mix-blend-mode: difference;
+    position: absolute;
+    z-index: 2;
+    width: 50vw; /* Logo scales with the viewport */
+    max-width: 25rem; /* Set a max-width for large screens */
+    top: 40%; /* Center vertically relative to the square */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: difference;
+}
+
+/* Media Query for Mobile Devices */
+@media (max-width: 768px) {
+    .square {
+        width: 90vw; /* Increase width on smaller screens */
+        height: 60vw; /* Adjust height to maintain aspect ratio */
+        top: 5%; /* Adjust position */
+    }
+
+    .big-logo {
+        width: 65vw;
+        top: 35%;
+    }
+
+    .square p {
+        font-size: 1rem; /* Adjust font size for readability */
+        transform: translateY(15%);
+    }
 }
 
 .maintext {
@@ -316,13 +335,7 @@ section#documents {
   }
 }
 
-.menu-line {
-  transition: transform 0.3s ease-out;
-}
 
-.menu-button:hover {
-  stroke: #ff9500;
-}
 
 .a-container {
   text-align: center;
