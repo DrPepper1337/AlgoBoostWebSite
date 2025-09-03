@@ -24,20 +24,18 @@
 }
 
 .user-card {
-  display: grid;
-  grid-template-columns: auto, auto;
-  align-items: center;
-  gap: 1px;
-
   background: #2a2a2a;
   border: 1px solid #444;
   border-radius: 12px;
-  padding: 1rem;
-  width: 90%;
-  max-height: 5rem;
+  padding: 1.5rem;
+  width: calc(100% - 20px);
   min-width: 300px;
+  height: 60px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transition: transform 0.5s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease;
 }
 
 .user-card:hover {
@@ -46,26 +44,46 @@
 }
 
 .user-info {
-  justify-self: start;
   display: flex;
   flex-direction: row;
-  gap: 5rem
+  flex: 1;
+  align-items: center;
 }
 
 .user-info p {
   margin: 8px 0;
   color: #cfcfcf;
+  flex: 1;
+  min-width: 150px;
+}
+
+.user-info p:first-child {
+  flex: 2;
+  min-width: 200px;
+}
+
+.user-info p:nth-child(2) {
+  flex: 2;
+  min-width: 180px;
+}
+
+.user-info p:last-child {
+  flex: 1;
+  min-width: 120px;
 }
 
 .edit-input {
   background: #1c1c1c;
   border: 1px solid #ff7a0a;
-  border-radius: 6px;
+  border-radius: 4px;
   color: #eaeaea;
-  padding: 4px 8px;
-  margin-left: 10px;
+  padding: 2px 6px;
+  margin: 0;
+  margin-left: 8px;
   font-size: 14px;
-  width: 150px;
+  width: 120px;
+  height: 20px;
+  box-sizing: border-box;
 }
 
 .edit-input:focus {
@@ -76,12 +94,16 @@
 
 .edit-select {
   background: #1c1c1c;
-  border-radius: 6px;
+  border: 1px solid #ff7a0a;
+  border-radius: 4px;
   color: #eaeaea;
-  padding: 4px 8px;
-  margin-left: 10px;
+  padding: 2px 6px;
+  margin: 0;
+  margin-left: 8px;
   font-size: 14px;
-  /* width: 100px; */
+  width: 100px;
+  height: 24px;
+  box-sizing: border-box;
 }
 
 .edit-select:focus {
@@ -95,10 +117,10 @@
 }
 
 .user-actions {
-  justify-self: end;
   display: flex;
   flex-direction: row;
   gap: 8px;
+  margin-left: 1rem;
 }
 
 .edit-btn,

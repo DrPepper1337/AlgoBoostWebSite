@@ -11,6 +11,7 @@ export default function ManageUsers() {
     const [editingId, setEditingId] = useState(null);
     const [editingType, setEditingType] = useState(null);
     const [editData, setEditData] = useState({});
+    const [addData, setAddData] = useState({role: "admin"});
 
     const startEditing = (id, type, EntryData) => {
         setEditingId(id);
@@ -143,6 +144,36 @@ export default function ManageUsers() {
         }
     };
 
+    const addEmailToWhitelist = async (email, name, role) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+
+        if ( !name || !role) {
+            alert('Please fill in all the fields');
+            return;
+        }
+
+        try {
+            const response = await axios.post('http://localhost:8080/api/admin/add-email-to-whitelist', {
+                email: email,
+                name: name,
+                role: role
+            }, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+
+            if (response.data.success) {
+                alert('Email added successfully');
+                setAddData({})
+                fetchAllData();
+            }
+
+            return;
+        } catch (error) {
+            console.error(`Failed to add ${email} to whitelist:`, error);
+        }
+    }
+
     useEffect(() => {
         fetchAllData();
     }, []);
@@ -158,7 +189,7 @@ export default function ManageUsers() {
                     admins.map((a) => (
                         <div key={a.id} className="admin-card user-card">
                             <div className="user-info">
-                                <p><strong>Name:</strong>
+                                <p><strong>Name: </strong>
                                     {editingId === a.id && editingType === "user" ? (
                                         <input
                                             type="text"
@@ -170,8 +201,8 @@ export default function ManageUsers() {
                                         a.name || 'N/A'
                                     )}
                                 </p>
-                                <p><strong>Email:</strong> {a.email}</p>
-                                <p><strong>Role:</strong>
+                                <p><strong>Email: </strong> {a.email}</p>
+                                <p><strong>Role: </strong>
                                     {editingId === a.id && editingType === "user" ? (
                                         <select
                                             value={editData.role}
@@ -231,7 +262,7 @@ export default function ManageUsers() {
                     members.map((m) => (
                         <div key={m.id} className="member-card user-card">
                             <div className="user-info">
-                                <p><strong>Name:</strong>
+                                <p><strong>Name: </strong>
                                     {editingId === m.id && editingType === "user" ? (
                                         <input
                                             type="text"
@@ -243,8 +274,8 @@ export default function ManageUsers() {
                                         m.name || 'N/A'
                                     )}
                                 </p>
-                                <p><strong>Email:</strong> {m.email}</p>
-                                <p><strong>Role:</strong>
+                                <p><strong>Email: </strong> {m.email}</p>
+                                <p><strong>Role: </strong>
                                     {editingId === m.id && editingType === "user" ? (
                                         <select
                                             value={editData.role}
@@ -285,7 +316,7 @@ export default function ManageUsers() {
                                         </button>
                                         <button
                                             className="delete-btn"
-                                            onClick={() => handleDelete(m.id, m.name,"user")}
+                                            onClick={() => handleDelete(m.id, m.name, "user")}
                                         >
                                             Delete
                                         </button>
@@ -304,7 +335,7 @@ export default function ManageUsers() {
                     whitelist.map((w) => (
                         <div key={w.id} className="whitelist-card user-card">
                             <div className="user-info">
-                                <p><strong>Name:</strong>
+                                <p><strong>Name: </strong>
                                     {editingId === w.id && editingType === "whitelist" ? (
                                         <input
                                             type="text"
@@ -316,8 +347,8 @@ export default function ManageUsers() {
                                         w.name || 'N/A'
                                     )}
                                 </p>
-                                <p><strong>Email:</strong> {w.email}</p>
-                                <p><strong>Role:</strong>
+                                <p><strong>Email: </strong> {w.email}</p>
+                                <p><strong>Role: </strong>
                                     {editingId === w.id && editingType === "whitelist" ? (
                                         <select
                                             value={editData.role}
@@ -368,6 +399,44 @@ export default function ManageUsers() {
                         </div>
                     ))
                 )}
+            </div>
+
+            <div className="whitelist-card user-card">
+                <div className="user-info">
+                    <p><strong>Name: </strong>
+                        <input
+                            type="text"
+                            value={addData.name}
+                            onChange={(e) => setAddData({ ...addData, name: e.target.value })}
+                            className="edit-input"
+                        />
+                    </p>
+
+                    <p><strong>Email: </strong>
+                        <input
+                            type="text"
+                            value={addData.email}
+                            onChange={(e) => setAddData({ ...addData, email: e.target.value })}
+                            className="edit-input"
+                        />
+                    </p>
+
+                    <p><strong>Role: </strong>
+                        <select
+                            value={addData.role}
+                            onChange={(e) => setAddData({ ...addData, role: e.target.value })}
+                            className="edit-select"
+                        >
+                            <option value="admin">admin</option>
+                            <option value="member">member</option>
+                        </select>
+                    </p>
+
+                    <button
+                        className="add-btn"
+                        onClick={() => addEmailToWhitelist(addData.email, addData.name, addData.role)}
+                    >Add</button>
+                </div>
             </div>
         </div>
     )
