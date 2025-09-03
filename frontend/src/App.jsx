@@ -10,7 +10,7 @@ import PasswordResetSuccess from './components/LoginRegister/PasswordResetSucces
 import MemberHub from './components/MemberHub/MemberHub';
 import UserProfile from './components/UserProfile/UserProfileTemp';
 import ManageUsers from './components/ManageUsers/ManageUsers';
-// import ManageLessons from './components/ManageLessons/ManageLessons';
+import ManageLessons from './components/ManageLessons/ManageLessons';
 import './styles/App.css';
 import Home from './Home';
 import Header from './components/HeaderNavBar/Header';
@@ -66,12 +66,12 @@ function App() {
         </Route>
 
         {/* Admin Routes */}
-        <Route path="admin/manageLessons" element={
+        <Route path="/manageLessons" element={
           <AdminRoute>
-            {/* <ManageLessons /> */}
+            <ManageLessons />
           </AdminRoute>
         } />
-        <Route path="admin/manageUsers" element={
+        <Route path="/manageUsers" element={
           <AdminRoute>
             <ManageUsers />
           </AdminRoute>

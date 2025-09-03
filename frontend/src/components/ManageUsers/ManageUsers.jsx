@@ -1,8 +1,8 @@
 import "./ManageUsers.css";
 import HeaderNavBar from "../HeaderNavBar/Header";
-import { useState } from "react";
-import { useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import axios from 'axios';
+
 
 export default function ManageUsers() {
     const [admins, setAdmins] = useState([]);

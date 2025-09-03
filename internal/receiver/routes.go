@@ -39,7 +39,7 @@ func SetupRoutes(db *database.Database) http.Handler {
 	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-task-from-lesson", DeleteTaskFromLessonHandler(db))
 	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-lesson", DeleteLessonHandler(db))
 
-	r.With(middleware.AdminMiddleware).Post("/api/admin/add-task", AddTaskHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/add-task", AddTaskHandler(db)) //task creation 
 	r.With(middleware.AdminMiddleware).Post("/api/admin/edit-task", EditTaskHandler(db))
 	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-task", DeleteTaskHandler(db))
 

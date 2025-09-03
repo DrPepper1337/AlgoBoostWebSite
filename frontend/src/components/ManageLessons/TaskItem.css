@@ -1,0 +1,9 @@
+.task-item {
+    margin: 6px 0;
+    padding-left: 5px;
+    font-size: 1rem;
+}
+
+.task-title {
+    font-weight: 500;
+}

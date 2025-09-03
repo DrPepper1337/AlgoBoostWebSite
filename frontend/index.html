@@ -5,22 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AlgoBoost</title>
 
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="/small-logo-black.svg"
-      media="(prefers-color-scheme: light)"
-      />
+  <!-- Default to icon -->
+<link rel="icon" type="image/png" href="/favicon-black/favicon-96x96.png" id="dynamic-favicon">
 
-      <!-- href="/narrower-black-logo.svg" -->
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="/small-logo-white.svg"
-      media="(prefers-color-scheme: dark)"
-      />
-    </head>
-    <!-- href="/narrower-white-logo.svg" -->
+<script>
+  function setFaviconForTheme() {
+    const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const favicon = document.getElementById('dynamic-favicon');
+
+    if (isDark) {
+      favicon.href = '/favicon-white/favicon-96x96.png';
+    } else {
+      favicon.href = '/favicon-black/favicon-96x96.png';
+    }
+  }
+
+  setFaviconForTheme();
+
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconForTheme);
+  }
+</script>
+
+
+</head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

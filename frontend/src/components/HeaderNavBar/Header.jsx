@@ -92,8 +92,8 @@ export default function Header() {
             <button className="navbarLink" onClick={() => { navigate('/lessons'); handleLinkClick(); }}>Lessons</button>
             {isAdmin && (
               <>
-                <button className="navbarLink admin-link" onClick={() => { navigate('/admin/manageUsers'); handleLinkClick(); }}>Manage Users</button>
-                <button className="navbarLink admin-link" onClick={() => { navigate('/admin/manageLessons'); handleLinkClick(); }}>Manage Lessons</button>
+                <button className="navbarLink admin-link" onClick={() => { navigate('/manageUsers'); handleLinkClick(); }}>Manage Users</button>
+                <button className="navbarLink admin-link" onClick={() => { navigate('/manageLessons'); handleLinkClick(); }}>Manage Lessons</button>
               </>
             )}
             <button className="navbarLink" id="logout" onClick={() => { deleteUserDataFromLocalStorage(); navigate('/'); handleLinkClick(); }}>Logout</button>
