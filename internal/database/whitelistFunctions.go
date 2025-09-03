@@ -59,9 +59,9 @@ func (db *Database) GetUserEmailByID(userID int) (string, error) {
 	return email, nil
 }
 
-func (db *Database) DeleteEmailFromWhitelist(email string) error {
+func (db *Database) DeleteEmailFromWhitelist(id int) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	sql, args, err := psql.Delete("whitelist").Where(sq.Eq{"email": email}).ToSql()
+	sql, args, err := psql.Delete("whitelist").Where(sq.Eq{"id": id}).ToSql()
 	if err != nil {
 		return err
 	}

@@ -241,7 +241,7 @@ func GetWhitelistHandler(db *database.Database) http.HandlerFunc {
 func EditUserHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type userData struct {
-			UserID   int    `json:"user_id"`
+			UserID   int    `json:"id"`
 			Property string `json:"property"`
 			Value    string `json:"value"`
 		}
@@ -271,7 +271,7 @@ func EditUserHandler(db *database.Database) http.HandlerFunc {
 func EditWhitelistHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type whitelistData struct {
-			WhitelistID int    `json:"whitelist_id"`
+			WhitelistID int    `json:"id"`
 			Property    string `json:"property"`
 			Value       string `json:"value"`
 		}
@@ -302,7 +302,7 @@ func EditWhitelistHandler(db *database.Database) http.HandlerFunc {
 func DeleteUserHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type userData struct {
-			UserID int `json:"user_id"`
+			UserID int `json:"id"`
 		}
 		var data userData
 		err := json.NewDecoder(r.Body).Decode(&data)
@@ -360,7 +360,7 @@ func AddEmailToWhitelistHandler(db *database.Database) http.HandlerFunc {
 func DeleteEmailFromWhitelistHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type emailData struct {
-			Email string `json:"email"`
+			Id int `json:"id"`
 		}
 		var data emailData
 		err := json.NewDecoder(r.Body).Decode(&data)
@@ -369,18 +369,18 @@ func DeleteEmailFromWhitelistHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		if data.Email == "" {
-			utils.WriteJSON(w, http.StatusBadRequest, false, "email is required", nil)
+		if data.Id < 0 {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "id is required", nil)
 			return
 		}
 
-		err = db.DeleteEmailFromWhitelist(data.Email)
+		err = db.DeleteEmailFromWhitelist(data.Id)
 		if err != nil {
 			zap.L().Error("Error deleting email from whitelist:", zap.Error(err))
 			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to delete email from whitelist: "+err.Error(), nil)
 			return
 		}
 
-		utils.WriteJSON(w, http.StatusOK, true, "email "+data.Email+" deleted from whitelist successfully", nil)
+		utils.WriteJSON(w, http.StatusOK, true, "entry deleted from whitelist successfully", nil)
 	}
 }

@@ -8,24 +8,26 @@ export default function ManageUsers() {
     const [admins, setAdmins] = useState([]);
     const [members, setMembers] = useState([]);
     const [whitelist, setWhitelist] = useState([]);
-    const [editingUser, setEditingUser] = useState(null);
-    const [editingWhitelist, setEditingWhitelist] = useState(null);
+    const [editingId, setEditingId] = useState(null);
+    const [editingType, setEditingType] = useState(null);
     const [editData, setEditData] = useState({});
 
-    const startEditingUser = (userId, userData) => {
-        setEditingUser(userId);
+    const startEditing = (id, type, EntryData) => {
+        setEditingId(id);
+        setEditingType(type);
         setEditData({
-            name: userData.name || '',
-            role: userData.role || 'member'
+            name: EntryData.name || '',
+            role: EntryData.role || 'member'
         });
     };
 
-    const cancelEditUser = () => {
-        setEditingUser(null);
+    const cancelEdit = () => {
+        setEditingId(null);
+        setEditingType(null);
         setEditData({});
     };
 
-    const saveEditUser = async (userId) => {
+    const saveEdit = async (id, type) => {
         if (!['admin', 'member'].includes(editData.role.toLowerCase())) {
             alert('Role must be either "admin" or "member"');
             return;
@@ -35,22 +37,22 @@ export default function ManageUsers() {
             const token = localStorage.getItem('authToken');
             if (!token) return;
 
-            const originalUser = [...admins, ...members].find(u => u.id === userId);
-            if (!originalUser) {
-                alert('User not found');
+            const originalData = type === "user" ? ([...admins, ...members].find(u => u.id === id)) : ([...whitelist].find(u => u.id === id));
+            if (!originalData) {
+                alert('Entry not found');
                 return;
             }
 
             const updates = [];
 
-            if (editData.name.trim() !== originalUser.name) {
+            if (editData.name.trim() !== originalData.name) {
                 updates.push({
                     property: 'name',
                     value: editData.name.trim()
                 });
             }
 
-            if (editData.role.toLowerCase() !== originalUser.role) {
+            if (editData.role.toLowerCase() !== originalData.role) {
                 updates.push({
                     property: 'role',
                     value: editData.role.toLowerCase()
@@ -59,14 +61,16 @@ export default function ManageUsers() {
 
             if (updates.length === 0) {
                 alert('No changes detected');
-                setEditingUser(null);
+                setEditingId(null);
+                setEdititngType(null);
                 setEditData({});
                 return;
             }
 
             for (const update of updates) {
-                const response = await axios.post('http://localhost:8080/api/admin/edit-user', {
-                    user_id: userId,
+                const endpoint = type === "user" ? 'http://localhost:8080/api/admin/edit-user' : 'http://localhost:8080/api/admin/edit-whitelist'
+                const response = await axios.post(endpoint, {
+                    id: id,
                     property: update.property,
                     value: update.value
                 }, {
@@ -79,134 +83,38 @@ export default function ManageUsers() {
             }
 
             alert('User updated successfully');
-            setEditingUser(null);
+            setEditingId(null);
+            setEditingType(null);
             setEditData({});
             fetchAllData();
         } catch (error) {
-            console.error('Failed to edit user:', error);
-            alert('Failed to edit user: ' + (error.response?.data?.message || error.message));
+            console.error('Failed to edit:', error);
+            alert('Failed to edit: ' + (error.response?.data?.message || error.message));
         }
     };
 
-    const handleDeleteUser = async (userId, userName) => {
-        if (!window.confirm(`Are you sure you want to delete user "${userName}"? This action cannot be undone.`)) return;
+    const handleDelete = async (id, userName, type) => {
+        if (!window.confirm(`Are you sure you want to delete "${userName}"? This action cannot be undone.`)) return;
 
         try {
             const token = localStorage.getItem('authToken');
             if (!token) return;
 
-            const response = await axios.post('http://localhost:8080/api/admin/delete-user', {
-                user_id: userId
+            const endpoint = type === "user" ? 'http://localhost:8080/api/admin/delete-user' : 'http://localhost:8080/api/admin/delete-email-from-whitelist'
+
+            const response = await axios.post(endpoint, {
+                id: id
             }, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
             if (response.data.success) {
-                alert('User deleted successfully');
+                alert('Entry deleted successfully');
                 fetchAllData();
             }
         } catch (error) {
-            console.error('Failed to delete user:', error);
-            alert('Failed to delete user: ' + (error.response?.data?.message || error.message));
-        }
-    };
-
-    const handleDeleteFromWhitelist = async (email) => {
-        if (!window.confirm(`Are you sure you want to remove "${email}" from whitelist?`)) return;
-
-        try {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
-            const response = await axios.post('http://localhost:8080/api/admin/delete-email-from-whitelist', {
-                email: email
-            }, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            if (response.data.success) {
-                alert('Email removed from whitelist successfully');
-                fetchAllData();
-            }
-        } catch (error) {
-            console.error('Failed to remove email from whitelist:', error);
-            alert('Failed to remove email: ' + (error.response?.data?.message || error.message));
-        }
-    };
-
-    const startEditingWhitelist = (whitelistId, whitelistData) => {
-        setEditingWhitelist(whitelistId);
-        setEditData({
-            name: whitelistData.name || '',
-            role: whitelistData.role || 'member'
-        });
-    };
-
-    const cancelEditWhitelist = () => {
-        setEditingWhitelist(null);
-        setEditData({});
-    };
-
-    const saveEditWhitelist = async (whitelist_id) => {
-        if (!['admin', 'member'].includes(editData.role.toLowerCase())) {
-            alert('Role must be either "admin" or "member"');
-            return;
-        }
-
-        try {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
-            const originalUser = [...whitelist].find(w => w.id === whitelist_id);
-            if (!originalUser) {
-                alert('User not found');
-                return;
-            }
-
-            const updates = [];
-
-            if (editData.name.trim() !== originalUser.name) {
-                updates.push({
-                    property: 'name',
-                    value: editData.name.trim()
-                });
-            }
-
-            if (editData.role.toLowerCase() !== originalUser.role) {
-                updates.push({
-                    property: 'role',
-                    value: editData.role.toLowerCase()
-                });
-            }
-
-                        if (updates.length === 0) {
-                alert('No changes detected');
-                setEditingUser(null);
-                setEditData({});
-                return;
-            }
-
-            for (const update of updates) {
-                const response = await axios.post('http://localhost:8080/api/admin/edit-whitelist', {
-                    whitelist_id: whitelist_id,
-                    property: update.property,
-                    value: update.value
-                }, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                if (!response.data.success) {
-                    throw new Error(`Failed to update ${update.property}`);
-                }
-            }
-
-            alert('User updated successfully');
-            setEditingWhitelist(null);
-            setEditData({});
-            fetchAllData();
-        } catch (error) {
-            console.error('Failed to edit whitelist entry:', error);
-            alert('Failed to edit whitelist entry: ' + (error.response?.data?.message || error.message));
+            console.error('Failed to delete Entry:', error);
+            alert('Failed to delete Entry: ' + (error.response?.data?.message || error.message));
         }
     };
 
@@ -251,7 +159,7 @@ export default function ManageUsers() {
                         <div key={a.id} className="admin-card user-card">
                             <div className="user-info">
                                 <p><strong>Name:</strong>
-                                    {editingUser === a.id ? (
+                                    {editingId === a.id && editingType === "user" ? (
                                         <input
                                             type="text"
                                             value={editData.name}
@@ -264,7 +172,7 @@ export default function ManageUsers() {
                                 </p>
                                 <p><strong>Email:</strong> {a.email}</p>
                                 <p><strong>Role:</strong>
-                                    {editingUser === a.id ? (
+                                    {editingId === a.id && editingType === "user" ? (
                                         <select
                                             value={editData.role}
                                             onChange={(e) => setEditData({ ...editData, role: e.target.value })}
@@ -279,17 +187,17 @@ export default function ManageUsers() {
                                 </p>
                             </div>
                             <div className="user-actions">
-                                {editingUser === a.id ? (
+                                {editingId === a.id && editingType === "user" ? (
                                     <>
                                         <button
                                             className="save-btn"
-                                            onClick={() => saveEditUser(a.id)}
+                                            onClick={() => saveEdit(a.id, "user")}
                                         >
                                             Save
                                         </button>
                                         <button
                                             className="cancel-btn"
-                                            onClick={cancelEditUser}
+                                            onClick={cancelEdit}
                                         >
                                             Cancel
                                         </button>
@@ -298,13 +206,13 @@ export default function ManageUsers() {
                                     <>
                                         <button
                                             className="edit-btn"
-                                            onClick={() => startEditingUser(a.id, { name: a.name, role: a.role })}
+                                            onClick={() => startEditing(a.id, "user", { name: a.name, role: a.role })}
                                         >
                                             Edit
                                         </button>
                                         <button
                                             className="delete-btn"
-                                            onClick={() => handleDeleteUser(a.id, a.name)}
+                                            onClick={() => handleDelete(a.id, a.name, "user")}
                                         >
                                             Delete
                                         </button>
@@ -324,7 +232,7 @@ export default function ManageUsers() {
                         <div key={m.id} className="member-card user-card">
                             <div className="user-info">
                                 <p><strong>Name:</strong>
-                                    {editingUser === m.id ? (
+                                    {editingId === m.id && editingType === "user" ? (
                                         <input
                                             type="text"
                                             value={editData.name}
@@ -337,7 +245,7 @@ export default function ManageUsers() {
                                 </p>
                                 <p><strong>Email:</strong> {m.email}</p>
                                 <p><strong>Role:</strong>
-                                    {editingUser === m.id ? (
+                                    {editingId === m.id && editingType === "user" ? (
                                         <select
                                             value={editData.role}
                                             onChange={(e) => setEditData({ ...editData, role: e.target.value })}
@@ -352,17 +260,17 @@ export default function ManageUsers() {
                                 </p>
                             </div>
                             <div className="user-actions">
-                                {editingUser === m.id ? (
+                                {editingId === m.id && editingType === "user" ? (
                                     <>
                                         <button
                                             className="save-btn"
-                                            onClick={() => saveEditUser(m.id)}
+                                            onClick={() => saveEdit(m.id, "user")}
                                         >
                                             Save
                                         </button>
                                         <button
                                             className="cancel-btn"
-                                            onClick={cancelEditUser}
+                                            onClick={cancelEdit}
                                         >
                                             Cancel
                                         </button>
@@ -371,13 +279,13 @@ export default function ManageUsers() {
                                     <>
                                         <button
                                             className="edit-btn"
-                                            onClick={() => startEditingUser(m.id, { name: m.name, role: m.role })}
+                                            onClick={() => startEditing(m.id, "user", { name: m.name, role: m.role })}
                                         >
                                             Edit
                                         </button>
                                         <button
                                             className="delete-btn"
-                                            onClick={() => handleDeleteUser(m.id, m.name)}
+                                            onClick={() => handleDelete(m.id, m.name,"user")}
                                         >
                                             Delete
                                         </button>
@@ -397,7 +305,7 @@ export default function ManageUsers() {
                         <div key={w.id} className="whitelist-card user-card">
                             <div className="user-info">
                                 <p><strong>Name:</strong>
-                                    {editingWhitelist === w.id ? (
+                                    {editingId === w.id && editingType === "whitelist" ? (
                                         <input
                                             type="text"
                                             value={editData.name}
@@ -410,7 +318,7 @@ export default function ManageUsers() {
                                 </p>
                                 <p><strong>Email:</strong> {w.email}</p>
                                 <p><strong>Role:</strong>
-                                    {editingWhitelist === w.id ? (
+                                    {editingId === w.id && editingType === "whitelist" ? (
                                         <select
                                             value={editData.role}
                                             onChange={(e) => setEditData({ ...editData, role: e.target.value })}
@@ -425,17 +333,17 @@ export default function ManageUsers() {
                                 </p>
                             </div>
                             <div className="user-actions">
-                                {editingWhitelist === w.id ? (
+                                {editingId === w.id && editingType === "whitelist" ? (
                                     <>
                                         <button
                                             className="save-btn"
-                                            onClick={() => saveEditWhitelist(w.id)}
+                                            onClick={() => saveEdit(w.id, "whitelist")}
                                         >
                                             Save
                                         </button>
                                         <button
                                             className="cancel-btn"
-                                            onClick={cancelEditWhitelist}
+                                            onClick={cancelEdit}
                                         >
                                             Cancel
                                         </button>
@@ -444,13 +352,13 @@ export default function ManageUsers() {
                                     <>
                                         <button
                                             className="edit-btn"
-                                            onClick={() => startEditingWhitelist(w.id, { name: w.name, role: w.role })}
+                                            onClick={() => startEditing(w.id, "whitelist", { name: w.name, role: w.role })}
                                         >
                                             Edit
                                         </button>
                                         <button
                                             className="delete-btn"
-                                            onClick={() => handleDeleteFromWhitelist(w.email)}
+                                            onClick={() => handleDelete(w.id, w.email, "whitelist")}
                                         >
                                             Delete
                                         </button>
