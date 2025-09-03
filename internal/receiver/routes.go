@@ -51,6 +51,7 @@ func SetupRoutes(db *database.Database) http.Handler {
 	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-user", DeleteUserHandler(db))
 	r.With(middleware.AdminMiddleware).Post("/api/admin/add-email-to-whitelist", AddEmailToWhitelistHandler(db))
 	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-email-from-whitelist", DeleteEmailFromWhitelistHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/edit-whitelist", EditWhitelistHandler(db))
 
 	return r
 }

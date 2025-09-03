@@ -268,6 +268,37 @@ func EditUserHandler(db *database.Database) http.HandlerFunc {
 	}
 }
 
+func EditWhitelistHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type whitelistData struct {
+			WhitelistID int    `json:"whitelist_id"`
+			Property    string `json:"property"`
+			Value       string `json:"value"`
+		}
+
+		var data whitelistData
+		err := json.NewDecoder(r.Body).Decode(&data)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+			return
+		}
+
+		if data.WhitelistID == 0 || data.Property == "" || data.Value == "" {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "user_id, property, and value are required", nil)
+			return
+		}
+
+		err = db.EditWhitelist(data.WhitelistID, data.Property, data.Value)
+		if err != nil {
+			zap.L().Error("Error editing whitelist:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to edit whitelist: "+err.Error(), nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "whitelist with ID "+strconv.Itoa(data.WhitelistID)+" edited successfully", nil)
+	}
+}
+
 func DeleteUserHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type userData struct {

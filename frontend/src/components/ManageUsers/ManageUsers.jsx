@@ -35,7 +35,6 @@ export default function ManageUsers() {
             const token = localStorage.getItem('authToken');
             if (!token) return;
 
-            // Get original data to compare changes
             const originalUser = [...admins, ...members].find(u => u.id === userId);
             if (!originalUser) {
                 alert('User not found');
@@ -44,7 +43,6 @@ export default function ManageUsers() {
 
             const updates = [];
 
-            // Check if name changed
             if (editData.name.trim() !== originalUser.name) {
                 updates.push({
                     property: 'name',
@@ -52,7 +50,6 @@ export default function ManageUsers() {
                 });
             }
 
-            // Check if role changed
             if (editData.role.toLowerCase() !== originalUser.role) {
                 updates.push({
                     property: 'role',
@@ -150,7 +147,7 @@ export default function ManageUsers() {
         setEditData({});
     };
 
-    const saveEditWhitelist = async (whitelistId) => {
+    const saveEditWhitelist = async (whitelist_id) => {
         if (!['admin', 'member'].includes(editData.role.toLowerCase())) {
             alert('Role must be either "admin" or "member"');
             return;
@@ -160,20 +157,53 @@ export default function ManageUsers() {
             const token = localStorage.getItem('authToken');
             if (!token) return;
 
-            const response = await axios.post('http://localhost:8080/api/admin/edit-whitelist', {
-                id: whitelistId,
-                name: editData.name.trim(),
-                role: editData.role.toLowerCase()
-            }, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            if (response.data.success) {
-                alert('Whitelist entry updated successfully');
-                setEditingWhitelist(null);
-                setEditData({});
-                fetchAllData();
+            const originalUser = [...whitelist].find(w => w.id === whitelist_id);
+            if (!originalUser) {
+                alert('User not found');
+                return;
             }
+
+            const updates = [];
+
+            if (editData.name.trim() !== originalUser.name) {
+                updates.push({
+                    property: 'name',
+                    value: editData.name.trim()
+                });
+            }
+
+            if (editData.role.toLowerCase() !== originalUser.role) {
+                updates.push({
+                    property: 'role',
+                    value: editData.role.toLowerCase()
+                });
+            }
+
+                        if (updates.length === 0) {
+                alert('No changes detected');
+                setEditingUser(null);
+                setEditData({});
+                return;
+            }
+
+            for (const update of updates) {
+                const response = await axios.post('http://localhost:8080/api/admin/edit-whitelist', {
+                    whitelist_id: whitelist_id,
+                    property: update.property,
+                    value: update.value
+                }, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (!response.data.success) {
+                    throw new Error(`Failed to update ${update.property}`);
+                }
+            }
+
+            alert('User updated successfully');
+            setEditingWhitelist(null);
+            setEditData({});
+            fetchAllData();
         } catch (error) {
             console.error('Failed to edit whitelist entry:', error);
             alert('Failed to edit whitelist entry: ' + (error.response?.data?.message || error.message));
@@ -212,7 +242,7 @@ export default function ManageUsers() {
     return (
         <div className="manage-users-wrapper">
             <HeaderNavBar />
-            <h3>Manage Admins ({admins.length})</h3>
+            <h4>Manage Admins ({admins.length})</h4>
             <div className="admin-list">
                 {admins.length === 0 ? (
                     <p>No admins found</p>
@@ -285,7 +315,7 @@ export default function ManageUsers() {
                     ))
                 )}
             </div>
-            <h3>Manage Members ({members.length})</h3>
+            <h4>Manage Members ({members.length})</h4>
             <div className="member-list">
                 {members.length === 0 ? (
                     <p>No members found</p>
@@ -358,7 +388,7 @@ export default function ManageUsers() {
                     ))
                 )}
             </div>
-            <h3>Manage Whitelist ({whitelist.length})</h3>
+            <h4>Manage Whitelist ({whitelist.length})</h4>
             <div className="white-list">
                 {whitelist.length === 0 ? (
                     <p>No whitelist entries found</p>

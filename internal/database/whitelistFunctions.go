@@ -101,3 +101,23 @@ func (db *Database) GetWhitelist() ([]models.Whitelist, error) {
 	}
 	return whitelist, nil
 }
+
+func (db *Database) EditWhitelist(id int, property string, value interface{}) error {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Update("whitelist").Set(property, value).Where(sq.Eq{"id": id}).ToSql()
+	if err != nil {
+		return err
+	}
+
+	result, err := db.Postgres.Exec(context.Background(), sql, args...)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected := result.RowsAffected()
+	if rowsAffected == 0 {
+		return errors.New("no rows updated - whitelist entry may not exist")
+	}
+
+	return nil
+}
