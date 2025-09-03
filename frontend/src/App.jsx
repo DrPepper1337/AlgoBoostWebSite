@@ -9,8 +9,8 @@ import PasswordReset from './components/LoginRegister/PasswordReset';
 import PasswordResetSuccess from './components/LoginRegister/PasswordResetSuccess';
 import MemberHub from './components/MemberHub/MemberHub';
 import UserProfile from './components/UserProfile/UserProfileTemp';
-// import ManageUsers from './components/ManageUsers/ManageUsers';
-// import ManageLessons from './components/ManageLessons/ManageLessons';
+import ManageUsers from './components/ManageUsers/ManageUsers';
+import ManageLessons from './components/ManageLessons/ManageLessons';
 import './styles/App.css';
 import Home from './Home';
 import Header from './components/HeaderNavBar/Header';
@@ -66,14 +66,14 @@ function App() {
         </Route>
 
         {/* Admin Routes */}
-        <Route path="/manageLessons" element={
+        <Route path="/manage-lessons" element={
           <AdminRoute>
-            {/* <ManageLessons /> */}
+            <ManageLessons />
           </AdminRoute>
         } />
-        <Route path="/manageUsers" element={
+        <Route path="/manage-users" element={
           <AdminRoute>
-            {/* <ManageUsers /> */}
+            <ManageUsers />
           </AdminRoute>
         } />
 

@@ -1,0 +1,122 @@
+.manage-lessons-wrapper {
+    padding: 30px;
+    min-height: 100vh;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 40px;
+     margin-top: 40px;
+    font-size: 2rem;
+}
+
+.lessons-list {
+    display: block;
+}
+
+.lesson-item {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 6px;
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.lesson-item h2 {
+    margin: 0 0 10px;
+    font-size: 1.4rem;
+}
+
+.lesson-item p {
+    margin: 0 0 15px;
+    font-size: 1rem;
+    text-align: left;
+}
+
+.lesson-item h3 {
+    font-size: 1.2rem;
+    margin: 20px 0 10px;
+    text-align: left;
+}
+
+.task-list {
+    list-style-type: none;
+    padding-left: 20px;
+    margin-top: 0;
+} 
+
+/* Forms */
+.add-task-form {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: var(--light-grey-bg)
+}
+
+
+
+
+/* Buttons */
+.form-button-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 10px;
+}
+
+
+.manage-lessons-button {
+    display: inline-block;
+    width: auto;
+    max-width: 200px;
+    padding: 8px 16px;
+    border: 1px solid #aaa;
+    background: var(--light-grey-bg);
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-bottom: 30px;
+     transition: transform 0.1s ease;
+}
+
+.manage-lessons-button:hover {
+    background: var(--orange-vivid);
+}
+
+.manage-lessons-button:active {
+    transform: scale(0.98);
+}
+
+.manage-lessons-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.lesson-buttons {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+          
+}
+
+.lesson-buttons .manage-lessons-button {
+    margin: 0; 
+}
+
+.delete-button {
+
+    top: 10px;
+    left: 10px;
+    margin-right: 0;
+}
+
+.delete-button:hover {
+    background: #ff4d4d;
+}

@@ -1,13 +1,15 @@
 import "./ManageUsers.css";
 import HeaderNavBar from "../HeaderNavBar/Header";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from 'axios';
+
 
 export default function ManageUsers() {
     const [admins, setAdmins] = useState([]);
     const [members, setMembers] = useState([]);
     const [whitelist, setWhitelist] = useState([]);
 
-    useEffec(() => {
+    useEffect(() => {
         (async () => {
             try {
                 const token = localStorage.getItem('authToken');
@@ -23,7 +25,7 @@ export default function ManageUsers() {
         })
     })
 
-    useEffec(() => {
+    useEffect(() => {
         (async () => {
             try {
                 const token = localStorage.getItem('authToken');
@@ -39,7 +41,7 @@ export default function ManageUsers() {
         })
     })
 
-    useEffec(() => {
+    useEffect(() => {
         (async () => {
             try {
                 const token = localStorage.getItem('authToken');
