@@ -10,11 +10,11 @@ h2 {
     font-size: 2rem;
 }
 
-.lessons-list {
+.manage-lessons-list {
     display: block;
 }
 
-.lesson-item {
+.manage-lesson-item {
     border: 1px solid #ccc;
     padding: 20px;
     margin-bottom: 25px;

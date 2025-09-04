@@ -336,3 +336,40 @@
     backdrop-filter: blur(0px);
   }
 }
+
+@media (max-width: 1200px) {
+  .custom-cal {
+      overflow-x: auto;
+    max-width: 100%;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+
+  } 
+
+  .cal-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+ @media (max-width: 768px) {
+  .welcome-banner {
+    overflow: hidden;     /* Prevent any content from spilling out */
+    padding: 12px 16px;   /* Optional: add some breathing room */
+  }
+
+  .welcome-banner .welcome-text h1 {
+    line-height: 1;     
+    white-space: normal;  
+    overflow: hidden;
+    text-overflow: clip;
+    font-size: clamp(1rem, 5vw, 1.4rem); 
+    margin: 0;
+    display: block;
+  }
+
+}
+
+}

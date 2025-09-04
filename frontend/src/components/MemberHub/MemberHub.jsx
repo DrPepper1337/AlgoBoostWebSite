@@ -62,7 +62,7 @@ export default function MemberHub() {
             <section className="welcome-banner">
                 <div className="welcome-text">
                     <h1>
-                        <span>Welcome back,</span><br />
+                        <span>Welcome back, </span><br />
                         <strong>{user?.name || 'Dear user'}!</strong>
                     </h1>
                 </div>

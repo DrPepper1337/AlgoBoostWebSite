@@ -277,6 +277,29 @@ export default function ManageLessons() {
     //         setError(error.response?.data?.message || error.message || "Failed to add task");
     //     }
     // }
+    const onTaskDeleted = (deletedTaskId, fromLessonId) => {
+        if (fromLessonId) {
+            // Remove task only from the specified lesson
+            setLessons(prevLessons =>
+                prevLessons.map(lesson => {
+                    if (lesson.id !== fromLessonId) return lesson;
+                    return {
+                        ...lesson,
+                        tasks: lesson.tasks.filter(task => task.id !== deletedTaskId),
+                    };
+                })
+            );
+        } else {
+            // Remove task completely from all lessons (and tasks list)
+            setLessons(prevLessons =>
+                prevLessons.map(lesson => ({
+                    ...lesson,
+                    tasks: lesson.tasks.filter(task => task.id !== deletedTaskId),
+                }))
+            );
+        }
+    };
+
 
 
 
@@ -376,9 +399,9 @@ export default function ManageLessons() {
             {lessons.length === 0 ? (
                 <p>No lessons found.</p>
             ) : (
-                <div className="lessons-list">
+                <div className="manage-lessons-list">
                     {lessons.map((lesson) => (
-                        <div key={lesson.id} className="lesson-item">
+                        <div key={lesson.id} className="manage-lesson-item">
                             {isEditMode && (
                                 <div className="lesson-buttons">
                                     <button
@@ -476,17 +499,18 @@ export default function ManageLessons() {
                                             task={task}
                                             isEditMode={isEditMode}
                                             lessonId={lesson.id}
-                                            onTaskDeleted={(deletedTaskId, fromLessonId) => {
-                                                setLessons(prevLessons =>
-                                                    prevLessons.map(lesson => {
-                                                        if (lesson.id !== fromLessonId) return lesson;
-                                                        return {
-                                                            ...lesson,
-                                                            tasks: lesson.tasks.filter(t => t.id !== deletedTaskId),
-                                                        };
-                                                    })
-                                                );
-                                            }}
+                                            onTaskDeleted={onTaskDeleted}
+                                            // onTaskDeleted={(deletedTaskId, fromLessonId) => {
+                                            //     setLessons(prevLessons =>
+                                            //         prevLessons.map(lesson => {
+                                            //             if (lesson.id !== fromLessonId) return lesson;
+                                            //             return {
+                                            //                 ...lesson,
+                                            //                 tasks: lesson.tasks.filter(t => t.id !== deletedTaskId),
+                                            //             };
+                                            //         })
+                                            //     );
+                                            // }}
                                         />
                                     ))}
 

@@ -6,7 +6,7 @@ export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) 
     const [isOpen, setIsOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const handleDelete = async () => {
+    const handleDeleteFromLesson = async () => {
         const confirmed = window.confirm(`Are you sure you want to delete "${task.title}"?`);
         if (!confirmed) return;
 
@@ -34,6 +34,56 @@ export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) 
         }
     };
 
+    const handleDeleteTask = async () => {
+  const confirmed = window.confirm(`Are you sure you want to delete task ID ${task.title}?`);
+  if (!confirmed) return;
+
+  try {
+    setIsDeleting(true);  // You need to have this state to manage loading
+
+    const token = localStorage.getItem('authToken');
+    if (!token) throw new Error("No auth token found");
+   
+
+    await axios.post(
+      'http://localhost:8080/api/admin/delete-task',
+      { task_id: task.id},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    onTaskDeleted(task.id);  // Callback to update your UI, e.g. remove task from state
+
+  } catch (error) {
+    console.error('Error deleting task:', error);
+    alert('Failed to delete task. Please try again.');
+  } finally {
+    setIsDeleting(false);
+  }
+};
+
+const handleDeleteClick = async () => {
+  const confirmed = window.confirm(
+    `Do you want to delete the task "${task.title}" only from this lesson?\n\n
+    Click OK to delete from lesson.\n
+    Click Cancel to delete the task entirely from the database.`
+  );
+
+    if (confirmed) {
+    // Delete from lesson only
+    await handleDeleteFromLesson();
+  } else {
+    // Delete from lesson first, then from database
+    await handleDeleteFromLesson();
+    await handleDeleteTask();
+  }
+};
+
+
     return (
     <li className="task-item">
       <div className="task-title-row">
@@ -54,7 +104,7 @@ export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) 
 
         {isEditMode && (
           <button
-            onClick={handleDelete}
+            onClick={handleDeleteClick}
             className="delete-task-cross"
             disabled={isDeleting}
             title="Delete Task"
