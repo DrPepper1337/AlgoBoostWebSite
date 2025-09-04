@@ -47,7 +47,8 @@ func (db *Database) CreateTables() error {
 	query := `CREATE TABLE IF NOT EXISTS whitelist (
 		id serial PRIMARY KEY,
 		email varchar(225) NOT NULL UNIQUE,
-		name varchar(255) NOT NULL
+		name varchar(255) NOT NULL,
+		role varchar(255) NOT NULL
 		);`
 	_, err := db.Postgres.Exec(context.Background(), query)
 	if err != nil {
@@ -68,6 +69,25 @@ func (db *Database) CreateTables() error {
 		zap.L().Error("failed to create users table", zap.Error(err))
 		return err
 	}
+
+	query = `
+	CREATE TABLE IF NOT EXISTS awaiting_verification (
+		id SERIAL PRIMARY KEY,
+		email VARCHAR(225) UNIQUE NOT NULL,
+		password TEXT NOT NULL,
+		name VARCHAR(255) NOT NULL,
+		role VARCHAR(255) NOT NULL,
+		token TEXT NOT NULL,
+		token_type TEXT NOT NULL,
+		expiration TIMESTAMP NOT NULL,
+		used BOOLEAN DEFAULT false
+		);`
+	_, err = db.Postgres.Exec(context.Background(), query)
+	if err != nil {
+		zap.L().Error("failed to create registration_entrie table", zap.Error(err))
+		return err
+	}
+
 	query = `
 		CREATE TABLE IF NOT EXISTS lessons (
 			id SERIAL PRIMARY KEY,
@@ -151,6 +171,7 @@ func (db *Database) CreateTables() error {
 func (db *Database) DropTables() error {
 	query := `
 		DROP TABLE IF EXISTS whitelist;
+		DROP TABLE IF EXISTS awaiting_verification;
 		DROP TABLE IF EXISTS statuses;
 		DROP TABLE IF EXISTS lessons_tasks;
 		DROP TABLE IF EXISTS lessons;

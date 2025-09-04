@@ -1,0 +1,35 @@
+
+
+.lessons-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+.lessons-wrapper h2 {
+  margin-top: 7rem;
+  text-align: center;
+}
+
+.user-menu-button {
+  font-size: 2rem;          
+  cursor: pointer;
+}
+
+
+.sessions-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+@media (min-width: 700px) {
+  .sessions-wrapper {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -32,7 +32,6 @@ func (db *Database) AddTaskToLesson(taskId, lessonId int) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	sql, args, err := psql.Insert("lessons_tasks").Columns("lesson_id", "task_id").Values(lessonId, taskId).ToSql()
 	if err != nil {
-
 		return err
 	}
 	_, err = db.Postgres.Exec(context.Background(), sql, args...)

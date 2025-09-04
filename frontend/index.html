@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AlgoBoost</title>
+
+  <!-- Default to icon -->
+<link rel="icon" type="image/png" href="/favicon-black/favicon-96x96.png" id="dynamic-favicon">
+
+<script>
+  function setFaviconForTheme() {
+    const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const favicon = document.getElementById('dynamic-favicon');
+
+    if (isDark) {
+      favicon.href = '/favicon-white/favicon-96x96.png';
+    } else {
+      favicon.href = '/favicon-black/favicon-96x96.png';
+    }
+  }
+
+  setFaviconForTheme();
+
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconForTheme);
+  }
+</script>
+
+
+</head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
