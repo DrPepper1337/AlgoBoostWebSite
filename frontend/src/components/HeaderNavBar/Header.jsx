@@ -8,7 +8,7 @@ import DropDownProfile from '../DropDownProfile/DropDownProfile';
 
 export default function Header() {
   const navigate = useNavigate();
-  const { isAuthenticated, user, deleteUserDataFromLocalStorage } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const location = useLocation();
@@ -76,7 +76,7 @@ export default function Header() {
       </div>
 
       <div className={`nav-container ${isMenuOpen ? 'open' : ''}`}>
-        {isHomePage && (
+        {isHomePage && !isAdmin && (
           <nav className="navbar">
             <a className="navbarLink" href="/#about" onClick={handleLinkClick}>About us</a>
             <a className="navbarLink" href="/#offer" onClick={handleLinkClick}>What we offer</a>
@@ -87,16 +87,16 @@ export default function Header() {
 
         {isAuthenticated && (
           <nav className="navbar">
-            <button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>Welcome Page</button>
-            <button className="navbarLink" onClick={() => { navigate('/memberHub'); handleLinkClick(); }}>Member Hub</button>
-            <button className="navbarLink" onClick={() => { navigate('/lessons'); handleLinkClick(); }}>Lessons</button>
+            {!isHomePage && (<button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>Welcome Page</button>)}
+            {!(location.pathname === '/memberHub') && (<button className="navbarLink" onClick={() => { navigate('/memberHub'); handleLinkClick(); }}>Member Hub</button>)}
+            {!(location.pathname === '/lessons') && (<button className="navbarLink" onClick={() => { navigate('/lessons'); handleLinkClick(); }}>Lessons</button>)}
             {isAdmin && (
               <>
-                <button className="navbarLink admin-link" onClick={() => { navigate('/manageUsers'); handleLinkClick(); }}>Manage Users</button>
-                <button className="navbarLink admin-link" onClick={() => { navigate('/manageLessons'); handleLinkClick(); }}>Manage Lessons</button>
+                {!(location.pathname === '/manageUsers') && (<button className="navbarLink admin-link" onClick={() => { navigate('/manageUsers'); handleLinkClick(); }}>Manage Users</button>)}
+                {!(location.pathname === '/manageLessons') && (<button className="navbarLink admin-link" onClick={() => { navigate('/manageLessons'); handleLinkClick(); }}>Manage Lessons</button>)}
               </>
             )}
-            <button className="navbarLink" id="logout" onClick={() => { deleteUserDataFromLocalStorage(); navigate('/'); handleLinkClick(); }}>Logout</button>
+
           </nav>
         )}
       </div>

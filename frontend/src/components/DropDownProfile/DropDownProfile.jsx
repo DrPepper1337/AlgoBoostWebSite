@@ -3,20 +3,22 @@ import './DropDownProfile.css';
 import { useNavigate } from 'react-router-dom';
 import { FaCog, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import DropDownItem from './DropDownItem';
+import { useAuth } from '../../contexts/AuthContext';
 
 const DropDownProfile = ({ isActive }) => {
   const navigate = useNavigate();
+  const { deleteUserDataFromLocalStorage } = useAuth();
 
   const [visible, setVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
     if (isActive) {
-      setShouldRender(true);         
+      setShouldRender(true);
       setTimeout(() => setVisible(true), 10);
     } else {
-      setVisible(false);             
-      const timeoutId = setTimeout(() => setShouldRender(false), 120); 
+      setVisible(false);
+      const timeoutId = setTimeout(() => setShouldRender(false), 120);
       return () => clearTimeout(timeoutId);
     }
   }, [isActive]);
@@ -28,6 +30,7 @@ const DropDownProfile = ({ isActive }) => {
       <ul>
         <DropDownItem icon={FaUser} text="My Profile" onClick={() => navigate('/userProfile')}/>
         <DropDownItem icon={FaCog} text="Settings" onClick={() => navigate('/settings')}/>
+        <DropDownItem icon={FaSignOutAlt} text="Logout" onClick={() => { deleteUserDataFromLocalStorage(); navigate('/')}}/>
       </ul>
     </div>
   );
