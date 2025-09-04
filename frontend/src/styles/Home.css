@@ -156,7 +156,7 @@ section#about {
 
 .about-text h3 {
     font-family: 'M PLUS 1p', sans-serif;
-    font-weight: 500;
+    font-weight: 800;
     color: var(--orange-vivid);
 }
 
@@ -177,29 +177,37 @@ section#about {
 /* Media Query for Mobile Devices */
 @media (max-width: 768px) {
     section#about {
-        grid-template-columns: 1fr; /* Switch to a single-column layout */
-        text-align: center;
-        height: auto;
-        padding: 4rem 1rem;
+      grid-template-columns: 1fr; /* Switch to a single-column layout */
+      text-align: center;
+      height: auto;
+      padding: 4rem 1rem;
     }
 
     .about-text {
-        justify-self: center;
-        text-align: center;
-        padding-left: 0;
-        margin-left: 0; 
+      justify-self: center;
+      text-align: center;
+      padding-left: 0;
+      margin-left: 0; 
+    }
+
+    .about-text h3 {
+      font-size: 20px;
     }
 
     .about-text p {
-        margin-right: 0;
-        font-size: 1rem;
+      margin-right: 0;
+      margin-top: 40px;
+      font-size: 0.9rem;
+      padding: 0px 20px 0px 20px;
     }
 
     .uni-logo {
         justify-self: center;
         margin: 2rem 0 0;
         width: 60%;
+        max-width: 13rem;
         order: -1;
+        margin-top: 0;
     }
 }
 
@@ -233,13 +241,19 @@ section#about {
   height: 4rem;
 }
 
+@media (max-width: 768px) {
+  section#offer {
+    height: auto;
+  }
+}
+
 /* events section */
 
 section#events {
   /* background: var(--light-grey-bg-2); */
   color: #fff;
   padding: clamp(3rem, 6vw, 5rem) 2rem;
-  height: 100vh;
+  height: 110vh;
 }
 
 /* documents section */
@@ -257,7 +271,7 @@ section#documents {
 }
 
 section#documents h1 {
-    font-size: clamp(2.5rem, 10vw, 4.5rem);
+    /* font-size: clamp(2.5rem, 10vw, 4.5rem); */
     max-width: 100%;
 }
 
@@ -293,24 +307,32 @@ section#documents h1 {
 }
 
 @media (max-width: 768px) {
-    /* Switch to a single, centered column */
-    .docs-container {
-        grid-template-columns: 1fr !important;
-        place-items: center !important;
-        gap: 2rem;
-    }
+  section#events {
+    height: auto;
+    margin-top: 20px;
+    margin-bottom: 50px;
+  }
 
-    .docs-container > * {
-        width: 80% !important;
-        min-height: 220px;
-        max-height: 220px;
-        padding: 0rem 6rem 0rem 6rem !important;
-    }
+  section#documents {
+    padding-top: 0;
+  }
+  /* Switch to a single, centered column */
+  .docs-container {
+      grid-template-columns: 1fr !important;
+      place-items: center !important;
+      gap: 2rem;
+  }
 
-    /* Force the descriptive text to be hidden */
-    .docs-container > * p {
-        display: none !important;
-    }
+  .docs-container > * {
+      width: 80% !important;
+      min-height: 220px;
+      max-height: 220px;
+  }
+
+  /* Force the descriptive text to be hidden */
+  .docs-container > * p {
+      display: none !important;
+  }
 }
 
 
@@ -540,12 +562,25 @@ section#documents h1 {
     padding: 60px 20px;
   }
 
+  h1 {
+    font-size: 2.3rem;
+    /* padding: 2px 2px 0px 2px; */
+    margin: 0;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    /* font-weight: 1000;s */
+    /* padding: 0px 2px 10px 2px; */
+  }
+
+
   .section h2 {
     font-size: 1.8rem;
   }
 
   .section p {
-    font-size: 1.05rem;
+    font-size: 1rem;
   }
 
   .footer-copyright p {

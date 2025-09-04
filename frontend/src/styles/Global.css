@@ -76,6 +76,12 @@ h5 {
 
 }
 
+@media (max-width: 768px) {
+  h5 {
+    font-size: 1rem;
+  }
+}
+
 a {
   text-decoration: none;
 }

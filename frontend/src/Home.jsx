@@ -9,12 +9,14 @@ import "./components/TiltEffect/Tilt.css";
 import OfferElement from "./components/OfferElement/OfferElement";
 import './components/OfferElement/Offer.css';
 import EventsCarousel from './components/EventsCarousel/EventsCarousel';
+import EventsCarouselMobile from './components/EventsCarousel/EventsCarouselMobile';
 import DocElement from './components/DocElement/DocElement';
-
+import { useMediaQuery } from 'react-responsive';
 
 export default function Home() {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
+  const isMobile = useMediaQuery({ maxWidth: 991 });
 
   const downloadSponsorshipProposal = () => {
     const link = document.createElement('a');
@@ -114,7 +116,8 @@ export default function Home() {
 
         <section id="events" className="section">
           <h1 style={{ textAlign: 'center', marginBottom: '2rem', color: '#eaeaea' }}>Our Events</h1>
-          <EventsCarousel />
+          {isMobile ? <EventsCarouselMobile /> : <EventsCarousel />}
+          
         </section>
 
         <RevealOnScroll as="section" id="documents" className="section"
