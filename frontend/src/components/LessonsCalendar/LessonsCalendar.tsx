@@ -185,6 +185,7 @@ export default function LessonsCalendar() {
       </div>
 
       <div className="cal-shell">
+        <div className="cal-grid-wrapper">
         <div className="cal-days">
           {days.map((d) => (
             <div key={d.toISOString()} className="cal-day-label">
@@ -229,7 +230,7 @@ export default function LessonsCalendar() {
                 gridColumn: ev.dayIndex + 1,
                 top: `${ev.topPx + 15}px`,
                 height: `${ev.heightPx - 15}px`,
-                width: "clamp(4rem, 7vw, 5rem)",
+                width: "clamp(5rem, 7vw, 6rem)",
               }}
               title={ev.title}
               onClick={() => openEvent(ev)}
@@ -274,5 +275,6 @@ export default function LessonsCalendar() {
         </div>
       )}
     </div>
+  </div>
   );
 }
