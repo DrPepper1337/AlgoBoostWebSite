@@ -47,7 +47,7 @@ export default function Home() {
               </p>
             </Tilt>
           </div>
-          <img src="../public/square-logo.svg" alt="AlgoBoost Logo" className="big-logo" />
+          <img src="/square-logo.svg" alt="AlgoBoost Logo" className="big-logo" />
         </section>
 
         <RevealOnScroll as="section" id="about" threshold={0.5} rootMargin="0px 0px -10% 0px">
@@ -61,7 +61,7 @@ export default function Home() {
           </div>
           <div className="reveal" data-sr="up" style={{ "--sr-order": 3 }}>
             <Tilt id="logo-tilt" className="uni-logo" maxTilt={10} perspective={800}>
-              <img src="../public/uni-logo.svg" alt="University Logo" />
+              <img src="/uni-logo.svg" alt="University Logo" />
             </Tilt>
           </div>
         </RevealOnScroll>
@@ -117,7 +117,7 @@ export default function Home() {
         <section id="events" className="section">
           <h1 style={{ textAlign: 'center', marginBottom: '2rem', color: '#eaeaea' }}>Our Events</h1>
           {isMobile ? <EventsCarouselMobile /> : <EventsCarousel />}
-          
+
         </section>
 
         <RevealOnScroll as="section" id="documents" className="section"
@@ -153,7 +153,7 @@ export default function Home() {
           <div className="footer-copyright">
             <p>&copy; 2025 St Andrews Algoboost Society. All Rights Reserved.</p>
           </div>
-          
+
         </section>
 
       </>

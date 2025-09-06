@@ -8,7 +8,6 @@ services:
     env_file:
       - "../configs/Docker.env"
 
-
   kafka:
     image: confluentinc/cp-kafka:7.4.0
     container_name: kafka
@@ -26,24 +25,24 @@ services:
       timeout: 10s
       retries: 5
 
-  solver:
-    build:
-      context: ../
-      dockerfile: "build/solver/Dockerfile"
-    container_name: solver
-    env_file:
-      - "../configs/Docker.env"
-    networks:
-      - service-network
-    depends_on:
-      zookeeper:
-        condition: service_started
-      kafka:
-        condition: service_healthy
-      postgres:
-        condition: service_started
-      receiver:
-        condition: service_started
+  # solver:
+  #   build:
+  #     context: ../
+  #     dockerfile: "build/solver/Dockerfile"
+  #   container_name: solver
+  #   env_file:
+  #     - "../configs/Docker.env"
+  #   networks:
+  #     - service-network
+  #   depends_on:
+  #     zookeeper:
+  #       condition: service_started
+  #     kafka:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_started
+  #     receiver:
+  #       condition: service_started
 
   receiver:
     build:
@@ -52,6 +51,8 @@ services:
     container_name: receiver
     env_file:
       - "../configs/Docker.env"
+    ports:
+      - "8080:8080"
     networks:
       - service-network
     depends_on:
@@ -74,7 +75,22 @@ services:
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
 
-
+  frontend:
+    build:
+      context: ../
+      dockerfile: "build/frontend/Dockerfile"
+    container_name: frontend
+    env_file:
+      - "../configs/Docker.env"
+    environment:
+      - VITE_API_URL=http://receiver:8080
+      - VITE_API_BASE_URL=http://localhost:8080
+    ports:
+      - "5173:5173"
+    networks:
+      - service-network
+    depends_on:
+      - receiver
 
 networks:
   service-network:

@@ -48,7 +48,7 @@ export default function UserProfile() {
         <div className="hub-wrapper">
         <header>
                     <div className="logo-container">
-                        <img src="../public/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
+                        <img src="/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
                     </div>
                     <nav className="navbar">
                         <Link to="/" className="tab">Welcome Page</Link>

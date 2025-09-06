@@ -4,12 +4,9 @@ import (
 	"AlgoBoostWebSite/internal/models"
 	"context"
 	"fmt"
-	"io"
 	"os"
-	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
@@ -86,17 +83,19 @@ func solve(filename string, memory, duration float64) error {
 	}
 
 	// Получаем логи контейнера
-	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
-	if err != nil {
-		return fmt.Errorf("failed to get container logs: %v", err)
-	}
-	defer out.Close()
+	// out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
+	// if err != nil {
+	// 	return fmt.Errorf("failed to get container logs: %v", err)
+	// }
+	// defer out.Close()
 
 	// Читаем логи
-	buf := new(strings.Builder)
-	_, err = io.Copy(buf, out)
-	if err != nil {
-		return fmt.Errorf("failed to read container logs: %v", err)
-	}
+	// buf := new(strings.Builder)
+	// _, err = io.Copy(buf, out)
+	// if err != nil {
+	// 	return fmt.Errorf("failed to read container logs: %v", err)
+	// }
+
+	return nil
 
 }
