@@ -1,4 +1,3 @@
-
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -7,6 +6,8 @@ services:
       - service-network
     env_file:
       - "../configs/Docker.env"
+    environment:
+      KAFKA_HEAP_OPTS: "-Xms256m -Xmx256m"
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
@@ -16,9 +17,11 @@ services:
     ports:
       - "9092:9092"
     env_file:
-      -  "../configs/Docker.env"
+      - "../configs/Docker.env"
     depends_on:
       - zookeeper
+    environment:
+      KAFKA_HEAP_OPTS: "-Xms256m -Xmx512m"
     healthcheck:
       test: [ "CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list" ]
       interval: 5s
