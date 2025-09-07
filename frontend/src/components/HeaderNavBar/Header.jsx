@@ -47,6 +47,7 @@ export default function Header() {
   return (
     <header className="site-header">
       <div className="header-inner">
+
         <div className="logo-container">
           <img src="/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
         </div>
@@ -56,7 +57,17 @@ export default function Header() {
           onClick={() => setMenuOpen(!isMenuOpen)}
           aria-label="Toggle menu"
         >
-          <div className={`hamburger ${isMenuOpen ? 'open' : ''}`}></div>
+          <div className={`hamburger ${isMenuOpen ? 'open' : ''}`}>
+            {/* {
+              isMenuOpen ?
+                <div className="menu-btns-hamburger">
+                  <button className="menu-btn" id="login" onClick={() => { navigate('/login'); handleLinkClick(); }}>Login</button>
+                  <button className="menu-btn" id="register" onClick={() => { navigate('/login?mode=register'); handleLinkClick(); }}>Register</button>
+                  <button className="menu-btn" id="become-a-member" onClick={() => { window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety'); handleLinkClick(); }}>Become a Member</button>
+                </div>
+                : <></>
+            } */}
+                    </div>
         </button>
 
         <div className="right-controls">
