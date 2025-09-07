@@ -14,40 +14,27 @@ import DocElement from './components/DocElement/DocElement';
 import { useMediaQuery } from 'react-responsive';
 
 export default function Home() {
-  const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
-  const isMobile = useMediaQuery({ maxWidth: 991 });
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
-  const downloadSponsorshipProposal = () => {
-    const link = document.createElement('a');
-    link.href = sponsorshipPDF;
-    link.download = 'AlgoBoost_Sponsorship_Proposal.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const downloadConstitution = () => {
-    const link = document.createElement('a');
-    link.href = constitutionPDF;
-    link.download = 'AlgoBoost_Society_Constitution.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  console.log('Current window width:', window.innerWidth, 'isMobile:', isMobile);
 
   return (
     <div className="home-wrapper">
       <>
         <section id="top">
           <div className="square-wrapper">
-            <Tilt className="square" maxTilt={10} perspective={800}>
+            {!isMobile ? <Tilt className="square" maxTilt={10} perspective={800}>
               <p>Want to get better at coding challenges and ace that technical interview? You are in the right place!
                 We are here to help you succeed through workshops, tutorials, mock interviews and hackathons.
               </p>
-            </Tilt>
+            </Tilt> : <div className="square-wrapper-mobile"> <div className="square">
+              <p>Want to get better at coding challenges and ace that technical interview? You are in the right place!
+                We are here to help you succeed through workshops, tutorials, mock interviews and hackathons.
+              </p> </div>
+            </div>
+            }
           </div>
-          <img src="../public/square-logo.svg" alt="AlgoBoost Logo" className="big-logo" />
+          <img src="/square-logo.svg" alt="AlgoBoost Logo" className="big-logo" />
         </section>
 
         <RevealOnScroll as="section" id="about" threshold={0.5} rootMargin="0px 0px -10% 0px">
@@ -60,9 +47,9 @@ export default function Home() {
             </p>
           </div>
           <div className="reveal" data-sr="up" style={{ "--sr-order": 3 }}>
-            <Tilt id="logo-tilt" className="uni-logo" maxTilt={10} perspective={800}>
-              <img src="../public/uni-logo.svg" alt="University Logo" />
-            </Tilt>
+            {!isMobile ? <Tilt id="logo-tilt" className="uni-logo" maxTilt={10} perspective={800}>
+              <img src="/uni-logo.svg" alt="University Logo" />
+            </Tilt> : <img src="/uni-logo.svg" alt="University Logo" className="uni-logo" />}
           </div>
         </RevealOnScroll>
 
@@ -117,7 +104,7 @@ export default function Home() {
         <section id="events" className="section">
           <h1 style={{ textAlign: 'center', marginBottom: '2rem', color: '#eaeaea' }}>Our Events</h1>
           {isMobile ? <EventsCarouselMobile /> : <EventsCarousel />}
-          
+
         </section>
 
         <RevealOnScroll as="section" id="documents" className="section"
@@ -153,7 +140,7 @@ export default function Home() {
           <div className="footer-copyright">
             <p>&copy; 2025 St Andrews Algoboost Society. All Rights Reserved.</p>
           </div>
-          
+
         </section>
 
       </>
