@@ -144,6 +144,11 @@
  * --- Mobile Styles (max-width: 992px) ---
  */
 @media (max-width: 992px) {
+
+  .right-controls {
+    display: none;
+  }
+
   .header-inner {
     display: grid;
     grid-template-columns: auto auto;
@@ -165,6 +170,8 @@
     z-index: 1001;
     /* Ensure it's above the nav container */
     position: relative;
+    /* min-height: 5rem;
+    min-width: 5rem; */
   }
 
   .hamburger {
@@ -185,12 +192,16 @@
     transition: all 0.3s ease;
   }
 
+
   .hamburger::before {
     top: -8px;
+    z-index: 1008;
+
   }
 
   .hamburger::after {
     top: 8px;
+    z-index: 1008;
   }
 
   .hamburger.open {
@@ -216,7 +227,7 @@
     height: 100vh;
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px) !important;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.512) 70%, transparent 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.326) 70%, transparent 100%);
     /* damn Safari support */
     flex-direction: column;
     align-items: center;
@@ -244,6 +255,12 @@
       visibility 0s;
   }
 
+  #login, #register, #become-a-member {
+    color: var(--orange-vivid);
+    background: none !important;
+    font-weight: 700;
+  }
+
   .navbar,
   .menu-buttons {
     flex-direction: column;
@@ -254,7 +271,7 @@
     text-align: center;
     opacity: 0;
     transform: translateY(-200%);
-    margin-bottom: 25rem;
+    margin-bottom: 10rem;
     transition: opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
       transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
   }

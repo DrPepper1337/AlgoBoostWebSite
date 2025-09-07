@@ -71,7 +71,6 @@ form .input-box {
 
 .input-box input::placeholder {
     color: black;
-
 }
 .input-box .icon {
     position: absolute;
@@ -111,7 +110,7 @@ form .remember-forgot {
 form button {
     width: 100%;
     height: 45px;
-    background-color:  #ff9500;
+    background-color:  var(--orange-vivid);
     border-radius: 40px;
     box-shadow:  0 0 10px rgba(0, 0, 0, 0.1);
     cursor: pointer;
@@ -136,3 +135,46 @@ form .register-login-link {
     text-decoration: underline;
 }
 
+@media (max-width: 992px) {
+    .wrapper .form-box{
+    width: 95%;
+    background-color: transparent;
+    color: var(--white-bg-text);
+    border-radius: 10px;
+    padding: 30px 40px;
+}
+
+.input-box  {
+    background: rgb(19, 19, 19);
+    border-radius: 20px;
+}
+
+.remember-forgot label input {
+    color: white;
+}
+
+.remember-forgot label {
+
+  color: white;
+}
+
+.remember-forgot a {
+    color: white;
+    text-decoration: none;
+}
+
+.input-box input::placeholder {
+    color:var(--light-grey-bg);
+
+}
+
+.register-login-link p a{
+    color: var(--orange-vivid);
+
+}
+/* form button {
+    width: 70%;
+    transform: translateX(25%);
+    right: -50%;
+} */
+}
