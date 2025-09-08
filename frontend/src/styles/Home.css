@@ -280,8 +280,7 @@ section#about {
   }
 
   .uni-logo {
-    justify-self: center;
-    margin: 2rem 0 0;
+     margin: 2rem auto 0 auto;
     width: 60%;
     max-width: 13rem;
     order: -1;
