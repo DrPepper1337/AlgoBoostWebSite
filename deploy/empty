@@ -1,0 +1,2 @@
+tcp   LISTEN 0      4096         0.0.0.0:8080      0.0.0.0:*    users:(("docker-proxy",pid=84941,fd=7))    
+tcp   LISTEN 0      4096            [::]:8080         [::]:*    users:(("docker-proxy",pid=84946,fd=7))    
