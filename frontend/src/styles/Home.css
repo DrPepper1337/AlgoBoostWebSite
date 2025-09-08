@@ -65,14 +65,11 @@ section#top {
   padding: 2rem;
   transform-style: preserve-3d;
   width: 70vw;
-  /* Use viewport width for responsive scaling */
   max-width: 35rem;
   height: 48vw;
-  /* Maintain aspect ratio */
   max-height: 24rem;
   position: relative;
   top: 6%;
-  /* Adjust vertical position */
 }
 
 .square p {
@@ -123,7 +120,7 @@ section#top {
 
   .big-logo {
     position: absolute !important;
-    top: 37vh !important;
+    top: 35vh !important;
     width: 60vw !important;
     max-width: 25rem !important;
     z-index: 2;
@@ -210,12 +207,10 @@ section#top {
   transform: translate(-50%, -50%);
 }
 
-/* about section */
 section#about {
   position: relative;
   display: grid;
   grid-template-columns: 3fr 1fr;
-  /* Text takes 3/4, logo takes 1/4 */
   width: 100%;
   min-height: 80vh;
   align-items: center;
@@ -378,6 +373,8 @@ section#documents h1 {
   max-width: 100%;
 }
 
+
+
 @media (max-width: 768px) {
   section#events {
     height: auto;
@@ -385,23 +382,21 @@ section#documents h1 {
     margin-bottom: 50px;
   }
 
+  section#documents h1 {
+    /* font-size: clamp(2.5rem, 10vw, 4.5rem); */
+    font-size: 2.2rem;
+    padding: 0 0 0 0 !important;
+    width: 100vw;
+  }
+
+
   section#documents {
     padding-top: 0;
+    padding: none !important;
+    padding: 0 6vw 0 6vw !important;
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-
-  .docs-container {
-    grid-template-columns: auto auto;
-    place-items: center !important;
-    gap: 2rem;
-  }
-
-  .docs-container>* {
-    width: 80% !important;
-    min-height: 220px;
-    max-height: 220px;
   }
 }
 
