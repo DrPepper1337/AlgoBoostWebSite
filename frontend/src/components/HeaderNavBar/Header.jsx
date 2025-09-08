@@ -69,7 +69,7 @@ export default function Header() {
         >
           <div className={`hamburger ${isMenuOpen ? 'open' : ''}`}>
             <div className={`nav-container ${isMenuOpen ? 'open' : ''}`}>
-              {isAuthenticated && (<nav className="navbar">
+              {(<nav className="navbar">
                 {!isAuthenticated && !(location.pathname === '/login') && (
                   <a className="navbarLink" id="login" onClick={() => { navigate('/login'); handleLinkClick(); }}>Login</a>
                 )}
@@ -86,9 +86,9 @@ export default function Header() {
                 {isHomePage && !isAdmin && (<a className="navbarLink" href="/#documents" onClick={handleLinkClick}>Documents</a>)}
                 {!isHomePage && !isAuthenticated && (<button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>Welcome Page</button>)}
 
-                {!isHomePage && (<button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>Welcome Page</button>)}
-                {!(location.pathname === '/memberHub') && (<button className="navbarLink" onClick={() => { navigate('/memberHub'); handleLinkClick(); }}>Member Hub</button>)}
-                {!(location.pathname === '/lessons') && (<button className="navbarLink" onClick={() => { navigate('/lessons'); handleLinkClick(); }}>Lessons</button>)}
+                {isAuthenticated && !isHomePage && (<button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>Welcome Page</button>)}
+                {isAuthenticated && !(location.pathname === '/memberHub') && (<button className="navbarLink" onClick={() => { navigate('/memberHub'); handleLinkClick(); }}>Member Hub</button>)}
+                {isAuthenticated && !(location.pathname === '/lessons') && (<button className="navbarLink" onClick={() => { navigate('/lessons'); handleLinkClick(); }}>Lessons</button>)}
                 {isAdmin && (
                   <>
                     {!(location.pathname === '/manageUsers') && (<button className="navbarLink admin-link" onClick={() => { navigate('/manageUsers'); handleLinkClick(); }}>Manage Users</button>)}

@@ -6,23 +6,40 @@ Base URL: `http://localhost:8080/api`
 
 ## Table of Contents
 
-- [Login](#login)
-- [Register](#register)
-- [Verify Email](#email-verification)
-- [Lessons](#lessons)
-- [Task](#tasks)
-- [Password Reset](#password-reset)
+- [AlgoBoost Backend API Reference](#algoboost-backend-api-reference)
+  - [Table of Contents](#table-of-contents)
+- [Member Endpints](#member-endpints)
+  - [Auth \& Registration](#auth--registration)
+    - [Register](#register)
+    - [Email Verification](#email-verification)
+    - [Login](#login)
+  - [Password Reset](#password-reset)
+    - [Request password reset (email + new password)](#request-password-reset-email--new-password)
+  - [Lessons](#lessons)
+    - [Get All Lessons](#get-all-lessons)
+  - [Tasks](#tasks)
+    - [Get Task Details](#get-task-details)
 - [Admin Endpoints](#admin-endpoints)
-  - [Add Lesson](#add-lesson)
-  - [Add Task to Lesson](#add-task-to-lesson)
-  - [Delete Task from Lesson](#delete-task-from-lesson)
-  - [Delete Lesson](#delete-lesson)
-  - [Add Task](#add-task)
-  - [Edit Task](#edit-task)
-  - [Delete Task](#delete-task)
+  - [Lessons \& Tasks](#lessons--tasks)
+    - [Add Lesson](#add-lesson)
+    - [Add Task to Lesson](#add-task-to-lesson)
+    - [Delete Task from Lesson](#delete-task-from-lesson)
+    - [Delete Lesson](#delete-lesson)
+    - [Add Task](#add-task)
+    - [Edit Task](#edit-task)
+    - [Delete Task](#delete-task)
+  - [Users \& Whitelist](#users--whitelist)
+    - [Get All Users](#get-all-users)
+    - [Edit User](#edit-user)
+    - [Add Email to Whitelist](#add-email-to-whitelist)
+    - [Delete Email from Whitelist](#delete-email-from-whitelist)
+    - [Delete User](#delete-user)
+- [Notes for Frontend](#notes-for-frontend)
+- [Test Users](#test-users)
+- [Test Lessons and tasks](#test-lessons-and-tasks)
 
 ---
-
+# Member Endpints
 ## Auth & Registration
 
 ### Register
@@ -35,7 +52,7 @@ curl -X POST http://localhost:8080/api/register \
   -d '{"email": "test1@gmail.com", "password": "test123"}'
 ```
 
-#### Response
+**Response**
 ```json
 {
     "success":true,
@@ -55,7 +72,7 @@ Triggered via email link (auto-submitted GET):
 curl GET http://localhost:8080/api/verify?token=<your_token>
 ```
 
-#### Response
+**Response**
 ```json
 {
    "success":true,
@@ -77,7 +94,7 @@ curl -X POST http://localhost:8080/api/login \
   -d '{"email": "test1@gmail.com", "password": "test123"}'
 ```
 
-#### Response
+**Response**
 
 ```json
 {
@@ -109,7 +126,7 @@ curl -X POST http://localhost:8080/api/request-reset-password \
   -d '{"email": "test1@gmail.com", "password": "test321"}'
 ```
 
-#### Response
+**Response**
 ```json
 {
     "success":true,
@@ -118,7 +135,7 @@ curl -X POST http://localhost:8080/api/request-reset-password \
 ```
 A reset link will be emailed. Once clicked:
 
-### Confirm reset (auto-GET)
+**Confirm reset (auto-GET)**
 
 ```bash
 curl GET http://localhost:8080/api/verify?token=<your_token>
@@ -137,7 +154,7 @@ curl http://localhost:8080/api/lessons \
   -H "Authorization: Bearer <jwt_token>"
 ```
 
-#### Response
+**Response**
 
 ```json
 [{
@@ -169,7 +186,7 @@ curl http://localhost:8080/api/tasks/{taskID} \
   -H "Authorization: Bearer <jwt_token>"
 ```
 
-#### Response
+**Response**
 
 ```json
 {
@@ -188,9 +205,11 @@ curl http://localhost:8080/api/tasks/{taskID} \
 
 ---
 
-## Admin Endpoints
+# Admin Endpoints
 
 > Requires login with an admin role (`Role: "admin"`)
+
+## Lessons & Tasks
 
 ### Add Lesson
 ```bash
@@ -200,7 +219,7 @@ curl -X POST http://localhost:8080/api/admin/add-lesson \
   -d '{"title": "Test Lesson Name", "description": "test description wablabdabda"}'
 ```
 
-#### Response
+**Response**
 ```json
 {
    "success":true,
@@ -220,7 +239,7 @@ curl -X POST http://localhost:8080/api/admin/add-task-to-lesson \
   -d '{"task_id": 1, "lesson_id": 1}'
 ```
 
-#### Response
+**Response**
 ```json
 {
    "success":true,
@@ -238,7 +257,7 @@ curl -X POST http://localhost:8080/api/admin/delete-task-from-lesson \
   -d '{"task_id": 1, "lesson_id": 1}'
 ```
 
-#### Response
+**Response**
 ```json
 {
    "success":true,
@@ -255,7 +274,7 @@ curl -X POST http://localhost:8080/api/admin/delete-lesson \
   -d '{"lesson_id": 1}'
 ```
 
-#### Response
+**Response**
 ```json
 {
    "success":true,
@@ -273,7 +292,7 @@ curl -X POST http://localhost:8080/api/admin/add-task \
   -d '{"title": "test task 3", "description": "task 3 test description", "time_limit": 150, "memory_limit": 50, "is_practice": true}'
 ```
 
-#### Response
+**Response**
 ```json
 {
    "success":true,
@@ -296,7 +315,7 @@ curl -X POST http://localhost:8080/api/admin/edit-task \
 ```
 (the memory limit was changed)
 
-#### Response
+**Response**
 ```json
 {
    "success":true,
@@ -314,7 +333,7 @@ curl -X POST http://localhost:8080/api/admin/delete-task \
   -d '{"task_id": 3}'
 ```
 
-#### Response
+**Response**
 ```json
 {
    "success":true,
@@ -322,24 +341,111 @@ curl -X POST http://localhost:8080/api/admin/delete-task \
 }
 ```
 ---
+## Users & Whitelist
 
-## Notes for Frontend
+### Get All Users
+```bash
+curl -X POST http://localhost:8080/api/admin/get-all-users \
+  -H "Authorization: Bearer <jwt_token>"  \
+  -H "Content-Type: application/json" \
+```
+**Response**
+
+```json
+[
+  {
+    "id":1,
+    "name":"test",
+    "email":"test1@gmail.com",
+    "password":"$2a$10$YwzPOIT4j4RIRCZP3sIVUeKzvI5q1Xhw/H85HyV8sngxo.jaCprWS",
+    "role":"admin"
+  },
+  {
+    "id":2,
+    "name":"test",
+    "email":"test2@gmail.com",
+    "password":"$2a$10$YwzPOIT4j4RIRCZP3sIVUeKzvI5q1Xhw/H85HyV8sngxo.jaCprWS",
+    "role":"member"
+  }
+]
+```
+---
+
+### Edit User
+```bash
+curl -X POST http://localhost:8080/api/admin/edit-user \
+  -H "Authorization: Bearer <jwt_token>"  \
+  -H "Content-Type: application/json" \
+  -d '{"id": 2, "name": "test changed", "password":"$2a$10$YwzPOIT4j4RIRCZP3sIVUeKzvI5q1Xhw/H85HyV8sngxo.jaCprWS", "email":"test2@gmail.com", "role":"member"}'
+```
+**Response**
+```json
+{
+   "success":true,
+   "message":"user with ID 2 edited successfully"
+}
+```
+---
+### Add Email to Whitelist
+```bash
+curl -X POST http://localhost:8080/api/admin/add-email-to-whitelist \
+  -H "Authorization: Bearer <jwt_token>"  \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test3@gmail.com", "name":"Test3", "role":"member"}'
+```
+**Response**
+```json
+{
+  "success":true,
+  "message":"email added whitelis successfully"
+}
+```
+---
+### Delete Email from Whitelist
+```bash
+curl -X POST http://localhost:8080/api/admin/delete-email-from-whitelist \
+  -H "Authorization: Bearer <jwt_token>"  \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test3@gmail.com"}'
+```
+**Response**
+```json
+{
+  "success":true,
+  "message":"user with email test3@gmail.com deleted from whitelist successfully"
+}
+```
+---
+### Delete User
+```bash
+curl -X POST http://localhost:8080/api/admin/delete-user \
+  -H "Authorization: Bearer <jwt_token>"  \
+  -H "Content-Type: application/json" \
+  -d '{"id":2}'
+```
+**Response**
+```json
+{
+  "success":true,
+  "message":"user with ID 2 deleted successfully"
+}
+```
+
+# Notes for Frontend
 
 * JWT tokens are returned after successful verification or login
 * Store the token in `localStorage`
 * Send the token as a Bearer token in headers for all protected routes
 * Handle expiry upon logout on the frontend
 
----
-
-## Test Users
+# Test Users
 
 | Email                                     | Password | Role   |
 | ----------------------------------------- | -------- | ------ |
 | [test1@gmail.com](mailto:test1@gmail.com) | test123  | admin  |
 | [test2@gmail.com](mailto:test2@gmail.com) | test123  | member |
 
-## Test Lessons and tasks
+# Test Lessons and tasks
 
 | Task Title | Task ID | linked to lesson  |
 | ---------- | ------- | ----------------- |
