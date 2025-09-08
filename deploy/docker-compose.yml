@@ -25,7 +25,7 @@ services:
     restart: unless-stopped
 
   postgres:
-    image: postgres:16
+    image: postgres:17
     container_name: postgres_container
     env_file: ["../configs/Docker.env"]
     ports: ["5432:5432"]
