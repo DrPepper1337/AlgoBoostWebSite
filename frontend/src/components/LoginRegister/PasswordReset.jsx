@@ -2,6 +2,7 @@ import './LoginRegister.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
+import { buildApiUrl } from "../../config/api";
 
 const PasswordReset = () => {
   const [email, setEmail] = useState('');
@@ -32,7 +33,7 @@ const PasswordReset = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/request-reset-password', {
+      const response = await fetch(buildApiUrl('request-reset-password'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

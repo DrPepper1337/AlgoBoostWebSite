@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './TaskItem.css';
 import axios from 'axios';
+import { buildApiUrl } from "../../config/api";
 
 export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +16,7 @@ export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) 
             const token = localStorage.getItem('authToken');
 
             await axios.post(
-                'http://localhost:8080/api/admin/delete-task-from-lesson',
+                buildApiUrl('admin/delete-task-from-lesson'),
                 { task_id: task.id, lesson_id: lessonId, },
                 {
                     headers: {
@@ -25,7 +26,7 @@ export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) 
                 }
             );
 
-            onTaskDeleted(task.id, lessonId); 
+            onTaskDeleted(task.id, lessonId);
         } catch (err) {
             console.error('Error deleting task:', err);
             alert('Failed to delete task. Please try again.');
@@ -43,10 +44,10 @@ export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) 
 
     const token = localStorage.getItem('authToken');
     if (!token) throw new Error("No auth token found");
-   
+
 
     await axios.post(
-      'http://localhost:8080/api/admin/delete-task',
+      buildApiUrl('admin/delete-task'),
       { task_id: task.id},
       {
         headers: {

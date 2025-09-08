@@ -7,6 +7,7 @@ import { useRef, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import '../HeaderNavBar/Header.css';
 import axios from 'axios';
+import { buildApiUrl } from "../../config/api";
 
 export default function Lessons() {
 
@@ -38,7 +39,7 @@ export default function Lessons() {
           return;
         }
 
-        const res = await axios.get('http://localhost:8080/api/lessons', {
+        const res = await axios.get(buildApiUrl('lessons'), {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -61,11 +62,8 @@ export default function Lessons() {
 
     return (
     <div className="lessons-wrapper">
-     
+
         <h2>Coming Soon!</h2>
     </div>
   );
 }
-
-
-  
