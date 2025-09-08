@@ -1,5 +1,5 @@
 .offer-element {
-    padding-top: 60px
+  padding-top: 60px
 }
 
 
@@ -67,8 +67,61 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .offer-grid {
-    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 90%;
+  }
+
+  .offer-element {
+    width: 100%;
+    text-align: left;
+    padding-top: 0;
+  }
+
+  .offer-card {
+    flex-direction: row;
+    text-align: left;
+    gap: 1.5rem;
+    padding: 1rem;
+    align-items: center;
+  }
+
+  .offer-element:nth-child(odd) .offer-card {
+    flex-direction: row;
+  }
+
+  .offer-element:nth-child(even) .offer-card {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+
+  .offer-icon-wrap {
+    margin-bottom: 0;
+    flex-shrink: 0;
+    width: 20vw !important;
+    height: 20vw !important;
+  }
+
+  .offer-element p {
+    max-width: none;
+    flex: 1;
+  }
+
+  .offer-element:nth-child(even) p {
+    text-align: right;
+  }
+}
+
+@media (max-width: 640px) {
+  .offer-element p {
+    font-size: 0.9rem;
+  }
+
+  .offer-icon-wrap {
+    width: 60px;
+    height: 60px;
   }
 }
