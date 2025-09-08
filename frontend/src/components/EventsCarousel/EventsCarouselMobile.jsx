@@ -33,13 +33,13 @@ function EventsCarouselMobile() {
             >
                 {eventTypes.map((event, index) => (
                     <SwiperSlide key={index} className="carousel-item-mobile">
-                        <div className="event-card">
+                        <div className="event-card-mobile">
                             {event.image ? (
-                                <img src={event.image} alt={event.title} className="event-image" />
+                                <img src={event.image} alt={event.title} className="event-image-mobile" />
                             ) : (
                                 <h3>{event.title}</h3>
                             )}
-                            <div className="event-content">
+                            <div className="event-content-mobile">
                                 <h3>{event.title}</h3>
                                 <p>{event.description}</p>
                             </div>

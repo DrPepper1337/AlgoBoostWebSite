@@ -1,16 +1,3 @@
-.doc-card {
-  background: var(--brownish);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  height: 90%;
-  max-width: 40%;
-  min-width: 40%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
 .doc-icon-wrap {
   border-radius: 50%;
   height: 30%;
@@ -21,8 +8,8 @@
 
 .doc-card h5, .doc-card p {
   color: white;
-  margin-right: 7rem;
-  margin-left: 7rem;
+  text-align: center;
+  margin: 0 5rem;
 }
 
 .doc-icon-wrap .lottie-icon {
@@ -37,14 +24,16 @@
   border-radius: 16px;
   box-shadow: var(--shadow);
   height: 90%;
-  max-width: 40%;
-  min-width: 40%;
+  max-width: 90%;
+  min-width: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin: 0 auto;
 }
 
 .doc-card:hover {
@@ -57,4 +46,32 @@
   font-weight: 300;
   line-height: 1.2;
   margin-top: 1rem;
+}
+
+.docs-container {
+    display: grid;
+    grid-template-columns: repeat(2, clamp(540px, 46vw, 700px));
+    grid-auto-rows: 1fr;
+    gap: 2rem;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.docs-container > * {
+    min-height: 400px;
+    color: #eaeaea;
+    padding: 2rem;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    box-sizing: border-box;
 }
