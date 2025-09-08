@@ -69,7 +69,7 @@ export default function Home() {
           sectionDir="up"
         >
           <h1 className="offer-title reveal" data-sr="up" style={{ "--sr-order": 0 }}>
-            What we offer
+            What we offer 
           </h1>
           <div className="offer-grid">
             <OfferElement
