@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { FaLock, FaEnvelope } from "react-icons/fa";
+import { buildApiUrl } from "../../config/api";
 const LoginRegister = () => {
 
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ const handleLogin = async (e) => {
   }
 
   try {
-    const response = await fetch('http://localhost:8080/api/login', {
+    const response = await fetch(buildApiUrl('login'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -96,7 +97,7 @@ const handleLogin = async (e) => {
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/register', {
+      const response = await fetch(buildApiUrl('register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -190,7 +191,7 @@ const handleLogin = async (e) => {
               />
               <FaLock className="icon" />
             </div>
-            
+
             <button type="submit" className="btn">Register</button>
 
             <div className="register-login-link">

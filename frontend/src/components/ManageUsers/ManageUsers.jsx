@@ -2,6 +2,7 @@ import "./ManageUsers.css";
 import HeaderNavBar from "../HeaderNavBar/Header";
 import { useState, useEffect } from "react";
 import axios from 'axios';
+import { buildApiUrl } from "../../config/api";
 
 
 export default function ManageUsers() {
@@ -69,7 +70,7 @@ export default function ManageUsers() {
             }
 
             for (const update of updates) {
-                const endpoint = type === "user" ? 'http://localhost:8080/api/admin/edit-user' : 'http://localhost:8080/api/admin/edit-whitelist'
+                const endpoint = type === "user" ? buildApiUrl('admin/edit-user') : buildApiUrl('admin/edit-whitelist');
                 const response = await axios.post(endpoint, {
                     id: id,
                     property: update.property,
@@ -101,7 +102,7 @@ export default function ManageUsers() {
             const token = localStorage.getItem('authToken');
             if (!token) return;
 
-            const endpoint = type === "user" ? 'http://localhost:8080/api/admin/delete-user' : 'http://localhost:8080/api/admin/delete-email-from-whitelist'
+            const endpoint = type === "user" ? buildApiUrl('admin/delete-user') : buildApiUrl('admin/delete-email-from-whitelist');
 
             const response = await axios.post(endpoint, {
                 id: id
@@ -125,13 +126,13 @@ export default function ManageUsers() {
 
         try {
             const [adminsRes, membersRes, whitelistRes] = await Promise.all([
-                axios.get('http://localhost:8080/api/admin/admins', {
+                axios.get(buildApiUrl('admin/admins'), {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                axios.get('http://localhost:8080/api/admin/members', {
+                axios.get(buildApiUrl('admin/members'), {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                axios.get('http://localhost:8080/api/admin/whitelist', {
+                axios.get(buildApiUrl('admin/whitelist'), {
                     headers: { Authorization: `Bearer ${token}` },
                 })
             ]);
@@ -154,7 +155,7 @@ export default function ManageUsers() {
         }
 
         try {
-            const response = await axios.post('http://localhost:8080/api/admin/add-email-to-whitelist', {
+            const response = await axios.post(buildApiUrl('admin/add-email-to-whitelist'), {
                 email: email,
                 name: name,
                 role: role

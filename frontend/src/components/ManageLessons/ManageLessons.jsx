@@ -3,6 +3,7 @@ import HeaderNavBar from "../HeaderNavBar/Header";
 import TaskItem from "./TaskItem";
 import { useState, useEffect } from "react";
 import axios from 'axios';
+import { buildApiUrl } from "../../config/api";
 
 export default function ManageLessons() {
     const [lessons, setLessons] = useState([]);
@@ -24,10 +25,10 @@ export default function ManageLessons() {
     const [successMessage, setSuccessMessage] = useState("");
     const [loading, setLoading] = useState(true);
 
-    //getting task info 
+    //getting task info
     async function fetchTaskDetails(taskID, token) {
         try {
-            const res = await axios.get(`http://localhost:8080/api/tasks/${taskID}`, {
+            const res = await axios.get(buildApiUrl(`tasks/${taskID}`), {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.data.success) {
@@ -60,7 +61,7 @@ export default function ManageLessons() {
 
         try {
             const res = await axios.post(
-                "http://localhost:8080/api/admin/add-lesson",
+                buildApiUrl("admin/add-lesson"),
                 {
                     title: newLessonTitle,
                     description: newLessonDescription,
@@ -89,7 +90,7 @@ export default function ManageLessons() {
         }
     }
 
-    //deleting a lesson 
+    //deleting a lesson
     async function handleDeleteLesson(lessonId) {
         const confirmDelete = window.confirm("Are you sure you want to delete this lesson?");
         if (!confirmDelete) return;
@@ -102,7 +103,7 @@ export default function ManageLessons() {
 
         try {
             const res = await axios.post(
-                "http://localhost:8080/api/admin/delete-lesson",
+                buildApiUrl("admin/delete-lesson"),
                 { lesson_id: lessonId },
                 {
                     headers: {
@@ -143,7 +144,7 @@ export default function ManageLessons() {
         try {
             // Step 1: Create the task
             const res = await axios.post(
-                "http://localhost:8080/api/admin/add-task",
+                buildApiUrl("admin/add-task"),
                 {
                     title: newTaskTitle,
                     description: newTaskDescription,
@@ -168,7 +169,7 @@ export default function ManageLessons() {
 
             // Step 2: Attach the task to the lesson
             const attachRes = await axios.post(
-                "http://localhost:8080/api/admin/add-task-to-lesson",
+                buildApiUrl("admin/add-task-to-lesson"),
                 {
                     task_id: taskId,
                     lesson_id: lessonId,
@@ -309,7 +310,7 @@ export default function ManageLessons() {
                 const token = localStorage.getItem('authToken');
                 if (!token) return;
 
-                const res = await axios.get('http://localhost:8080/api/lessons', {
+                const res = await axios.get(buildApiUrl('lessons'), {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

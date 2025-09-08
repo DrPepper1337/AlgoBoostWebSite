@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { buildApiUrl } from "../../config/api";
 
 const VerifyPage = () => {
   const [message, setMessage] = useState("Verifying...");
@@ -24,7 +25,7 @@ const VerifyPage = () => {
       return;
     }
 
-    fetch(`http://localhost:8080/api/verify?token=${token}`)
+    fetch(buildApiUrl(`verify?token=${token}`))
       .then(async (res) => {
         const json = await res.json();
         console.log("Verification response:", res.status, json);

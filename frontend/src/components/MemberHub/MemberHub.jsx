@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import LessonsCalendar from '../LessonsCalendar/LessonsCalendar';
 import '../LessonsCalendar/LessonsCalendar.css';
+import { buildApiUrl } from "../../config/api";
 
 export default function MemberHub() {
     const navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function MemberHub() {
             try {
                 const token = localStorage.getItem('authToken');
                 if (!token) return;
-                const res = await axios.get('http://localhost:8080/api/lessons', {
+                const res = await axios.get(buildApiUrl('lessons'), {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const lessonsData = Array.isArray(res.data?.data) ? res.data.data : [];

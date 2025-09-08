@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { buildApiUrl } from "../../config/api";
 
 const PasswordResetSuccess = () => {
   const location = useLocation();
@@ -14,7 +15,7 @@ const PasswordResetSuccess = () => {
       return;
     }
 
-    fetch(`http://localhost:8080/api/verify?token=${token}`)
+    fetch(buildApiUrl(`verify?token=${token}`))
       .then(res => {
         if (!res.ok) throw new Error('Verification failed');
         return res.json();
@@ -41,4 +42,3 @@ const PasswordResetSuccess = () => {
 };
 
 export default PasswordResetSuccess;
-
