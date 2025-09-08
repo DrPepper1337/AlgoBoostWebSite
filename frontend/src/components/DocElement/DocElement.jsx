@@ -31,8 +31,10 @@ export default function DocElement({ iconName, title, text, document: documentTy
             <div className="doc-icon-wrap reveal" data-sr="up" style={{ "--sr-order": 0 }}>
                 <OfferIcon iconName={iconName} isHovered={isHovered} />
             </div>
-            <h5 className="reveal" data-sr="up" style={{ "--sr-order": 1 }}>{title}</h5>
-            <p className="reveal" data-sr="up" style={{ "--sr-order": 2 }}>{text}</p>
+            <div className="doc-card-content">
+                <h5 className="reveal" data-sr="up" style={{ "--sr-order": 1 }}>{title}</h5>
+                <p className="reveal" data-sr="up" style={{ "--sr-order": 2 }}>{text}</p>
+            </div>
         </div>
     );
 }

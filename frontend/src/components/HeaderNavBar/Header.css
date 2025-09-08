@@ -72,6 +72,11 @@
   white-space: nowrap;
 }
 
+/* Hide specific navbar link on desktop to avoid duplication with button */
+.navbarLink#become-a-member {
+  display: none;
+}
+
 .navbarLink {
   text-decoration: none;
   color: white;
@@ -147,6 +152,11 @@
 
   .right-controls {
     display: none;
+  }
+
+  /* Show "Become a Member" link on mobile */
+  .navbarLink#become-a-member {
+    display: flex;
   }
 
   .header-inner {
@@ -225,10 +235,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.326) 70%, transparent 100%);
-    /* damn Safari support */
+    background: rgba(0, 0, 0, 0.3);
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -244,9 +251,33 @@
     visibility: hidden;
   }
 
+  .blur-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Alternative: Apply blur to main content only when menu is open */
+  body.menu-open main,
+  body.menu-open .main-content,
+  body.menu-open [id="root"] > *:not(.site-header) {
+    filter: blur(5px);
+    transition: filter 0.3s ease;
+  }
+
+  /* Ensure header and nav elements stay sharp */
+  body.menu-open .site-header,
+  body.menu-open .nav-container {
+    filter: none !important;
+  }
+
   .nav-container.open {
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
@@ -255,14 +286,31 @@
       visibility 0s;
   }
 
+  .nav-container.open::before {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
   #login, #register, #become-a-member {
     color: var(--orange-vivid);
     background: none !important;
     font-weight: 700;
   }
 
+  #login:hover, #register:hover, #become-a-member:hover {
+    color: var(--orange-vivid);
+    background: none !important;
+    font-weight: 700;
+    box-shadow: none !important;
+    color:#ff7a0a !important;
+    border: none !important;
+    text-shadow: #ff7a0a 0 0 10px rgba(255, 122, 10, 0.5) !important;
+  }
+
+
   .navbar,
   .menu-buttons {
+    display: flex;
     flex-direction: column;
     width: 100%;
     align-items: center;

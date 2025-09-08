@@ -29,7 +29,6 @@ export default function Home() {
               </p>
             </Tilt> : <div className="square-wrapper-mobile"> <div className="square">
               <p>Want to get better at coding challenges and ace that technical interview? You are in the right place!
-                We are here to help you succeed through workshops, tutorials, mock interviews and hackathons.
               </p> </div>
             </div>
             }
@@ -113,20 +112,40 @@ export default function Home() {
           sectionFirst
           sectionDur={1000}
           sectionDir="up">
-          <h1 className="reveal" data-sr="up" style={{ textAlign: 'center', marginBottom: '2rem', color: '#eaeaea', "--sr-order": 0 }}>Our Documents</h1>
+            {isMobile && (<h1 className="reveal" data-sr="up" style={{ textAlign: 'center', marginBottom: '2rem', color: '#eaeaea', "--sr-order": 0 }}>Documents</h1>)}
+            {!isMobile && (<h1 className="reveal" data-sr="up" style={{ textAlign: 'center', marginBottom: '2rem', color: '#eaeaea', "--sr-order": 0 }}>Our Documents</h1>)}
           <div className="docs-container">
-            <DocElement
-              iconName="sponsorship"
-              title="Sponsorship Proposal"
-              text="Click to download our sponsorship proposal and learn about partnership opportunities with AlgoBoost Society."
-              document="sponsorship"
-            />
-            <DocElement
-              iconName="constitution"
-              title="Constitution"
-              text="Click to download the official AlgoBoost Society constitution and learn about our structure and governance."
-              document="constitution"
-            />
+            {isMobile && (
+              <DocElement
+                iconName="sponsorship"
+                title="Sponsorship Proposal"
+                text="Learn about partnership opportunities with AlgoBoost Society."
+                document="sponsorship"
+              />
+            )}
+            {isMobile && (
+              <DocElement
+                iconName="constitution"
+                title="Constitution"
+                text="Learn about the governance and structure of AlgoBoost Society."
+                document="constitution"
+              />
+            )}
+            {!isMobile && (
+              <DocElement
+                iconName="sponsorship"
+                title="Sponsorship Proposal"
+                text="Click to download our sponsorship proposal and learn about partnership opportunities with AlgoBoost Society."
+                document="sponsorship"
+              />)}
+            {!isMobile && (
+              <DocElement
+                iconName="constitution"
+                title="Constitution"
+                text="Click to download the official AlgoBoost Society constitution and learn about our structure and governance."
+                document="constitution"
+              />
+            )}
           </div>
         </RevealOnScroll>
 

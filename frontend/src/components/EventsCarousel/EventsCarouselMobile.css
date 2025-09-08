@@ -1,63 +1,183 @@
 
-.carousel-container-mobile .swiper-button-next,
-.carousel-container-mobile .swiper-button-prev {
-  color: var(--orange-vivid);
-  width: 40px;
-  height: 40px;
-  background: var(--light-grey-bg-2);
+/* Base styles for mobile carousel */
+.events-carousel-mobile {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0;
+  margin: 0;
+}
+
+/* Custom pagination dots styling */
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+.carousel-dots .dot {
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: rgba(120, 120, 120, 0.6);
+  cursor: pointer;
   transition: all 0.3s ease;
-  border: 1px solid var(--light-grey-bg);
+  border: 2px solid transparent;
+  opacity: 1;
 }
 
-.carousel-container-mobile .swiper-button-next:hover,
-.carousel-container-mobile .swiper-button-prev:hover {
-  background: var(--orange-vivid);
-  color: var(--black-bg-text);
-  box-shadow: 0 4px 12px rgba(255, 128, 1, 0.4);
-  border-color: var(--orange-vivid);
-}
-
-.carousel-container-mobile .swiper-button-next::after,
-.carousel-container-mobile .swiper-button-prev::after {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-/* Swiper Pagination */
-.carousel-container-mobile .swiper-pagination {
-  bottom: -40px;
-}
-
-.carousel-container-mobile .swiper-pagination-bullet {
-  width: 10px;
-  height: 10px;
-  background: var(--light-grey-bg);
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  opacity: 0.7;
-}
-
-.carousel-container-mobile .swiper-pagination-bullet-active {
+.carousel-dots .dot.active {
   background: var(--orange-vivid);
   transform: scale(1.2);
+  border: 2px solid rgba(255, 128, 1, 0.3);
+  box-shadow: 0 0 8px rgba(255, 128, 1, 0.4);
+}
+
+.carousel-dots .dot:hover {
+  background: rgba(255, 128, 1, 0.7);
+  transform: scale(1.1);
+}
+
+.carousel-container-mobile {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Ensure slides take full width */
+.carousel-container-mobile .swiper-slide {
+  width: 100vw !important;
+}
+
+/* Ensure swiper wrapper takes full width */
+.carousel-container-mobile .swiper-wrapper {
+  width: 100% !important;
+}
+
+/* Image styling for full viewport width */
+.carousel-slide-mobile img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+/* Additional styling for slide container */
+.carousel-slide-mobile {
+  width: 100% !important;
+  position: relative;
+}
+
+/* Hide navigation arrows */
+.carousel-container-mobile .swiper-button-next,
+.carousel-container-mobile .swiper-button-prev {
+  display: none !important;
+}
+
+/* Hide built-in pagination since we use custom dots */
+.carousel-container-mobile .swiper-pagination {
+  display: none !important;
+}
+
+/* Mobile carousel description with animations */
+.carousel-description-mobile {
+  text-align: left;
+  max-width: 90%;
+  margin: 2rem auto 0;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
   opacity: 1;
-  box-shadow: 0 0 8px rgba(255, 128, 1, 0.5);
+  transform: translateY(0);
+  transition: all 0.3s ease-out;
+}
+
+.carousel-description-mobile.transitioning {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.carousel-description-mobile.entering {
+  animation: slideUpFromBelowMobile 0.4s ease-out forwards;
+}
+
+.carousel-description-mobile h4 {
+  color: var(--white-bg-text);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.2s ease-out;
+}
+
+.carousel-description-mobile p {
+  color: #cfcfcf;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0;
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.2s ease-out;
+}
+
+.carousel-description-mobile.transitioning h4,
+.carousel-description-mobile.transitioning p {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.carousel-description-mobile.entering h4,
+.carousel-description-mobile.entering p {
+  animation: slideUpFromBelowMobile 0.2s ease-out forwards;
+}
+
+@keyframes slideUpFromBelowMobile {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Mobile First - Extra Small devices (phones, less than 576px) */
 @media (max-width: 575.98px) {
   .events-carousel-mobile {
-    padding: 15px 0;
+    padding: 0;
   }
 
   .carousel-container-mobile {
-    padding: 0 15px;
+    padding: 0 20px;
   }
 
   .event-card-mobile {
     max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .carousel-description-mobile {
+    max-width: 95%;
+    padding: 1rem;
+    margin: 1.5rem auto 0;
+  }
+
+  .carousel-description-mobile h4 {
+    font-size: 1.3rem;
+  }
+
+  .carousel-description-mobile p {
+    font-size: 1rem;
+    line-height: 1.5;
   }
 
   .event-image-mobile {
@@ -94,11 +214,25 @@
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) and (max-width: 767.98px) {
   .carousel-container-mobile {
-    padding: 0 25px;
+    padding: 0 30px;
   }
 
   .event-card-mobile {
-    max-width: 320px;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .carousel-description-mobile {
+    max-width: 85%;
+    padding: 1.25rem;
+  }
+
+  .carousel-description-mobile h4 {
+    font-size: 1.4rem;
+  }
+
+  .carousel-description-mobile p {
+    font-size: 1.05rem;
   }
 
   .event-image-mobile {

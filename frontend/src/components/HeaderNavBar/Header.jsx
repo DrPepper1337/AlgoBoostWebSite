@@ -36,6 +36,20 @@ export default function Header() {
     setOpen(false);
   }, [location]);
 
+  // Add/remove blur effect to body when menu opens/closes
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add('menu-open');
+    } else {
+      document.body.classList.remove('menu-open');
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove('menu-open');
+    };
+  }, [isMenuOpen]);
+
   if (location.pathname === '/verify') {
     return null;
   }
@@ -67,45 +81,41 @@ export default function Header() {
           onClick={() => setMenuOpen(!isMenuOpen)}
           aria-label="Toggle menu"
         >
-          <div className={`hamburger ${isMenuOpen ? 'open' : ''}`}>
-            <div className={`nav-container ${isMenuOpen ? 'open' : ''}`}>
-              {(<nav className="navbar">
-                {!isAuthenticated && !(location.pathname === '/login') && (
-                  <a className="navbarLink" id="login" onClick={() => { navigate('/login'); handleLinkClick(); }}>Login</a>
-                )}
-                {!isAuthenticated && !(location.pathname === '/register') && (
-                  <a className="navbarLink" id="register" onClick={() => { navigate('/login?mode=register'); handleLinkClick(); }}>Register</a>
-                )}
-                {!isAuthenticated && !(location.pathname === '/register') && (
-                  <a className="navbarLink" id="become-a-member" onClick={() => { window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety'); handleLinkClick(); }}>Become a Member</a>
-                )}
-
-                {isHomePage && !isAdmin && (<a className="navbarLink" href="/#about" onClick={handleLinkClick}>About us</a>)}
-                {isHomePage && !isAdmin && (<a className="navbarLink" href="/#offer" onClick={handleLinkClick}>What we offer</a>)}
-                {isHomePage && !isAdmin && (<a className="navbarLink" href="/#events" onClick={handleLinkClick}>Events</a>)}
-                {isHomePage && !isAdmin && (<a className="navbarLink" href="/#documents" onClick={handleLinkClick}>Documents</a>)}
-                {!isHomePage && !isAuthenticated && (<button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>Welcome Page</button>)}
-
-                {isAuthenticated && !isHomePage && (<button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>Welcome Page</button>)}
-                {isAuthenticated && !(location.pathname === '/memberHub') && (<button className="navbarLink" onClick={() => { navigate('/memberHub'); handleLinkClick(); }}>Member Hub</button>)}
-                {isAuthenticated && !(location.pathname === '/lessons') && (<button className="navbarLink" onClick={() => { navigate('/lessons'); handleLinkClick(); }}>Lessons</button>)}
-                {isAdmin && (
-                  <>
-                    {!(location.pathname === '/manageUsers') && (<button className="navbarLink admin-link" onClick={() => { navigate('/manageUsers'); handleLinkClick(); }}>Manage Users</button>)}
-                    {!(location.pathname === '/manageLessons') && (<button className="navbarLink admin-link" onClick={() => { navigate('/manageLessons'); handleLinkClick(); }}>Manage Lessons</button>)}
-                  </>
-                )}
-              </nav>
-              )}
-            </div>
-          </div>
+          <div className={`hamburger ${isMenuOpen ? 'open' : ''}`}></div>
         </button>
+
+        {/* Mobile Navigation Overlay */}
+        <div className={`nav-container ${isMenuOpen ? 'open' : ''}`}>
+          {/* Background blur element */}
+          <div className="blur-backdrop"></div>
+          <nav className="navbar">
+            {!isAuthenticated && !(location.pathname === '/register') && (
+              <a className="navbarLink" id="become-a-member" onClick={() => { window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety'); handleLinkClick(); }}>Become a Member</a>
+            )}
+
+            {isHomePage && !isAdmin && (<a className="navbarLink" href="/#about" onClick={handleLinkClick}>About us</a>)}
+            {isHomePage && !isAdmin && (<a className="navbarLink" href="/#offer" onClick={handleLinkClick}>What we offer</a>)}
+            {isHomePage && !isAdmin && (<a className="navbarLink" href="/#events" onClick={handleLinkClick}>Events</a>)}
+            {isHomePage && !isAdmin && (<a className="navbarLink" href="/#documents" onClick={handleLinkClick}>Documents</a>)}
+            {!isHomePage && !isAuthenticated && (<button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>Welcome Page</button>)}
+
+            {isAuthenticated && !isHomePage && (<button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>Welcome Page</button>)}
+            {isAuthenticated && !(location.pathname === '/memberHub') && (<button className="navbarLink" onClick={() => { navigate('/memberHub'); handleLinkClick(); }}>Member Hub</button>)}
+            {isAuthenticated && !(location.pathname === '/lessons') && (<button className="navbarLink" onClick={() => { navigate('/lessons'); handleLinkClick(); }}>Lessons</button>)}
+            {isAdmin && (
+              <>
+                {!(location.pathname === '/manageUsers') && (<button className="navbarLink admin-link" onClick={() => { navigate('/manageUsers'); handleLinkClick(); }}>Manage Users</button>)}
+                {!(location.pathname === '/manageLessons') && (<button className="navbarLink admin-link" onClick={() => { navigate('/manageLessons'); handleLinkClick(); }}>Manage Lessons</button>)}
+              </>
+            )}
+          </nav>
+        </div>
 
         <div className="right-controls">
           {!isAuthenticated ? (
             <div className="menu-buttons">
-              <button className="menu-btn" id="login" onClick={() => { navigate('/login'); handleLinkClick(); }}>Login</button>
-              <button className="menu-btn" id="register" onClick={() => { navigate('/login?mode=register'); handleLinkClick(); }}>Register</button>
+              {/* <button className="menu-btn" id="login" onClick={() => { navigate('/login'); handleLinkClick(); }}>Login</button> */}
+              {/* <button className="menu-btn" id="register" onClick={() => { navigate('/login?mode=register'); handleLinkClick(); }}>Register</button> */}
               <button className="menu-btn" id="become-a-member" onClick={() => { window.open('https://www.yourunion.net/activities/societies/explore/algoboostsociety'); handleLinkClick(); }}>Become a Member</button>
             </div>
           ) : (
@@ -115,32 +125,6 @@ export default function Header() {
             </div>
           )}
         </div>
-      </div>
-
-      <div className={`nav-container`}>
-        {isHomePage && !isAdmin && (
-          <nav className="navbar">
-            <a className="navbarLink" href="/#about" onClick={handleLinkClick}>About us</a>
-            <a className="navbarLink" href="/#offer" onClick={handleLinkClick}>What we offer</a>
-            <a className="navbarLink" href="/#events" onClick={handleLinkClick}>Events</a>
-            <a className="navbarLink" href="/#documents" onClick={handleLinkClick}>Documents</a>
-          </nav>
-        )}
-
-        {isAuthenticated && (
-          <nav className="navbar">
-            {!isHomePage && (<button className="navbarLink" onClick={() => { navigate('/'); handleLinkClick(); }}>Welcome Page</button>)}
-            {!(location.pathname === '/memberHub') && (<button className="navbarLink" onClick={() => { navigate('/memberHub'); handleLinkClick(); }}>Member Hub</button>)}
-            {!(location.pathname === '/lessons') && (<button className="navbarLink" onClick={() => { navigate('/lessons'); handleLinkClick(); }}>Lessons</button>)}
-            {isAdmin && (
-              <>
-                {!(location.pathname === '/manageUsers') && (<button className="navbarLink admin-link" onClick={() => { navigate('/manageUsers'); handleLinkClick(); }}>Manage Users</button>)}
-                {!(location.pathname === '/manageLessons') && (<button className="navbarLink admin-link" onClick={() => { navigate('/manageLessons'); handleLinkClick(); }}>Manage Lessons</button>)}
-              </>
-            )}
-
-          </nav>
-        )}
       </div>
     </header>
   );
