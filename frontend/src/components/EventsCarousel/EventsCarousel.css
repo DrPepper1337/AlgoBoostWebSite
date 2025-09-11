@@ -192,7 +192,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
     .events-carousel {
         padding: 2rem 1rem;
     }
@@ -228,7 +228,7 @@
         font-size: 1rem;
         line-height: 1.6;
     }
-}
+} */
 
 .carousel-items {
     --gap: clamp(520px, 40vw, 720px);
