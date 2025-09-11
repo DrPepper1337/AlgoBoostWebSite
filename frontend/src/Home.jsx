@@ -14,7 +14,10 @@ import DocElement from './components/DocElement/DocElement';
 import { useMediaQuery } from 'react-responsive';
 
 export default function Home() {
-  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isMobile = useMediaQuery({
+  maxWidth: 1024,
+  orientation: 'portrait',
+});
 
   console.log('Current window width:', window.innerWidth, 'isMobile:', isMobile);
 

@@ -62,7 +62,7 @@ function EventsCarouselMobile() {
             <Swiper
                 ref={swiperRef}
                 modules={[Pagination, Autoplay]}
-                spaceBetween={0}
+                spaceBetween={20}
                 slidesPerView={1}
                 navigation={false}
                 pagination={false}
@@ -73,7 +73,7 @@ function EventsCarouselMobile() {
                 initialSlide={currentSlide}
             >
                 {eventTypes.map((event, index) => (
-                    <SwiperSlide key={index} className="carousel-item-mobile">
+                    <SwiperSlide key={index} className="carousel-slide-mobile">
                         <div className="event-card-mobile">
                             {event.image ? (
                                 <img src={event.image} alt={event.title} className="event-image-mobile" />
