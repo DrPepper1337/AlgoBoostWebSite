@@ -63,8 +63,25 @@ services:
       - /root/AlgoBoostWebSite/deploy/nginx/conf.d:/etc/nginx/conf.d:ro
       # letsencrypt certs
       - /root/AlgoBoostWebSite/deploy/letsencrypt:/etc/letsencrypt:ro
+      # writeable acme chellenge 
+      - /root/AlgoBoostWebSite/deploy/acme-challenge:/acme:rw
     networks: [service-network]
     restart: unless-stopped
+
+  certbot: 
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./deploy/letsencrypt:/etc/letsencrypt
+      - ./deploy/acme-challenge:/acme
+    entrypoint: >
+      sh -c "while :; do
+             certbot renew --webroot --webroot-path /acme;
+             sleep 12h;
+           done"
+    networks: [service-network]
+    restart: unless-stopped
+      
 
 networks:
   service-network:
