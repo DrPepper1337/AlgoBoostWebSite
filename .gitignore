@@ -8,4 +8,14 @@
 /yarn-error.log
 /.env
 node_modules
-/deploy
+/deploy/postgres_data
+/frontend/dist
+/frontend/build
+*.exe
+*.out
+*.exe~
+*.out~
+/deploy/letsencrypt/
+deploy/letsencrypt/*
+deploy/postgres_data/
+/docker/*

@@ -1,0 +1,71 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper
+    env_file: ["../configs/Docker.env"]
+    environment:
+      KAFKA_HEAP_OPTS: "-Xms256m -Xmx256m"
+    networks: [service-network]
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
+    env_file: ["../configs/Docker.env"]
+    depends_on: [zookeeper]
+    environment:
+      KAFKA_HEAP_OPTS: "-Xms256m -Xmx512m"
+    ports: ["9092:9092"]
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks: [service-network]
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17
+    container_name: postgres_container
+    env_file: ["../configs/Docker.env"]
+    ports: ["5432:5432"]
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks: [service-network]
+    restart: unless-stopped
+
+  receiver:
+    build:
+      context: ../
+      dockerfile: build/receiver/Dockerfile
+    container_name: receiver
+    env_file: ["../configs/Docker.env"]
+    # publish only if you need to hit it directly from host; not required for NGINX proxy
+    ports: ["8080:8080"]
+    depends_on:
+      zookeeper: { condition: service_started }
+      kafka:     { condition: service_healthy }
+      postgres:  { condition: service_started }
+    networks: [service-network]
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: web
+    depends_on: [receiver]
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # built static files
+      - /root/AlgoBoostWebSite/frontend/dist:/usr/share/nginx/html:ro
+      # your nginx server blocks (include HTTP->HTTPS and SPA fallback)
+      - /root/AlgoBoostWebSite/deploy/nginx/conf.d:/etc/nginx/conf.d:ro
+      # letsencrypt certs
+      - /root/AlgoBoostWebSite/deploy/letsencrypt:/etc/letsencrypt:ro
+    networks: [service-network]
+    restart: unless-stopped
+
+networks:
+  service-network:
+    driver: bridge
