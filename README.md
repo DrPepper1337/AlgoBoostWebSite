@@ -6,9 +6,13 @@ We are a St Andrews Universiy student-led society, commited to helping our peers
 
 1. Make sure you have the latest version of Docker Desktop Running
 2. Make sure your `.env` is up to date
-3. Build the static files:
-   1. From the root directory of the project, go to `frontend/`
-   2. Run `npm install`
-   3. Run `npm run build`
-4. Run `docker compose -f deploy/docker-compose.dev.yml up --build`
-5. The website should be accessible via `http://localhost/8088` on your machine
+3. Run `docker compose -f deploy/docker-compose.dev.yml up --build`
+4. The website should be accessible via `http://localhost/8088` on your machine
+
+## Ports - Development
+
+- `8088` = Nginx. proxies `/` to the Vite dev server (frontend hot-reload) and `/api/` to receiver
+- `5173` = Vite dev server in the frontend container, hot-reload, but bypasses Nginx
+- `8080` = receiver API service
+- `5432` = Postgres
+- `9092` = Kafka broker
