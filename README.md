@@ -11,4 +11,4 @@ We are a St Andrews Universiy student-led society, commited to helping our peers
    2. Run `npm install`
    3. Run `npm run build`
 4. Run `docker compose -f deploy/docker-compose.dev.yml up --build`
-5. The website should be accessible via `http://localhost/` on your machine
+5. The website should be accessible via `http://localhost/8088` on your machine
