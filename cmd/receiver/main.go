@@ -113,6 +113,19 @@ func main() {
 		zap.L().Debug(err.Error())
 	}
 
+	   err = db.AddEmailToWhitelist("i@nadezhdafedotova.ru", "Nadezhda", "member")
+    if err != nil {
+        zap.L().Debug(err.Error())
+    }
+
+    // Add test solutions for user ID 1
+    _, err = db.AddSolution("python", "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)", 1, 1)
+    if err != nil {
+        zap.L().Debug(err.Error())
+    }
+
+	
+
 
 	// initialises the receiver
 	r := receiver.SetupRoutes(db)

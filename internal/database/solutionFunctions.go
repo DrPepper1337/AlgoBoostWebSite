@@ -10,7 +10,7 @@ import (
 
 func (db *Database) AddSolution(compiler, code string, userId int, taskId int) (int, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	sql, args, err := psql.Insert("solutions").Columns("compiler", "code", "status_code", "task_id", "user_id").Values(compiler, code, "waiting", taskId, userId).Suffix("RETURNING id").ToSql()
+	sql, args, err := psql.Insert("solutions").Columns("compiler", "code", "status_code", "task_id", "user_id").Values(compiler, code, 1, taskId, userId).Suffix("RETURNING id").ToSql()
 	if err != nil {
 		return 0, err
 	}
@@ -26,7 +26,7 @@ func (db *Database) AddSolution(compiler, code string, userId int, taskId int) (
 	return int(result.(int32)), nil
 }
 
-func (db *Database) UpdateSolution(id int, statusCode string, time float64, memory float64, status models.Status) error {
+func (db *Database) UpdateSolution(id int, statusCode int, time float64, memory float64, status models.Status) error {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	sql, args, err := psql.Insert("statuses").Columns("solution_id", "num_of_test", "test_input", "test_output", "user_output").Values(id, status.NumOfTest, status.TestInput, status.TestOutput, status.UserOutput).Suffix("RETURNING id").ToSql()
 	if err != nil {
@@ -71,4 +71,33 @@ func (db *Database) GetSolution(id int) (models.Solution, error) {
 	}
 	result.Status = status
 	return result, nil
+}
+
+func (db *Database) GetSolutionsByUserID(userID int) ([]models.Solution, error) {
+    psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+    sql, args, err := psql.Select("id", "compiler", "code", "COALESCE(memory, 0)", "COALESCE(time, 0)", "status_code", "task_id", "user_id").
+        From("solutions").
+        Where(sq.Eq{"user_id": userID}).
+        Where(sq.NotEq{"code": ""}).
+        ToSql()
+    if err != nil {
+        return nil, err
+    }
+
+    rows, err := db.Postgres.Query(context.Background(), sql, args...)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var solutions []models.Solution
+    for rows.Next() {
+        var s models.Solution
+        err = rows.Scan(&s.ID, &s.Compiler, &s.Code, &s.Memory, &s.Time, &s.StatusCode, &s.TaskID, &s.UserID)
+        if err != nil {
+            return nil, err
+        }
+        solutions = append(solutions, s)
+    }
+    return solutions, nil
 }

@@ -312,6 +312,24 @@ func GetTasksDetailsHandler(db *database.Database) http.HandlerFunc {
 
 }
 
+func GetUserSolutionsHandler(db *database.Database) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        userID, ok := middleware.GetUserIDFromContext(r.Context())
+        if !ok {
+            utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
+            return
+        }
+
+        solutions, err := db.GetSolutionsByUserID(userID)
+        if err != nil {
+            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch solutions: "+err.Error(), nil)
+            return
+        }
+
+        utils.WriteJSON(w, http.StatusOK, true, "solutions fetched successfully", solutions)
+    }
+}
+
 func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	var req models.Solution
 	err := json.NewDecoder(r.Body).Decode(&req)

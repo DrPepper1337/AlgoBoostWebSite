@@ -59,7 +59,7 @@ type Solution struct { // add timestamp
 	Code       string  `json:"code"`
 	Memory     float64 `json:"memory"`
 	Time       float64 `json:"time"`
-	StatusCode string  `json:"status_code"`
+	StatusCode int     `json:"status_code"`
 	TaskID     int     `json:"task_id"`
 	UserID     int     `json:"user_id"`
 	Status     Status  `json:"status"`
