@@ -14,8 +14,43 @@ h2 {
     display: block;
 }
 
+.add-lesson-form {
+    border: 3px solid #ccc;
+    padding: 20px;
+    margin-bottom: 50px;
+    border-radius: 6px;
+    position: relative;
+}
+
+.add-lesson-form button {
+    padding: 20px;
+    margin: 10px 0px 10px 0px;
+    display: flex;
+    align-items: center;  
+    justify-content: center;
+    width: 10%;
+}
+
+.add-lesson-form label {
+    font-size: 1.5rem;
+}
+
+.add-lesson-form input {
+    border: 0.5px solid #ff7a0a;
+}
+
+.add-lesson-form textarea {
+    border: 0.5px solid #ff7a0a;
+}
+
+.add-lesson-form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
 .manage-lesson-item {
-    border: 1px solid #ccc;
+    border: 3px solid #ff7a0a;
     padding: 20px;
     margin-bottom: 25px;
     border-radius: 6px;
@@ -71,7 +106,6 @@ h2 {
 .manage-lessons-button {
     display: inline-block;
     width: auto;
-    max-width: 200px;
     padding: 8px 16px;
     border: 1px solid #aaa;
     background: var(--light-grey-bg);
