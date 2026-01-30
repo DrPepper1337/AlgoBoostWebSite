@@ -183,7 +183,7 @@ export default function UserProfile() {
                                         className="lesson-item"
                                         onClick={() => navigate(`/tasks/${l.id}`, { state: { lesson: l } })}
                                     >
-                                        <div className="lesson-meta">
+                                        <div className="task-label">
                                             <h3>{l.title}</h3>
                                             <p className="muted">{l.description || 'A brief description of this lesson.'}</p>
                                         </div>
