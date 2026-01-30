@@ -103,3 +103,24 @@ func (db *Database) GetTasksByLessonIdHandler(lessonID int) ([]models.Task, erro
 	}
 	return tasks, nil
 }
+
+func (db *Database) GetTotalNumPracticeTasks() (int, error) {
+    psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+    
+    // Count total practice tasks
+    sql, args, err := psql.Select("COUNT(*)").
+        From("tasks").
+        Where(sq.Eq{"is_practice": true}).
+        ToSql()
+    if err != nil {
+        return 0, err
+    }
+    
+    var total int
+    err = db.Postgres.QueryRow(context.Background(), sql, args...).Scan(&total)
+    if err != nil {
+        return 0, err
+    }
+
+    return total, nil
+}

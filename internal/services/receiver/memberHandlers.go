@@ -330,6 +330,34 @@ func GetUserSolutionsHandler(db *database.Database) http.HandlerFunc {
     }
 }
 
+
+func GetUserStatsHandler(db *database.Database) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        userID, ok := middleware.GetUserIDFromContext(r.Context())
+        if !ok {
+            utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
+            return
+        }
+
+        solved, err := db.GetSolvedUserTasks(userID)
+        if err != nil {
+            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch solved count: "+err.Error(), nil)
+            return
+        }
+
+        total, err := db.GetTotalNumPracticeTasks()
+        if err != nil {
+            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch total count: "+err.Error(), nil)
+            return
+        }
+
+        utils.WriteJSON(w, http.StatusOK, true, "stats fetched successfully", map[string]int{
+            "solved": solved,
+            "total":  total,
+        })
+    }
+}
+
 func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	var req models.Solution
 	err := json.NewDecoder(r.Body).Decode(&req)

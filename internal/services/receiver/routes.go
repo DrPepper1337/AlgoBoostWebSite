@@ -31,6 +31,7 @@ func SetupRoutes(db *database.Database) http.Handler {
 	r.With(middleware.MemberMiddleware).Get("/api/lessons", GetAllLessonsHandler(db))
 	r.With(middleware.MemberMiddleware).Get("/api/tasks/{taskID}", GetTasksDetailsHandler(db))
 	r.With(middleware.MemberMiddleware).Get("/api/user/solutions", GetUserSolutionsHandler(db))
+	r.With(middleware.MemberMiddleware).Get("/api/user/stats", GetUserStatsHandler(db))
 
 	// user stats and progress handlers and routes as future improvements
 

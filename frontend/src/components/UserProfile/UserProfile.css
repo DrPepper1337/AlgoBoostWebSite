@@ -2,3 +2,64 @@
   margin-top: 7rem;
   text-align: center;
 }
+.recent-card {
+    margin-top: 3rem;
+}
+
+.stats-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.circular-progress {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.circular-progress svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.progress-bg {
+    fill: none;
+    stroke: #2a2a2a;
+    stroke-width: 8;
+}
+
+.progress-bar {
+    fill: none;
+    stroke: #ff8f2a;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.5s ease;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.stats-label h3 {
+    margin: 0;
+    color: #ff8f2a;
+    font-size: 1.5rem;
+}
+
+.stats-label .muted {
+    margin: 0.5rem 0 0;
+}
+
+.no-tasks {
+    text-align: center;
+    padding: 1rem;
+}
