@@ -106,7 +106,7 @@ func (db *Database) GetSolutionsByUserID(userID int) ([]models.Solution, error) 
 func (db *Database) GetSolvedUserTasks(userID int) (solved int, err error) {
     psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
     
-    // Count solved (status_code = 0) for this user - unique tasks only
+    // Count solved (status_code = 0) for this user 
     sql, args, err := psql.Select("COUNT(DISTINCT task_id)").
         From("solutions").
         Where(sq.Eq{"user_id": userID, "status_code": 0}).
@@ -121,3 +121,24 @@ func (db *Database) GetSolvedUserTasks(userID int) (solved int, err error) {
 
     return solved, nil
 }
+
+// retunrs the number of attmempted practice tasks
+func (db *Database) GetAttemptedUserTasks(userID int) (attempted int, err error) {
+    psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+    
+    // Count attempted (status_code = 1) for this user 
+    sql, args, err := psql.Select("COUNT(DISTINCT task_id)").
+        From("solutions").
+        Where(sq.Eq{"user_id": userID, "status_code": 1}).
+        ToSql()
+    if err != nil {
+        return 0, err
+    }
+    err = db.Postgres.QueryRow(context.Background(), sql, args...).Scan(&attempted)
+    if err != nil {
+        return 0, err
+    }
+
+    return attempted, nil
+}
+

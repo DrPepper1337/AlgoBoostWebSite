@@ -351,9 +351,16 @@ func GetUserStatsHandler(db *database.Database) http.HandlerFunc {
             return
         }
 
+		attempted, err := db.GetAttemptedUserTasks(userID)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch attempted count: "+err.Error(), nil)
+			return
+		}
+
         utils.WriteJSON(w, http.StatusOK, true, "stats fetched successfully", map[string]int{
             "solved": solved,
             "total":  total,
+            "attempted": attempted,
         })
     }
 }

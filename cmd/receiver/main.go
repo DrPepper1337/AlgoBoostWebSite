@@ -124,6 +124,17 @@ func main() {
         zap.L().Debug(err.Error())
     }
 
+	  _, err = db.AddSolution("python", "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)", 1, 3)
+    if err != nil {
+        zap.L().Debug(err.Error())
+    }
+
+	  _, err = db.AddSolution("python", "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)", 1, 4)
+    if err != nil {
+        zap.L().Debug(err.Error())
+    }
+
+
 	
 
 

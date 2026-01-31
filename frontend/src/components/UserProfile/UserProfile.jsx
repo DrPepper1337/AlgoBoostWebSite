@@ -62,7 +62,7 @@ export default function UserProfile() {
 
    
 
-        // fetch solutions and their task details
+        // fetch solutions and task details
     useEffect(() => {
         (async () => {
             try {
@@ -79,7 +79,7 @@ export default function UserProfile() {
                 
                 // Get solutions with status_code not 0 or 1
                 const inProgressSolutions = solutions.filter(
-                    s => s.status_code !== 0 && s.status_code !== 1
+                    s => s.status_code !== 0 && s.status_code !== 2
                 );
 
                 console.log('In progress solutions:', inProgressSolutions);
@@ -108,7 +108,8 @@ export default function UserProfile() {
         })();
     }, []);
 
-    const progressPercent = stats.total > 0 ? (stats.solved / stats.total) * 100 : 0;
+    const progressPercentSolved = stats.total > 0 ? (stats.solved / stats.total) * 100 : 0;
+    const progressPercentAttempted = stats.total > 0 ? (stats.attempted / stats.total) * 100 : 0;
     return (
             <div className="hub-wrapper">
                  <section className="welcome-banner">
@@ -153,31 +154,62 @@ export default function UserProfile() {
                     <div className="recent-card">
                         <h2>Statistics</h2>
                         <div className="stats-container">
-                            <div className="circular-progress">
-                                <svg viewBox="0 0 100 100">
-                                    <circle
-                                        className="progress-bg"
-                                        cx="50"
-                                        cy="50"
-                                        r="45"
-                                    />
-                                    <circle
-                                        className="progress-bar"
-                                        cx="50"
-                                        cy="50"
-                                        r="45"
-                                        style={{
-                                            strokeDasharray: `${progressPercent * 2.83} 283`,
-                                        }}
-                                    />
-                                </svg>
-                                <div className="progress-text">
-                                    {stats.solved}/{stats.total}
+                            <div className="stat-item">
+                                <div className="circular-progress">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle
+                                            className="progress-bg"
+                                            cx="50"
+                                            cy="50"
+                                            r="45"
+                                        />
+                                        <circle
+                                            className="progress-bar"
+                                            cx="50"
+                                            cy="50"
+                                            r="45"
+                                            style={{
+                                                strokeDasharray: `${progressPercentSolved * 2.83} 283`,
+                                            }}
+                                        />
+                                    </svg>
+                                    <div className="progress-text">
+                                        {stats.solved}/{stats.total}
+                                    </div>
+                                </div>
+                                <div className="stats-label">
+                                    <h3>Solved</h3>
+                                    <p className="muted">Practice problems completed</p>
                                 </div>
                             </div>
-                            <div className="stats-label">
-                                <h3>Solved</h3>
-                                <p className="muted">Practice problems completed</p>
+
+                            <div className="stat-item">
+                                <div className="circular-progress">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle
+                                            className="progress-bg"
+                                            cx="50"
+                                            cy="50"
+                                            r="45"
+                                        />
+                                        <circle
+                                            className="progress-bar"
+                                            cx="50"
+                                            cy="50"
+                                            r="45"
+                                            style={{
+                                                strokeDasharray: `${progressPercentAttempted * 2.83} 283`,
+                                            }}
+                                        />
+                                    </svg>
+                                    <div className="progress-text">
+                                        {stats.attempted}/{stats.total}
+                                    </div>
+                                </div>
+                                <div className="stats-label">
+                                    <h3>Attempted</h3>
+                                    <p className="muted">Practice problems not yet solved</p>
+                                </div>
                             </div>
                         </div>
                       
