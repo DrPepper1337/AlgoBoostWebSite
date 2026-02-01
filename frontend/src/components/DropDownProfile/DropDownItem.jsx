@@ -1,4 +1,4 @@
-
+// eslint-disable-next-line no-unused-vars
 const DropDownItem = ({ icon: Icon, text, onClick }) => {
   return (
     <li className="dropdownItem" onClick={onClick}>

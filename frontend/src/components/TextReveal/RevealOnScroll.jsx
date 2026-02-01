@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 
 export default function RevealOnScroll({
+  // eslint-disable-next-line no-unused-vars
   as: Tag = "div",
   className = "",
   threshold = 0,
@@ -26,7 +27,7 @@ export default function RevealOnScroll({
           }
         });
       },
-      { threshold, rootMargin }
+      { threshold, rootMargin },
     );
 
     io.observe(el);

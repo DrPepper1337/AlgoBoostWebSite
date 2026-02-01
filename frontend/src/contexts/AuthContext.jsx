@@ -1,11 +1,12 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -17,8 +18,8 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem('authToken');
-      const userData = localStorage.getItem('userData');
+      const token = localStorage.getItem("authToken");
+      const userData = localStorage.getItem("userData");
 
       if (token && userData) {
         try {
@@ -26,8 +27,9 @@ export const AuthProvider = ({ children }) => {
           setUser(parsedUser);
           setIsAuthenticated(true);
         } catch (error) {
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('userData');
+          console.error("Error parsing user data from localStorage:", error);
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("userData");
           setUser(null);
           setIsAuthenticated(false);
         }
@@ -41,28 +43,28 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
 
     const handleStorageChange = (e) => {
-      if (e.key === 'authToken' || e.key === 'userData') {
+      if (e.key === "authToken" || e.key === "userData") {
         checkAuth();
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 
   const saveUserDataInLocalStorage = (token, userData) => {
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('userData', JSON.stringify(userData));
+    localStorage.setItem("authToken", token);
+    localStorage.setItem("userData", JSON.stringify(userData));
     setUser(userData);
     setIsAuthenticated(true);
   };
 
   const deleteUserDataFromLocalStorage = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
     setUser(null);
     setIsAuthenticated(false);
   };
@@ -72,12 +74,8 @@ export const AuthProvider = ({ children }) => {
     user,
     saveUserDataInLocalStorage,
     deleteUserDataFromLocalStorage,
-    loading
+    loading,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
