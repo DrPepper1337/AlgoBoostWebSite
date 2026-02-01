@@ -65,8 +65,8 @@ func RegisterUser(db *database.Database, entry models.RegistrationEntry, token s
 
 func SendVerificationEmail(email, name, verificationLink string) error {
 	zap.L().Info("Sending verification email to:", zap.String("email", email), zap.String("name", name), zap.String("link", verificationLink))
-	// verifEmail.SendVerificationEmailBrevo(email, name, verificationLink)
-	verifEmail.SendVerificationEmailSendGrid(email, name, verificationLink)
+	verifEmail.SendVerificationEmailBrevo(email, name, verificationLink)
+	// verifEmail.SendVerificationEmailSendGrid(email, name, verificationLink)
 	return nil
 }
 
