@@ -370,7 +370,7 @@ export default function ManageLessons() {
 
             {isAddingLesson && (
                 <form onSubmit={handleAddLesson} className="add-lesson-form">
-                    <div>
+                    <div className="add-lesson-form-row">
                         <label>Title:</label>
                         <input
                             type="text"
@@ -379,7 +379,7 @@ export default function ManageLessons() {
                             required
                         />
                     </div>
-                    <div>
+                    <div className="add-lesson-form-row">
                         <label>Description:</label>
                         <textarea
                             value={newLessonDescription}

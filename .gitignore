@@ -7,6 +7,7 @@
 /npm-debug.log
 /yarn-error.log
 /.env
+configs/Docker.env.dev
 node_modules
 /deploy/postgres_data
 /frontend/dist
