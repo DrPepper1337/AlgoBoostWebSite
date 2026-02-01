@@ -81,10 +81,12 @@ func (db *Database) EditLesson(id int, title, description string) error {
 	if err != nil {
 		return err
 	}
-	row := db.Postgres.QueryRow(context.Background(), sql, args...)
-	var result interface{}
-	if err := row.Scan(&result); err != nil {
+	result, err := db.Postgres.Exec(context.Background(), sql, args...)
+	if err != nil {
 		return err
+	}
+	if result.RowsAffected() == 0 {
+		return errors.New("no lesson updated")
 	}
 	return nil
 }
@@ -95,10 +97,12 @@ func (db *Database) SetLessonVisability(id int, open bool) error {
 	if err != nil {
 		return err
 	}
-	row := db.Postgres.QueryRow(context.Background(), sql, args...)
-	var result interface{}
-	if err := row.Scan(&result); err != nil {
+	result, err := db.Postgres.Exec(context.Background(), sql, args...)
+	if err != nil {
 		return err
+	}
+	if result.RowsAffected() == 0 {
+		return errors.New("no lesson updated")
 	}
 	return nil
 }
