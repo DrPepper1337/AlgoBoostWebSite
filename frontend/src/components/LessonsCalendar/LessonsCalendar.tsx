@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { startOfWeek, addDays, isSameDay, differenceInMinutes, setHours, setMinutes } from "date-fns";
-import enUS from "date-fns/locale/en-US";
+import { enUS } from "date-fns/locale/en-US";
 import { fetchPublicCalendarEvents } from "../../utils/fetchGcal";
 import "./LessonsCalendar.css";
 
