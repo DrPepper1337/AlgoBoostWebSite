@@ -1,0 +1,7 @@
+./createConnection.go
+./lessonFunctions.go
+./solutionFunctions.go
+./taskFunctions.go
+./userFunctions.go
+./verifFuncitons.go
+./whitelistFunctions.go

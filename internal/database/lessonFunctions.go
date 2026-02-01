@@ -6,7 +6,7 @@ import (
 	"errors"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jackc/pgx/v5"
+	pgx "github.com/jackc/pgx/v5"
 	"go.uber.org/zap"
 )
 
@@ -83,7 +83,9 @@ func (db *Database) EditLesson(id int, title, description string) error {
 	}
 	row := db.Postgres.QueryRow(context.Background(), sql, args...)
 	var result interface{}
-	err = row.Scan(&result)
+	if err := row.Scan(&result); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -95,7 +97,9 @@ func (db *Database) SetLessonVisability(id int, open bool) error {
 	}
 	row := db.Postgres.QueryRow(context.Background(), sql, args...)
 	var result interface{}
-	err = row.Scan(&result)
+	if err := row.Scan(&result); err != nil {
+		return err
+	}
 	return nil
 }
 

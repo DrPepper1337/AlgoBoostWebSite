@@ -1,0 +1,5 @@
+./helpers_deprecated.go
+./normalize_deprecated.go
+./reference_deprecated.go
+./regexp_deprecated.go
+./sort_deprecated.go

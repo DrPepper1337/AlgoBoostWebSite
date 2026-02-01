@@ -6,7 +6,7 @@ import (
 	"errors"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jackc/pgx/v5"
+	pgx "github.com/jackc/pgx/v5"
 )
 
 func (db *Database) AddTask(title, description string, timeLimit float64, memoryLimit float64, isPractice bool) (int, error) {
@@ -57,7 +57,9 @@ func (db *Database) EditTask(id int, title, description string, timeLimit float6
 	}
 	row := db.Postgres.QueryRow(context.Background(), sql, args...)
 	var result interface{}
-	err = row.Scan(&result)
+	if err := row.Scan(&result); err != nil {
+		return err
+	}
 	return nil
 }
 

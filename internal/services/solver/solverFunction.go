@@ -9,7 +9,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/client"
+	client "github.com/docker/docker/client"
 )
 
 func (s *Solver) CheckSubmission(solution *models.Solution) error {
@@ -19,13 +19,10 @@ func (s *Solver) CheckSubmission(solution *models.Solution) error {
 	switch solution.Compiler {
 	case "c++":
 		filename += "cpp"
-		break
 	case "python":
 		filename += "py "
-		break
 	case "java":
 		filename += "java"
-		break
 	}
 	filename = fmt.Sprintf(filename, solution.ID)
 	err := os.WriteFile(filename, codeToWrite, 0755)
