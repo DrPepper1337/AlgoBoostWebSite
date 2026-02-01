@@ -26,6 +26,10 @@ jobs:
           install-mode: goinstall
           skip-cache: true
           args: ./...
+        env:
+          GOTOOLCHAIN: local
+          GOCACHE: /tmp/gocache
+          GOMODCACHE: /tmp/gomodcache
 
       - name: Set up eslint for frontend
         uses: actions/setup-node@v3
@@ -40,5 +44,3 @@ jobs:
       - name: Run ESLint
         run: |
           npx eslint . --ext .js,.jsx,.ts,.tsx
-        env:
-          GOTOOLCHAIN: local
