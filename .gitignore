@@ -21,3 +21,5 @@ deploy/letsencrypt/*
 deploy/postgres_data/
 /docker/*
 configs/Docker.env
+.cache/
+vendor/
