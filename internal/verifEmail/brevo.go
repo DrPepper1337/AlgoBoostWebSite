@@ -5,9 +5,11 @@ import (
 	"os"
 
 	"github.com/go-resty/resty/v2"
+	"go.uber.org/zap"
 )
 
 func SendVerificationEmailBrevo(toEmail, name, verificationLink string) error {
+       zap.L().Debug("SendVerificationEmailBrevo called", zap.String("toEmail", toEmail), zap.String("name", name))
 	apiKey := os.Getenv("BREVO_API_KEY")
 
 	client := resty.New()
@@ -33,12 +35,18 @@ func SendVerificationEmailBrevo(toEmail, name, verificationLink string) error {
 		}).
 		Post("https://api.brevo.com/v3/smtp/email")
 
+       zap.L().Debug("Brevo email request made", zap.Any("resp", resp), zap.Error(err))
+
 	if err != nil {
-		return fmt.Errorf("failed to send email: %w", err)
+		zap.L().Error("failed to send email: " + err.Error())
 	}
 
 	if resp.StatusCode() >= 400 {
-		return fmt.Errorf("failed to send email: %s", resp.String())
+		zap.L().Error("failed to send email: " + resp.String())
+	}
+
+	if resp.StatusCode() == 201 {
+		zap.L().Info("Verification email sent successfully via Brevo!")
 	}
 	return nil
 }
