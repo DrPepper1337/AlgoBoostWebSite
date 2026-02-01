@@ -16,3 +16,23 @@ We are a St Andrews Universiy student-led society, commited to helping our peers
 - `8080` = receiver API service
 - `5432` = Postgres
 - `9092` = Kafka broker
+
+## How to run lint
+
+To run lint for the entire codebase run:
+
+```bash
+make lint
+```
+
+To run lint for just backend run:
+
+```bash
+make lint-go
+```
+
+To run lint for just frontend run:
+
+```bash
+make lint-js
+```
