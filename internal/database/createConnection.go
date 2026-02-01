@@ -122,7 +122,7 @@ func (db *Database) CreateTables() error {
 			code TEXT NOT NULL,
 			time NUMERIC(10, 3),
 			memory NUMERIC(10, 3),
-			status_code VARCHAR(20) NOT NULL,
+			status_code INTEGER NOT NULL,
     		task_id INTEGER NOT NULL,
 			user_id INTEGER NOT NULL,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
