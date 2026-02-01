@@ -26,5 +26,19 @@ jobs:
           install-mode: goinstall
           skip-cache: true
           args: ./...
+
+      - name: Set up eslint for frontend
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Run ESLint
+        run: |
+          npx eslint . --ext .js,.jsx,.ts,.tsx
         env:
           GOTOOLCHAIN: local
