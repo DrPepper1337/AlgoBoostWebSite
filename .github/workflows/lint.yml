@@ -43,4 +43,5 @@ jobs:
 
       - name: Run ESLint
         run: |
+          cd frontend
           npx eslint . --ext .js,.jsx,.ts,.tsx
