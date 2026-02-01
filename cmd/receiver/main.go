@@ -108,6 +108,11 @@ func main() {
 		zap.L().Debug(err.Error())
 	}
 
+	err = db.AddEmailToWhitelist("stasymartinson@gmail.com", "aaa", "admin")
+	if err != nil {
+		zap.L().Debug(err.Error())
+	}
+
 	err = db.AddEmailToWhitelist("i@nadezhdafedotova.ru", "Nadezhda", "member")
 	if err != nil {
 		zap.L().Debug(err.Error())
@@ -124,13 +129,9 @@ func main() {
         zap.L().Debug(err.Error())
     }
 
-	
-
-
 	// initialises the receiver
 	r := receiver.SetupRoutes(db)
 	log.Println("receiver running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
-	// ---
 
 }
