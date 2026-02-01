@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  go-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.23.4"
+
+      - name: Download modules
+        run: go mod download
+
+      - name: Run tests
+        env:
+          GOTOOLCHAIN: local
+          GOCACHE: /tmp/gocache
+          GOMODCACHE: /tmp/gomodcache
+        run: go test ./...
