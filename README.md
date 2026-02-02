@@ -36,3 +36,11 @@ To run lint for just frontend run:
 ```bash
 make lint-js
 ```
+
+## How to test
+
+Our extensive testing suite is located in the `tests/` directory. They run as part of CI/CD. To run them locally, do the followig:
+
+1. Make sure backend / the app is running (`docker compose -f deploy/docker-compose.dev.yml up`)
+2. Run tests in all subdirs of the project: `go test ./..`
+3. Run specific test files: `go test tests/database/postgres_test.go`
