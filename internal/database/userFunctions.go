@@ -6,7 +6,7 @@ import (
 	"errors"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jackc/pgx/v5"
+	pgx "github.com/jackc/pgx/v5"
 )
 
 func (db *Database) AddUser(name string, email string, password string, role string) (int, error) {
@@ -89,6 +89,9 @@ func (db *Database) GetUser(id int) (models.User, error) {
 	row := db.Postgres.QueryRow(context.Background(), sql, args...)
 	var result models.User
 	err = row.Scan(&result.ID, &result.Name, &result.Email, &result.Password, &result.Role)
+	if err != nil {
+		return models.User{}, err
+	}
 	return result, nil
 }
 

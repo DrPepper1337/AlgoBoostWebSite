@@ -2,7 +2,7 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
     container_name: zookeeper
-    env_file: ["../configs/Docker.env.dev"]
+    env_file: ["../configs/Docker.dev.env"]
     environment:
       KAFKA_HEAP_OPTS: "-Xms256m -Xmx256m"
     networks: [service-network]
@@ -11,7 +11,7 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.4.0
     container_name: kafka
-    env_file: ["../configs/Docker.env.dev"]
+    env_file: ["../configs/Docker.dev.env"]
     depends_on: [zookeeper]
     environment:
       KAFKA_HEAP_OPTS: "-Xms256m -Xmx512m"
@@ -28,7 +28,7 @@ services:
   postgres:
     image: postgres:17
     container_name: postgres_container
-    env_file: ["../configs/Docker.env.dev"]
+    env_file: ["../configs/Docker.dev.env"]
     ports: ["5432:5432"]
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
@@ -40,7 +40,7 @@ services:
       context: ../
       dockerfile: build/receiver/Dockerfile
     container_name: receiver
-    env_file: ["../configs/Docker.env.dev"]
+    env_file: ["../configs/Docker.dev.env"]
     # publish only if you need to hit it directly from host; not required for NGINX proxy
     ports: ["8080:8080"]
     depends_on:
