@@ -65,7 +65,10 @@ func RegisterUser(db *database.Database, entry models.RegistrationEntry, token s
 
 func SendVerificationEmail(email, name, verificationLink string) error {
 	zap.L().Info("Sending verification email to:", zap.String("email", email), zap.String("name", name), zap.String("link", verificationLink))
-	verifEmail.SendVerificationEmailBrevo(email, name, verificationLink)
+	if err := verifEmail.SendVerificationEmailBrevo(email, name, verificationLink); err != nil {
+		zap.L().Error("failed to send verification email", zap.Error(err))
+		return err
+	}
 	// verifEmail.SendVerificationEmailSendGrid(email, name, verificationLink)
 	return nil
 }
@@ -89,7 +92,10 @@ func ResetPassword(db *database.Database, entry models.RegistrationEntry) error 
 
 func SendResetPasswordEmail(email, name, verificationLink string) error {
 	zap.L().Info("Sending reset password email to:", zap.String("email", email), zap.String("name", name), zap.String("link", verificationLink))
-	verifEmail.SendResetPasswordEmailBrevo(email, name, verificationLink)
+	if err := verifEmail.SendResetPasswordEmailBrevo(email, name, verificationLink); err != nil {
+		zap.L().Error("failed to send reset password email", zap.Error(err))
+		return err
+	}
 	return nil
 }
 

@@ -7,7 +7,7 @@ import (
 
 	"AlgoBoostWebSite/internal/utils"
 
-	"github.com/golang-jwt/jwt/v5"
+	jwt "github.com/golang-jwt/jwt/v5"
 )
 
 type contextKey string

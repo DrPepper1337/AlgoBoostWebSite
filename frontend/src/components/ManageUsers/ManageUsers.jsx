@@ -64,7 +64,7 @@ export default function ManageUsers() {
             if (updates.length === 0) {
                 alert('No changes detected');
                 setEditingId(null);
-                setEdititngType(null);
+                setEditingType(null);
                 setEditData({});
                 return;
             }

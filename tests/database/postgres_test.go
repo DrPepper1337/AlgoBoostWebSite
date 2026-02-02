@@ -11,14 +11,15 @@ import (
 )
 
 func setup() {
-	if err := godotenv.Load("../../configs/.env"); err != nil {
-		panic(err)
+	// Load local env files if present; fall back to already-set env vars in CI.
+	if err := godotenv.Load("../../.env", "../../configs/Docker.dev.env", "../../configs/Docker.env"); err != nil {
+		zap.L().Warn("env file not found, relying on existing environment", zap.Error(err))
 	}
 	db, err := database.NewDatabase()
-	defer db.Close()
 	if err != nil {
 		panic(err)
 	}
+	defer db.Close()
 	if err = db.DropTables(); err != nil {
 		panic(err)
 	}
@@ -29,10 +30,10 @@ func setup() {
 
 func finish() {
 	db, err := database.NewDatabase()
-	defer db.Close()
 	if err != nil {
 		panic(err)
 	}
+	defer db.Close()
 	if err = db.DropTables(); err != nil {
 		panic(err)
 	}
@@ -59,7 +60,7 @@ func TestAddUser(t *testing.T) {
 	if user.Email != "example1@gmail.com" || user.Password != "123" || user.Role != "admin" {
 		t.Errorf("User weren't added to the database correctly. (email: %s, password: %s, role: %s)", user.Email, user.Password, user.Role)
 	}
-	id, err = db.AddUser("fedor", "example1@gmail.com", "123", "admin")
+	_, err = db.AddUser("fedor", "example1@gmail.com", "123", "admin")
 	if err == nil {
 		t.Errorf("AddUser should have failed, in case of an existing user")
 	}
@@ -95,7 +96,7 @@ func TestEditUser(t *testing.T) {
 	if err != nil {
 		t.Errorf("AddUser failed with error: %v", err)
 	}
-	err = db.EditUser(id, "fedor", "example1@gmail.com", "123", "admin")
+	err = db.EditUser(id, "name", "Fedor")
 	if err != nil {
 		t.Errorf("EditUser failed with error: %v", err)
 	}
@@ -103,7 +104,7 @@ func TestEditUser(t *testing.T) {
 	if user.Email != "example2@gmail.com" {
 		t.Errorf("user shouldn't be updated")
 	}
-	err = db.EditUser(id, "fedor", "example3@gmail.com", "123", "admin")
+	err = db.EditUser(id, "email", "example3@gmail.com")
 	if err != nil {
 		t.Errorf("EditUser failed with error: %v", err)
 	}
