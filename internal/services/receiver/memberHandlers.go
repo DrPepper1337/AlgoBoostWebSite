@@ -366,6 +366,40 @@ func GetUserStatsHandler(db *database.Database) http.HandlerFunc {
     }
 }
 
+func UpdateUserNameHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type nameUpdate struct {
+			Name string `json:"name"`
+		}
+
+		var req nameUpdate
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+			return
+		}
+
+		if req.Name == "" {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "name cannot be empty", nil)
+			return
+		}
+
+		userID, ok := middleware.GetUserIDFromContext(r.Context())
+		if !ok {
+			utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
+			return
+		}
+
+		err = db.UpdateUserName(userID, req.Name)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to update name: "+err.Error(), nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "name updated successfully", nil)
+	}
+}
+
 func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	var req models.Solution
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -403,3 +437,5 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	zap.L().Info("code submitted to Kafka for task", zap.String("taskID", strconv.Itoa(req.TaskID)))
 	utils.WriteJSON(w, http.StatusOK, true, "code submitted successfully", nil)
 }
+
+

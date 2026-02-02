@@ -80,6 +80,27 @@ func (db *Database) UpdateUserPassword(id int, newPassword string) error {
 	return nil
 }
 
+func (db *Database) UpdateUserName(id int, newName string) error {
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	sql, args, err := psql.Update("users").Set("name", newName).Where(sq.Eq{"id": id}).ToSql()
+	if err != nil {
+		return err
+	}
+
+	result, err := db.Postgres.Exec(context.Background(), sql, args...)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected := result.RowsAffected()
+	if rowsAffected == 0 {
+		return errors.New("no rows updated - user may not exist")
+	}
+
+	return nil
+}
+
+
 func (db *Database) GetUser(id int) (models.User, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	sql, args, err := psql.Select("id", "name", "email", "password", "role").From("users").Where(sq.Eq{"id": id}).ToSql()
