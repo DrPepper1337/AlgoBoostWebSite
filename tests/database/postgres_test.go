@@ -4,35 +4,16 @@ import (
 	"AlgoBoostWebSite/internal/database"
 	"errors"
 	"os"
-	"time"
 	"testing"
 
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 )
 
-func waitForDB(maxWait time.Duration) error {
-	deadline := time.Now().Add(maxWait)
-	for {
-		db, err := database.NewDatabase()
-		if err == nil {
-			db.Close()
-			return nil
-		}
-		if time.Now().After(deadline) {
-			return err
-		}
-		time.Sleep(500 * time.Millisecond)
-	}
-}
-
 func setup() {
 	// Load local env files if present; fall back to already-set env vars in CI.
 	if err := godotenv.Load("../../.env", "../../configs/Docker.dev.env", "../../configs/Docker.env"); err != nil {
 		zap.L().Warn("env file not found, relying on existing environment", zap.Error(err))
-	}
-	if err := waitForDB(20 * time.Second); err != nil {
-		panic(err)
 	}
 	db, err := database.NewDatabase()
 	if err != nil {
