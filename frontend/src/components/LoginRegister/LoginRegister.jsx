@@ -2,7 +2,7 @@ import './LoginRegister.css';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { FaLock, FaEnvelope } from "react-icons/fa";
+import { FaLock, FaEnvelope, FaUser } from "react-icons/fa";
 import { buildApiUrl } from "../../config/api";
 const LoginRegister = () => {
 
@@ -14,6 +14,7 @@ const LoginRegister = () => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
+  const [registerName, setRegisterName] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
   const location = useLocation();
@@ -91,7 +92,7 @@ const handleLogin = async (e) => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (!registerEmail || !registerPassword) {
+    if (!registerName || !registerEmail || !registerPassword) {
       alert('Please fill all fields');
       return;
     }
@@ -103,6 +104,7 @@ const handleLogin = async (e) => {
         body: JSON.stringify({
           email: registerEmail,
           password: registerPassword,
+          name: registerName
         }),
       });
 
@@ -169,6 +171,17 @@ const handleLogin = async (e) => {
 
           <form onSubmit={handleRegister}>
             <h1>Registration</h1>
+
+             <div className="input-box">
+              <input
+                type="text"
+                placeholder="Username"
+                value={registerName}
+                onChange={(e) => setRegisterName(e.target.value)}
+                required
+              />
+              <FaUser className="icon" />
+            </div>
 
             <div className="input-box">
               <input

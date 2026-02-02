@@ -28,6 +28,7 @@ var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
 func RegistrationHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type regCreds struct {
+			Name	 string `json:"name"`
 			Email    string `json:"email"`
 			Password string `json:"password"`
 		}
@@ -39,8 +40,8 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		if credentials.Email == "" || credentials.Password == "" {
-			utils.WriteJSON(w, http.StatusBadRequest, false, "email and password are required", nil)
+		if credentials.Name == "" || credentials.Email == "" || credentials.Password == "" {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "name, email and password are required", nil)
 			return
 		}
 
@@ -74,7 +75,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		password := string(hashedPassword)
 
 		// email verification
-		token, err := utils.GenerateVerificationToken(db, credentials.Email, password, whitelist.Name, whitelist.Role, "registration")
+		token, err := utils.GenerateVerificationToken(db, credentials.Email, password, credentials.Name, whitelist.Role, "registration")
 		if err != nil {
 			zap.L().Error("error generating verification token:", zap.Error(err))
 			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to generate verification token", nil)
@@ -83,7 +84,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 
 		verificationLink := fmt.Sprintf("http://localhost:5173/verify?token=%s", token)
 
-		err = utils.SendVerificationEmail(credentials.Email, whitelist.Name, verificationLink)
+		err = utils.SendVerificationEmail(credentials.Email, credentials.Name, verificationLink)
 		if err != nil {
 			zap.L().Error("error sending verification email:", zap.Error(err))
 			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to send verification email", nil)
