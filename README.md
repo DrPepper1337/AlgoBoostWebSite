@@ -44,3 +44,6 @@ Our extensive testing suite is located in the `tests/` directory. They run as pa
 1. Make sure backend / the app is running (`docker compose -f deploy/docker-compose.dev.yml up`)
 2. Run tests in all subdirs of the project: `go test ./..`
 3. Run specific test files: `go test tests/database/postgres_test.go`
+   i
+
+fkhjhjkfjhkd
