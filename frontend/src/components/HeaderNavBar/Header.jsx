@@ -15,7 +15,7 @@ export default function Header() {
   const location = useLocation();
   const menuRef = useRef(null);
   const isHomePage = location.pathname === "/";
-  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isMobile = useMediaQuery({ maxWidth: 992 });
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -108,6 +108,31 @@ export default function Header() {
                 Become a Member
               </a>
             )}
+
+              {/* Login/Register links for mobile menu */}
+            {!isAuthenticated && isMobile && (
+              <>
+                <button
+                  className="navbarLink"
+                  onClick={() => {
+                    navigate("/login");
+                    handleLinkClick();
+                  }}
+                >
+                  Login
+                </button>
+                <button
+                  className="navbarLink"
+                  onClick={() => {
+                    navigate("/login?mode=register");
+                    handleLinkClick();
+                  }}
+                >
+                  Register
+                </button>
+              </>
+            )}
+
 
             {isHomePage && !isAdmin && (
               <a

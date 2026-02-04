@@ -438,4 +438,61 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, true, "code submitted successfully", nil)
 }
 
+func ChangePasswordHandler(db *database.Database) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        type passwordChange struct {
+            CurrentPassword string `json:"currentPassword"`
+            NewPassword     string `json:"newPassword"`
+        }
+
+        var req passwordChange
+        err := json.NewDecoder(r.Body).Decode(&req)
+        if err != nil {
+            utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+            return
+        }
+
+        if req.CurrentPassword == "" || req.NewPassword == "" {
+            utils.WriteJSON(w, http.StatusBadRequest, false, "current and new password are required", nil)
+            return
+        }
+
+        userID, ok := middleware.GetUserIDFromContext(r.Context())
+        if !ok {
+            utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
+            return
+        }
+
+        // Get user from database
+        user, err := db.GetUser(userID)
+        if err != nil {
+            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to get user", nil)
+            return
+        }
+
+        // Verify current password
+        err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.CurrentPassword))
+        if err != nil {
+            utils.WriteJSON(w, http.StatusUnauthorized, false, "current password is incorrect", nil)
+            return
+        }
+
+        // Hash new password
+        hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+        if err != nil {
+            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to hash password", nil)
+            return
+        }
+
+        // Update password in database
+        err = db.UpdateUserPassword(userID, string(hashedPassword))
+        if err != nil {
+            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to update password", nil)
+            return
+        }
+
+        utils.WriteJSON(w, http.StatusOK, true, "password changed successfully", nil)
+    }
+}
+
 

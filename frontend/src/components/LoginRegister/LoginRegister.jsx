@@ -74,7 +74,8 @@ const handleLogin = async (e) => {
     const userData = {
       id: parseInt(data?.data?.user_id),
       name: data?.data?.name,
-      role: data?.data?.role
+      role: data?.data?.role,
+      email: loginEmail
     };
 
     if (!token) {

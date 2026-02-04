@@ -144,8 +144,13 @@ form .register-login-link {
     padding: 30px 40px;
 }
 
+.input-box input {
+    background-color: white;
+    color: black;
+}
+
 .input-box  {
-    background: rgb(19, 19, 19);
+    /* background: rgb(19, 19, 19); */
     border-radius: 20px;
 }
 
@@ -171,6 +176,10 @@ form .register-login-link {
 .register-login-link p a{
     color: var(--orange-vivid);
 
+}
+
+.input-box .icon {
+    color: var(--light-grey-bg);
 }
 /* form button {
     width: 70%;

@@ -1,6 +1,4 @@
 import AnimatedCodeBackground from './components/CodeAnimate/AnimatedCodeBackground';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from './contexts/AuthContext';
 import './styles/Home.css';
 import Tilt from "./components/TiltEffect/Tilt";
 import RevealOnScroll from "./components/TextReveal/RevealOnScroll";
@@ -14,10 +12,7 @@ import DocElement from './components/DocElement/DocElement';
 import { useMediaQuery } from 'react-responsive';
 
 export default function Home() {
-  const isMobile = useMediaQuery({
-  maxWidth: 1024,
-  orientation: 'portrait',
-});
+  const isMobile = useMediaQuery({ maxWidth: 992 });
 
   console.log('Current window width:', window.innerWidth, 'isMobile:', isMobile);
 

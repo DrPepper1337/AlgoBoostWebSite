@@ -61,6 +61,7 @@
   left: 50%;
   transform: translateX(-50%);
   flex: 1;
+  transition: left 0.3s ease;
 }
 
 .navbar {
@@ -145,14 +146,25 @@
   color: #f7a14a;
 }
 
+@media (max-width: 1280px) and (min-width: 993px) {
+  .nav-container {
+    left: 40%;
+  }
+  
+  .navbar {
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+  
+  .navbarLink {
+    font-size: 1rem;
+  }
+}
+
+
 /*
  * --- Mobile Styles (max-width: 992px) ---
  */
 @media (max-width: 992px) {
-
-  .right-controls {
-    display: none;
-  }
 
   /* Show "Become a Member" link on mobile */
   .navbarLink#become-a-member {
@@ -356,4 +368,5 @@
     transform: translateY(-2px);
     text-shadow: 0 0 10px rgba(255, 122, 10, 0.5);
   }
+
 }
