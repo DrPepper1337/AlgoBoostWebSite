@@ -14,6 +14,7 @@ import (
 
     "github.com/joho/godotenv"
     "golang.org/x/crypto/bcrypt"
+    "go.uber.org/zap"
 )
 
 
@@ -178,7 +179,7 @@ func TestChangePasswordHandler(t *testing.T) {
 // Helper functions
 func setupTestDB() *database.Database {
 	if err := godotenv.Load("../../.env", "../../configs/Docker.dev.env", "../../configs/Docker.env"); err != nil {
-        panic(err)
+        zap.L().Warn("env file not found, relying on existing environment", zap.Error(err))
     }
     
     db, err := database.NewDatabase()
