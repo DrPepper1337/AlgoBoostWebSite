@@ -177,7 +177,7 @@ func TestChangePasswordHandler(t *testing.T) {
 
 // Helper functions
 func setupTestDB(t *testing.T) *database.Database {
-	if err := godotenv.Load("../../configs/.env"); err != nil {
+	if err := godotenv.Load("../../.env", "../../configs/Docker.dev.env", "../../configs/Docker.env"); err != nil {
         t.Fatalf("Failed to load .env: %v", err)
     }
     
