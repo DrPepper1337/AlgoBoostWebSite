@@ -77,7 +77,9 @@ func TestUpdateUserNameHandler(t *testing.T) {
             }
 
             var response map[string]interface{}
-            json.Unmarshal(rr.Body.Bytes(), &response)
+            if err := json.Unmarshal(rr.Body.Bytes(), &response); err != nil {
+                t.Fatalf("Failed to unmarshal response: %v", err)
+            }
             if response["message"] != tt.expectedMsg {
                 t.Errorf("Expected message '%s', got '%s'", tt.expectedMsg, response["message"])
             }
@@ -163,7 +165,9 @@ func TestChangePasswordHandler(t *testing.T) {
             }
 
             var response map[string]interface{}
-            json.Unmarshal(rr.Body.Bytes(), &response)
+            if err := json.Unmarshal(rr.Body.Bytes(), &response); err != nil {
+                t.Fatalf("Failed to unmarshal response: %v", err)
+            }      
             if response["message"] != tt.expectedMsg {
                 t.Errorf("Expected message '%s', got '%s'", tt.expectedMsg, response["message"])
             }
