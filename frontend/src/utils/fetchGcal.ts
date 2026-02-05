@@ -11,7 +11,8 @@ export async function fetchPublicCalendarEvents({
   timeMax?: Date;
   maxResults?: number;
 }) {
-  const until = timeMax ?? new Date(timeMin.getTime() + 60 * 24 * 60 * 60 * 1000); // +60 days
+  const until =
+    timeMax ?? new Date(timeMin.getTime() + 60 * 24 * 60 * 60 * 1000); // +60 days
   const params = new URLSearchParams({
     key: apiKey,
     timeMin: timeMin.toISOString(),
@@ -21,12 +22,13 @@ export async function fetchPublicCalendarEvents({
     maxResults: String(maxResults),
   });
   const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(
-    calendarId
+    calendarId,
   )}/events?${params.toString()}`;
 
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Google Calendar error: ${res.status}`);
   const data = await res.json();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (data.items ?? []).map((it: any) => ({
     id: it.id,
     title: it.summary || "(untitled)",

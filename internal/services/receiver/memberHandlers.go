@@ -16,7 +16,7 @@ import (
 	"AlgoBoostWebSite/internal/models"
 	"AlgoBoostWebSite/internal/utils"
 
-	"github.com/go-chi/chi/v5"
+	chi "github.com/go-chi/chi/v5"
 	kafka "github.com/segmentio/kafka-go"
 )
 
@@ -145,7 +145,9 @@ func VerifyHandler(db *database.Database) http.HandlerFunc {
 			zap.L().Error("Error marking token as used:", zap.Error(err))
 		}
 
-		db.DeleteVerificationEntry(token)
+		if err := db.DeleteVerificationEntry(token); err != nil {
+			zap.L().Error("Error deleting verification entry:", zap.Error(err))
+		}
 	}
 }
 func RequestResetPasswordHandler(db *database.Database) http.HandlerFunc {

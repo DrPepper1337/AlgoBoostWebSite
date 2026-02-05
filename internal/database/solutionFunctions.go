@@ -4,8 +4,9 @@ import (
 	"AlgoBoostWebSite/internal/models"
 	"context"
 	"errors"
+
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jackc/pgx/v5"
+	pgx "github.com/jackc/pgx/v5"
 )
 
 func (db *Database) AddSolution(compiler, code string, userId int, taskId int) (int, error) {

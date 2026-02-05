@@ -37,21 +37,27 @@ func main() {
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
-	db.AddTaskToLesson(definitionID, dpLessonID)
+	if err := db.AddTaskToLesson(definitionID, dpLessonID); err != nil {
+		zap.L().Debug(err.Error())
+	}
 
 	// practice Task 1
 	fibID, err := db.AddTask("Fibonacci", "Compute the nth Fibonacci number using memoization.", 10, 250, true)
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
-	db.AddTaskToLesson(fibID, dpLessonID)
+	if err := db.AddTaskToLesson(fibID, dpLessonID); err != nil {
+		zap.L().Debug(err.Error())
+	}
 
 	// practice Task 2
 	knapsackID, err := db.AddTask("0/1 Knapsack", "Given weights and values, determine max value under capacity limit.", 10, 250, true)
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
-	db.AddTaskToLesson(knapsackID, dpLessonID)
+	if err := db.AddTaskToLesson(knapsackID, dpLessonID); err != nil {
+		zap.L().Debug(err.Error())
+	}
 
 	// checking
 	result, err := db.GetLesson(dpLessonID)
@@ -71,18 +77,26 @@ func main() {
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
-	db.AddTaskToLesson(reverseID, llLessonID)
+	if err := db.AddTaskToLesson(reverseID, llLessonID); err != nil {
+		zap.L().Debug(err.Error())
+	}
 
 	// Add Task 2 to Linked Lists
 	detectCycleID, err := db.AddTask("Detect Cycle", "Check if a linked list contains a cycle using Floyd’s algorithm.", 10, 250, true)
 	if err != nil {
 		zap.L().Debug(err.Error())
 	}
-	db.AddTaskToLesson(detectCycleID, llLessonID)
+	if err := db.AddTaskToLesson(detectCycleID, llLessonID); err != nil {
+		zap.L().Debug(err.Error())
+	}
 
 	// Set lessons visible
-	db.SetLessonVisability(dpLessonID, true)
-	db.SetLessonVisability(llLessonID, true)
+	if err := db.SetLessonVisability(dpLessonID, true); err != nil {
+		zap.L().Debug(err.Error())
+	}
+	if err := db.SetLessonVisability(llLessonID, true); err != nil {
+		zap.L().Debug(err.Error())
+	}
 
 	// _, err = db.AddUser("test", "test@gmail.com", "test123", "admin")
 	// if err != nil {

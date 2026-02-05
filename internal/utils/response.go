@@ -15,9 +15,11 @@ func WriteJSON(w http.ResponseWriter, status int, success bool, message string, 
 		Data    interface{} `json:"data,omitempty"`
 	}
 
-	json.NewEncoder(w).Encode(Response{
+	if err := json.NewEncoder(w).Encode(Response{
 		Success: success,
 		Message: message,
 		Data:    data,
-	})
+	}); err != nil {
+		http.Error(w, "failed to encode response", http.StatusInternalServerError)
+	}
 }
