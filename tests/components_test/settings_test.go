@@ -19,8 +19,8 @@ import (
 
 func TestUpdateUserNameHandler(t *testing.T) {
     // Setup test database
-    db := setupTestDB(t)
-    defer cleanupTestDB(t, db)
+    db := setupTestDB()
+    defer cleanupTestDB(db)
 
     // Create a test user
     hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("testpass"), bcrypt.DefaultCost)
@@ -88,15 +88,15 @@ func TestUpdateUserNameHandler(t *testing.T) {
 }
 
 func TestChangePasswordHandler(t *testing.T) {
-    db := setupTestDB(t)
-    defer cleanupTestDB(t, db)
+    db := setupTestDB()
+    defer cleanupTestDB(db)
 
     // Create a test user with known password
     currentPassword := "oldPassword123"
     hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(currentPassword), bcrypt.DefaultCost)
     userID, err := db.AddUser("TestUser", "testpassword@example.com", string(hashedPassword), "member")
     if err != nil {
-        t.Fatalf("Failed to create test user: %v", err)
+        panic(err)
     }
 
     tests := []struct {
@@ -176,30 +176,30 @@ func TestChangePasswordHandler(t *testing.T) {
 }
 
 // Helper functions
-func setupTestDB(t *testing.T) *database.Database {
+func setupTestDB() *database.Database {
 	if err := godotenv.Load("../../.env", "../../configs/Docker.dev.env", "../../configs/Docker.env"); err != nil {
-        t.Fatalf("Failed to load .env: %v", err)
+        panic(err)
     }
     
     db, err := database.NewDatabase()
     if err != nil {
-        t.Fatalf("Failed to connect to database: %v", err)
+        panic(err)
     }
     
     if err = db.DropTables(); err != nil {
         db.Close()
-        t.Fatalf("Failed to drop tables: %v", err)
+        panic(err)
     }
     
     if err = db.CreateTables(); err != nil {
         db.Close()
-        t.Fatalf("Failed to create tables: %v", err)
+        panic(err)
     }
 
     return db
 }
 
-func cleanupTestDB(t *testing.T, db *database.Database) {
+func cleanupTestDB(db *database.Database) {
     if db != nil {
 		db.Close()
 	}
