@@ -24,7 +24,7 @@ func TestUpdateUserNameHandler(t *testing.T) {
 
     // Create a test user
     hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("testpass"), bcrypt.DefaultCost)
-    userID, err := db.AddUser("OldName", "test@example.com", string(hashedPassword), "member")
+    userID, err := db.AddUser("OldName", "testname@example.com", string(hashedPassword), "member")
     if err != nil {
         t.Fatalf("Failed to create test user: %v", err)
     }
@@ -94,7 +94,7 @@ func TestChangePasswordHandler(t *testing.T) {
     // Create a test user with known password
     currentPassword := "oldPassword123"
     hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(currentPassword), bcrypt.DefaultCost)
-    userID, err := db.AddUser("TestUser", "test@example.com", string(hashedPassword), "member")
+    userID, err := db.AddUser("TestUser", "testpassword@example.com", string(hashedPassword), "member")
     if err != nil {
         t.Fatalf("Failed to create test user: %v", err)
     }
