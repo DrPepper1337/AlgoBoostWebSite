@@ -1,0 +1,202 @@
+package components_test
+
+import (
+    "bytes"
+    "encoding/json"
+    "net/http"
+    "net/http/httptest"
+    "testing"
+
+    "AlgoBoostWebSite/internal/database"
+    "AlgoBoostWebSite/internal/middleware"
+	"AlgoBoostWebSite/internal/services/receiver"
+
+
+    "github.com/joho/godotenv"
+    "golang.org/x/crypto/bcrypt"
+)
+
+
+func TestUpdateUserNameHandler(t *testing.T) {
+    // Setup test database
+    db := setupTestDB(t)
+    defer cleanupTestDB(t, db)
+
+    // Create a test user
+    hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("testpass"), bcrypt.DefaultCost)
+    userID, err := db.AddUser("OldName", "test@example.com", string(hashedPassword), "member")
+    if err != nil {
+        t.Fatalf("Failed to create test user: %v", err)
+    }
+
+    // Test cases 
+    tests := []struct {
+        name           string
+        payload        map[string]string
+        userID         int
+        expectedStatus int
+        expectedMsg    string
+    }{
+        {
+            name:           "Valid name update",
+            payload:        map[string]string{"name": "NewName"},
+            userID:         userID,
+            expectedStatus: http.StatusOK,
+            expectedMsg:    "name updated successfully",
+        },
+        {
+            name:           "Empty name",
+            payload:        map[string]string{"name": ""},
+            userID:         userID,
+            expectedStatus: http.StatusBadRequest,
+            expectedMsg:    "name cannot be empty",
+        },
+        {
+            name:           "Missing name field",
+            payload:        map[string]string{},
+            userID:         userID,
+            expectedStatus: http.StatusBadRequest,
+            expectedMsg:    "name cannot be empty",
+        },
+    }
+
+    // Running each test case
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            body, _ := json.Marshal(tt.payload)
+            req := httptest.NewRequest(http.MethodPut, "/api/user/details", bytes.NewBuffer(body))
+            req.Header.Set("Content-Type", "application/json")
+            req = req.WithContext(middleware.SetUserIDInContext(req.Context(), tt.userID))
+
+            rr := httptest.NewRecorder()
+            handler := receiver.UpdateUserNameHandler(db)
+            handler.ServeHTTP(rr, req)
+
+            if rr.Code != tt.expectedStatus {
+                t.Errorf("Expected status %d, got %d", tt.expectedStatus, rr.Code)
+            }
+
+            var response map[string]interface{}
+            json.Unmarshal(rr.Body.Bytes(), &response)
+            if response["message"] != tt.expectedMsg {
+                t.Errorf("Expected message '%s', got '%s'", tt.expectedMsg, response["message"])
+            }
+        })
+    }
+}
+
+func TestChangePasswordHandler(t *testing.T) {
+    db := setupTestDB(t)
+    defer cleanupTestDB(t, db)
+
+    // Create a test user with known password
+    currentPassword := "oldPassword123"
+    hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(currentPassword), bcrypt.DefaultCost)
+    userID, err := db.AddUser("TestUser", "test@example.com", string(hashedPassword), "member")
+    if err != nil {
+        t.Fatalf("Failed to create test user: %v", err)
+    }
+
+    tests := []struct {
+        name           string
+        payload        map[string]string
+        userID         int
+        expectedStatus int
+        expectedMsg    string
+    }{
+        {
+            name: "Valid password change",
+            payload: map[string]string{
+                "currentPassword": currentPassword,
+                "newPassword":     "newPassword456",
+            },
+            userID:         userID,
+            expectedStatus: http.StatusOK,
+            expectedMsg:    "password changed successfully",
+        },
+        {
+            name: "Incorrect current password",
+            payload: map[string]string{
+                "currentPassword": "wrongPassword",
+                "newPassword":     "newPassword456",
+            },
+            userID:         userID,
+            expectedStatus: http.StatusUnauthorized,
+            expectedMsg:    "current password is incorrect",
+        },
+        {
+            name: "Missing current password",
+            payload: map[string]string{
+                "currentPassword": "",
+                "newPassword":     "newPassword456",
+            },
+            userID:         userID,
+            expectedStatus: http.StatusBadRequest,
+            expectedMsg:    "current and new password are required",
+        },
+        {
+            name: "Missing new password",
+            payload: map[string]string{
+                "currentPassword": currentPassword,
+                "newPassword":     "",
+            },
+            userID:         userID,
+            expectedStatus: http.StatusBadRequest,
+            expectedMsg:    "current and new password are required",
+        },
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            body, _ := json.Marshal(tt.payload)
+            req := httptest.NewRequest(http.MethodPut, "/api/user/password", bytes.NewBuffer(body))
+            req.Header.Set("Content-Type", "application/json")
+            req = req.WithContext(middleware.
+                SetUserIDInContext(req.Context(), tt.userID))
+
+            rr := httptest.NewRecorder()
+            handler := receiver.ChangePasswordHandler(db)
+            handler.ServeHTTP(rr, req)
+
+            if rr.Code != tt.expectedStatus {
+                t.Errorf("Expected status %d, got %d", tt.expectedStatus, rr.Code)
+            }
+
+            var response map[string]interface{}
+            json.Unmarshal(rr.Body.Bytes(), &response)
+            if response["message"] != tt.expectedMsg {
+                t.Errorf("Expected message '%s', got '%s'", tt.expectedMsg, response["message"])
+            }
+        })
+    }
+}
+
+// Helper functions - adjust based on your test DB setup
+func setupTestDB(t *testing.T) *database.Database {
+	if err := godotenv.Load("../../configs/.env"); err != nil {
+        t.Fatalf("Failed to load .env: %v", err)
+    }
+    
+    db, err := database.NewDatabase()
+    if err != nil {
+        t.Fatalf("Failed to connect to database: %v", err)
+    }
+    
+    if err = db.DropTables(); err != nil {
+        db.Close()
+        t.Fatalf("Failed to drop tables: %v", err)
+    }
+    
+    if err = db.CreateTables(); err != nil {
+        db.Close()
+        t.Fatalf("Failed to create tables: %v", err)
+    }
+
+    return db
+}
+
+func cleanupTestDB(t *testing.T, db *database.Database) {
+    if db != nil {
+		db.Close()
+	}
+}
