@@ -63,23 +63,9 @@ export default function Header() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        {isAuthenticated && isMobile ? (
-          <div className="user-menu" ref={menuRef}>
-            <FaUser
-              className="user-menu-button"
-              onClick={() => setOpen((prev) => !prev)}
-            />
-            {open && <DropDownProfile isActive={open} />}
-          </div>
-        ) : (
-          <div className="logo-container">
-            <img
-              src="/logo-no-text.svg"
-              alt="AlgoBoost Logo"
-              className="logo"
-            />
-          </div>
-        )}
+        <div className="logo-container">
+          <img src="/logo-no-text.svg" alt="AlgoBoost Logo" className="logo" />
+        </div>
 
         <button
           className="menu-toggle"

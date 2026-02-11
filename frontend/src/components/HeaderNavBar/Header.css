@@ -15,16 +15,9 @@
 
 .header-inner {
   display: flex;
-  /* display: grid;
-  grid-template-columns: auto auto; */
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  /* padding-top: 1rem; */
-  /* max-width: 100%;
-  max-height: 100%;
-  min-width: 100%;
-  min-height: 100%; */
 }
 
 .right-controls {
@@ -32,7 +25,6 @@
   align-items: center;
   gap: 1rem;
 }
-
 
 .menu-buttons {
   display: flex;
@@ -49,7 +41,9 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease, color 0.3s ease;
+  transition:
+    all 0.3s ease,
+    color 0.3s ease;
 }
 
 .nav-container {
@@ -69,7 +63,9 @@
   display: flex;
   gap: clamp(1rem, 4vw, 3rem);
   pointer-events: auto;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
   white-space: nowrap;
 }
 
@@ -85,7 +81,6 @@
   font-size: 1rem;
   transition: all 0.5s ease;
 }
-
 
 #register,
 #login {
@@ -119,8 +114,6 @@
   /* overflow: hidden; */
 }
 
-
-
 .navbarLink:hover {
   text-decoration: none;
   color: var(--orange-vivid);
@@ -150,22 +143,20 @@
   .nav-container {
     left: 40%;
   }
-  
+
   .navbar {
     gap: clamp(1rem, 2vw, 1.5rem);
   }
-  
+
   .navbarLink {
     font-size: 1rem;
   }
 }
 
-
 /*
  * --- Mobile Styles (max-width: 992px) ---
  */
 @media (max-width: 992px) {
-
   /* Show "Become a Member" link on mobile */
   .navbarLink#become-a-member {
     display: flex;
@@ -173,14 +164,39 @@
 
   .header-inner {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
     justify-content: space-between;
+    column-gap: 0.75rem;
     padding-top: 1rem;
     max-width: 100%;
     max-height: 100%;
     min-width: 100%;
     min-height: 100%;
+  }
+
+  .logo-container {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .right-controls {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    align-self: center;
+  }
+
+  .menu-toggle {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+  }
+
+  .nav-container {
+    grid-column: 1 / -1;
+    grid-row: 1;
   }
 
   .menu-toggle {
@@ -206,7 +222,7 @@
 
   .hamburger::before,
   .hamburger::after {
-    content: '';
+    content: "";
     position: absolute;
     width: 25px;
     height: 3px;
@@ -214,11 +230,9 @@
     transition: all 0.3s ease;
   }
 
-
   .hamburger::before {
     top: -8px;
     z-index: 1008;
-
   }
 
   .hamburger::after {
@@ -254,9 +268,10 @@
     gap: 2rem;
     box-shadow: 0 3px 20px rgba(0, 0, 0, 0.5);
     transform: translateY(-100%);
-    transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1),
-      opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1),
-      visibility 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+    transition:
+      transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
     padding-top: 80px;
     opacity: 0;
@@ -293,8 +308,9 @@
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
-    transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1),
-      opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1),
+    transition:
+      transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
       visibility 0s;
   }
 
@@ -303,22 +319,25 @@
     -webkit-backdrop-filter: blur(10px);
   }
 
-  #login, #register, #become-a-member {
+  #login,
+  #register,
+  #become-a-member {
     color: var(--orange-vivid);
     background: none !important;
     font-weight: 700;
   }
 
-  #login:hover, #register:hover, #become-a-member:hover {
+  #login:hover,
+  #register:hover,
+  #become-a-member:hover {
     color: var(--orange-vivid);
     background: none !important;
     font-weight: 700;
     box-shadow: none !important;
-    color:#ff7a0a !important;
+    color: #ff7a0a !important;
     border: none !important;
     text-shadow: #ff7a0a 0 0 10px rgba(255, 122, 10, 0.5) !important;
   }
-
 
   .navbar,
   .menu-buttons {
@@ -332,16 +351,18 @@
     opacity: 0;
     transform: translateY(-200%);
     margin-bottom: 10rem;
-    transition: opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
-      transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    transition:
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .nav-container.open .navbar,
   .nav-container.open .menu-buttons {
     opacity: 1;
     transform: translateY(0);
-    transition: opacity 0.5s cubic-bezier(0.4, 0.0, 0.2, 1) 0.1s,
-      transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1) 0.1s;
+    transition:
+      opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s,
+      transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
   }
 
   .navbarLink,
@@ -369,4 +390,7 @@
     text-shadow: 0 0 10px rgba(255, 122, 10, 0.5);
   }
 
+  .logo-container {
+    display: none;
+  }
 }
