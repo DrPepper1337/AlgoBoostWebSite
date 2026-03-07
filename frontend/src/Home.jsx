@@ -10,6 +10,7 @@ import EventsCarousel from "./components/EventsCarousel/EventsCarousel";
 import EventsCarouselMobile from "./components/EventsCarousel/EventsCarouselMobile";
 import DocElement from "./components/DocElement/DocElement";
 import { useMediaQuery } from "react-responsive";
+import SponsorsSection from "./components/SponsorsSection/SponsorsSection";
 
 export default function Home() {
   const isMobile = useMediaQuery({
@@ -101,6 +102,8 @@ export default function Home() {
             )}
           </div>
         </RevealOnScroll>
+
+        <SponsorsSection />
 
         <div style={{ position: "relative" }}>
           {/* <div className="ombre-top"></div> */}
