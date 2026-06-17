@@ -47,6 +47,8 @@ services:
       zookeeper: { condition: service_started }
       kafka:     { condition: service_healthy }
       postgres:  { condition: service_started }
+    volumes:
+      - ../tasksTests:/tasksTests
     networks: [service-network]
     restart: unless-stopped
 

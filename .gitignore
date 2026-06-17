@@ -22,4 +22,4 @@ deploy/postgres_data/
 /docker/*
 configs/Docker.env
 .cache/
-vendor/
+vendor/tasksTests/

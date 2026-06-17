@@ -58,25 +58,177 @@
   border-color: rgba(255,122,10,.2);
 }
 
-.ti-delete-btn {
-  background: none;
-  border: none;
-  color: #444;
+.ti-actions {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.ti-edit-btn {
+  background: rgba(255,122,10,.08);
+  border: 1px solid rgba(255,122,10,.2);
+  color: #886040;
   cursor: pointer;
   font-size: 12px;
-  padding: 3px 7px;
+  padding: 3px 8px;
   border-radius: 6px;
   flex-shrink: 0;
-  transition: color .15s, background .15s;
+  transition: color .15s, background .15s, border-color .15s;
+  line-height: 1;
+}
+
+.ti-edit-btn:hover {
+  background: rgba(255,122,10,.2);
+  border-color: #ff7a0a;
+  color: #ff7a0a;
+}
+
+.ti-delete-btn {
+  background: rgba(220,53,69,.08);
+  border: 1px solid rgba(220,53,69,.18);
+  color: #664444;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: color .15s, background .15s, border-color .15s;
   line-height: 1;
 }
 
 .ti-delete-btn:hover {
+  background: rgba(220,53,69,.22);
+  border-color: #dc3545;
   color: #ff6b7a;
-  background: rgba(220,53,69,.1);
 }
 
 .ti-delete-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+/* ── Inline edit form ── */
+.ti-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ti-edit-label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #666;
+}
+
+.ti-edit-input {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #eaeaea;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 7px 10px;
+  outline: none;
+  transition: border-color .15s;
+}
+
+.ti-edit-input:focus { border-color: #ff7a0a; }
+.ti-edit-input--sm { width: 110px; }
+
+.ti-edit-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #eaeaea;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.ti-edit-check input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #ff7a0a;
+}
+
+.ti-edit-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ti-edit-err { color: #ff6b7a; font-size: 12px; margin: 0; }
+
+.ti-edit-btns { display: flex; gap: 8px; }
+
+.ti-save-btn {
+  background: #ff7a0a;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 7px 18px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.ti-save-btn:hover { background: #c85a00; }
+.ti-save-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+.ti-cancel-btn {
+  background: #242424;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #888;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: color .15s;
+}
+
+.ti-cancel-btn:hover { color: #eaeaea; }
+
+/* ── ZIP picker in edit form ── */
+.ti-zip-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+
+.ti-zip-btn {
+  display: inline-block;
+  background: #1a1a1a;
+  border: 1px dashed #444;
+  border-radius: 8px;
+  color: #888;
+  font-size: 12px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+
+.ti-zip-btn:hover { border-color: #ff7a0a; color: #ff7a0a; }
+.ti-zip-hidden { display: none; }
+
+.ti-zip-clear {
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.ti-zip-clear:hover { color: #ff6b7a; }
+
+.ti-zip-hint { font-size: 11px; color: #444; margin-top: 3px; }
+.ti-zip-ok   { font-size: 12px; color: #2ecc71; }
 
 /* ── Expanded ── */
 .ti-details {

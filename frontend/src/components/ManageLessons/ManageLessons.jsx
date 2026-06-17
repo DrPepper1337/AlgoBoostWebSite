@@ -11,7 +11,6 @@ export default function ManageLessons() {
   const [lessons,         setLessons]         = useState([]);
   const [loading,         setLoading]         = useState(true);
   const [selectedId,      setSelectedId]      = useState(null);
-  const [isEditMode,      setIsEditMode]      = useState(false);
 
   // add lesson form
   const [showAddLesson,   setShowAddLesson]   = useState(false);
@@ -84,6 +83,7 @@ export default function ManageLessons() {
     setEditingLesson(false);
     setEditLessonErr("");
   };
+
 
   // ── Visibility toggle ──
   async function handleToggleVisibility(lessonId, currentOpen) {
@@ -189,7 +189,7 @@ export default function ManageLessons() {
     fd.append("task_id", taskId);
     try {
       const res = await axios.post(buildApiUrl(`admin/upload-tests/${taskId}`), fd, {
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setZipStatus(res.data?.success ? "Tests uploaded!" : "Upload failed: " + (res.data?.message || ""));
     } catch (err) {
@@ -239,6 +239,16 @@ export default function ManageLessons() {
     );
   };
 
+  const onTaskUpdated = (updatedTask) => {
+    setLessons((prev) =>
+      prev.map((l) =>
+        l.id === selectedId
+          ? { ...l, tasks: l.tasks.map((t) => t.id === updatedTask.id ? updatedTask : t) }
+          : l
+      )
+    );
+  };
+
   if (loading) return (
     <div className="ml-page">
       <div className="ml-loading"><div className="ml-spinner" /></div>
@@ -254,11 +264,6 @@ export default function ManageLessons() {
           <div className="ml-sidebar-head">
             <span className="ml-sidebar-title">Lessons</span>
             <div className="ml-sidebar-actions">
-              <button
-                className={`ml-icon-btn${isEditMode ? " ml-icon-btn--active" : ""}`}
-                title="Edit mode"
-                onClick={() => { setIsEditMode((v) => !v); setEditingLesson(false); }}
-              >✎</button>
               <button
                 className="ml-icon-btn ml-icon-btn--orange"
                 title="Add lesson"
@@ -294,15 +299,6 @@ export default function ManageLessons() {
               >
                 <span className="ml-nav-item-title">{l.title}</span>
                 <span className="ml-nav-item-count">{l.tasks?.length ?? 0}</span>
-                {isEditMode && (
-                  <button
-                    className={`ml-vis-btn${l.open ? " ml-vis-btn--open" : ""}`}
-                    onClick={(e) => { e.stopPropagation(); handleToggleVisibility(l.id, l.open); }}
-                    title={l.open ? "Published — click to lock" : "Locked — click to publish"}
-                  >
-                    {l.open ? "🔓" : "🔒"}
-                  </button>
-                )}
               </div>
             ))}
           </div>
@@ -355,22 +351,18 @@ export default function ManageLessons() {
                     >
                       {selectedLesson.open ? "🔓 Published" : "🔒 Locked"}
                     </button>
-                    {isEditMode && (
-                      <>
-                        <button
-                          className="ml-btn ml-btn--sm ml-btn--dark"
-                          onClick={startEditLesson}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="ml-btn ml-btn--danger ml-btn--sm"
-                          onClick={() => handleDeleteLesson(selectedLesson.id)}
-                        >
-                          Delete
-                        </button>
-                      </>
-                    )}
+                    <button
+                      className="ml-btn ml-btn--sm ml-btn--dark"
+                      onClick={startEditLesson}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="ml-btn ml-btn--danger ml-btn--sm"
+                      onClick={() => handleDeleteLesson(selectedLesson.id)}
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               )}
@@ -382,14 +374,12 @@ export default function ManageLessons() {
                     Tasks
                     <span className="ml-tasks-count">{selectedLesson.tasks?.length ?? 0}</span>
                   </h2>
-                  {isEditMode && (
-                    <button
-                      className={`ml-btn ml-btn--sm${showAddTask ? "" : " ml-btn--orange"}`}
-                      onClick={() => { setShowAddTask((v) => !v); setTaskErr(""); setTaskSuccess(""); }}
-                    >
-                      {showAddTask ? "Cancel" : "+ Add Task"}
-                    </button>
-                  )}
+                  <button
+                    className={`ml-btn ml-btn--sm${showAddTask ? "" : " ml-btn--orange"}`}
+                    onClick={() => { setShowAddTask((v) => !v); setTaskErr(""); setTaskSuccess(""); }}
+                  >
+                    {showAddTask ? "Cancel" : "+ Add Task"}
+                  </button>
                 </div>
 
                 {showAddTask && (
@@ -441,7 +431,7 @@ export default function ManageLessons() {
                                 onClick={() => { setZipFile(null); setZipStatus(""); }}>✕</button>
                             )}
                           </div>
-                          <span className="ml-hint">Format: 1.in / 1.out, 2.in / 2.out …</span>
+                          <span className="ml-hint">Format: 1/in.txt, 1/out.txt, 2/in.txt, 2/out.txt …</span>
                           {zipStatus && <p className={zipStatus.includes("failed") ? "ml-err" : "ml-ok"}>{zipStatus}</p>}
                         </div>
                       </>
@@ -454,16 +444,16 @@ export default function ManageLessons() {
                 )}
 
                 {selectedLesson.tasks?.length === 0 && !showAddTask ? (
-                  <p className="ml-no-tasks">No tasks yet.{isEditMode ? ' Click "+ Add Task" to create one.' : ""}</p>
+                  <p className="ml-no-tasks">No tasks yet. Click "+ Add Task" to create one.</p>
                 ) : (
                   <ul className="ml-task-list">
                     {selectedLesson.tasks.map((task) => (
                       <TaskItem
                         key={task.id}
                         task={task}
-                        isEditMode={isEditMode}
                         lessonId={selectedLesson.id}
                         onTaskDeleted={onTaskDeleted}
+                        onTaskUpdated={onTaskUpdated}
                       />
                     ))}
                   </ul>

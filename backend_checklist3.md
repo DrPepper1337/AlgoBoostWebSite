@@ -86,8 +86,8 @@ Python/C++/Java code fails immediately with a compile or not-found error.
 - [ ] Create a `tests/` directory at the repo root (gitignored — contains judge data, not source)
 - [ ] Add a named volume or bind mount `./tests:/tests` to **both** the `receiver` and `solver`
   services in `docker-compose.yml`
-- [ ] Convention: `tests/<taskId>/1.in`, `tests/<taskId>/1.out`, `2.in`, `2.out`, …
-- [ ] No DB table needed — test count can be derived with `os.ReadDir` when needed
+- [ ] Convention: `tests/<taskId>/1/in.txt`, `tests/<taskId>/1/out.txt`, `2/in.txt`, `2/out.txt`, …
+- [ ] No DB table needed — test count can be derived with `os.ReadDir("/tests/<taskId>")` when needed
 
 **Why:** Files are faster (no DB query per submission), handle large inputs without bloating
 Postgres, and let the solver bind-mount inputs directly into judge containers. This is the
@@ -128,10 +128,10 @@ in the compose file. No code is ever judged in production.
 ### 8. Add POST /api/admin/edit-lesson route and handler
 **Files:** `internal/services/receiver/routes.go`, `internal/services/receiver/adminHandlers.go`
 
-- [ ] Register `POST /api/admin/edit-lesson` behind `AdminMiddleware`
-- [ ] Handler reads `{ lesson_id: int, title: string, description: string }` from JSON body
-- [ ] Calls `db.EditLesson(lessonID, title, description)` (DB function already exists in `lessonFunctions.go`)
-- [ ] Return `{ success: true }`
+- [X] Register `POST /api/admin/edit-lesson` behind `AdminMiddleware`
+- [X] Handler reads `{ lesson_id: int, title: string, description: string }` from JSON body
+- [X] Calls `db.EditLesson(lessonID, title, description)` (DB function already exists in `lessonFunctions.go`)
+- [X] Return `{ success: true }`
 
 **Why:** The ManageLessons edit-lesson form calls this endpoint. No route or handler exists yet.
 
@@ -172,18 +172,25 @@ in the compose file. No code is ever judged in production.
 ### 12. Add POST /api/admin/upload-tests/:taskId route and handler
 **Files:** `internal/services/receiver/routes.go`, `internal/services/receiver/adminHandlers.go`
 
-**Frontend is already fully implemented** — `ManageLessons.jsx` has a ZIP file picker in the
-add-task form and an `uploadTestsZip(taskId, token)` function that automatically fires after
-task creation. It sends `multipart/form-data` with `file` (the ZIP) and `task_id` to
-`POST /api/admin/upload-tests/:taskId`. Only the backend route is missing.
+**Frontend is fully implemented** — ZIP picker exists in both the add-task form (`ManageLessons.jsx`)
+and the edit-task inline form (`TaskItem.jsx`). Both send `multipart/form-data` with `file` and
+`task_id` to `POST /api/admin/upload-tests/:taskId`. Only the backend route is missing.
 
-- [ ] Register `POST /api/admin/upload-tests/{taskId}` behind `AdminMiddleware`
-- [ ] Read the ZIP from `r.FormFile("file")`
-- [ ] Parse the ZIP in memory (`archive/zip`); for each pair `N.in` / `N.out` write them to
-  `/tests/<taskId>/N.in` and `/tests/<taskId>/N.out` on disk (the volume from item 5)
-- [ ] `os.MkdirAll("/tests/<taskId>", 0755)` before writing
-- [ ] Overwrite any existing files for that task (full replace semantics — `os.RemoveAll` then re-create)
-- [ ] Return `{ "success": true, "added": N }`
+- [X] Register `POST /api/admin/upload-tests/{taskId}` behind `AdminMiddleware` ✅
+- [X] Read the ZIP from `r.FormFile("file")` ✅
+- [X] Parse the ZIP in memory (`archive/zip`); expected structure inside the ZIP:
+  ```
+  1/in.txt
+  1/out.txt
+  2/in.txt
+  2/out.txt
+  …
+  ```
+  For each folder `N/` write `in.txt` → `/tasksTests/<taskId>/N/in.txt` and `out.txt` → `/tasksTests/<taskId>/N/out.txt` ✅
+- [X] `os.MkdirAll` before writing each pair ✅
+- [X] Overwrite any existing tests for that task (full replace semantics — `os.RemoveAll` then re-create) ✅
+- [X] Return `{ "success": true, "added": N }` ✅
+- [X] Fixed frontend bug: removed manual `Content-Type: multipart/form-data` header from axios calls — boundary was missing, causing server-side parse failure ✅
 
 **Why:** The frontend ZIP upload UI is ready; the backend endpoint is the only missing piece.
 
@@ -306,7 +313,7 @@ the string comparison is case-sensitive. Email addresses are case-insensitive by
 | 9 | AdminMiddleware: propagate userID into context | ✅ Done |
 | 10 | ShortTask: add is_practice field | ✅ Done |
 | 11 | GetAllLessonsWithTasks: real per-user completion status | ✅ Done |
-| 12 | POST /api/admin/upload-tests/:taskId route + handler | ⏳ Todo |
+| 12 | POST /api/admin/upload-tests/:taskId route + handler | ✅ Done |
 | 13 | Kafka broker address, topic env var, auto-creation writer | ✅ Done |
 | 14 | Hardcoded localhost:5173 in email links | ⏳ Todo |
 | 15 | Docker.env.template Kafka format (colons → equals) | ✅ Done |

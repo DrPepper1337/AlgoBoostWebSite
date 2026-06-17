@@ -176,7 +176,7 @@ func TestSetLessonVisability(t *testing.T) {
 	if err != nil {
 		t.Errorf("AddLesson failed with error: %v", err)
 	}
-	err = db.SetLessonVisability(id, true)
+	err = db.SetLessonVisibility(id, true)
 	if err != nil {
 		t.Errorf("SetLessonVisability failed with error: %v", err)
 	}

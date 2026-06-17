@@ -1,13 +1,98 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import MdEditor from "./MdEditor";
 import "./TaskItem.css";
 import axios from "axios";
 import { buildApiUrl } from "../../config/api";
 
-export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+export default function TaskItem({ task, onTaskDeleted, onTaskUpdated, lessonId }) {
+  const [isOpen,      setIsOpen]      = useState(false);
+  const [isDeleting,  setIsDeleting]  = useState(false);
+  const [isEditing,   setIsEditing]   = useState(false);
+  const [isSaving,    setIsSaving]    = useState(false);
+  const [editErr,     setEditErr]     = useState("");
+
+  const [editTitle,    setEditTitle]    = useState(task.title);
+  const [editDesc,     setEditDesc]     = useState(task.description || "");
+  const [editTime,     setEditTime]     = useState(task.time_limit ?? "");
+  const [editMem,      setEditMem]      = useState(task.memory_limit ?? "");
+  const [editPractice, setEditPractice] = useState(task.is_practice ?? false);
+  const [editZip,      setEditZip]      = useState(null);
+  const [zipStatus,    setZipStatus]    = useState("");
+
+  const openEdit = (e) => {
+    e.stopPropagation();
+    if (isEditing) {
+      setIsEditing(false);
+      return;
+    }
+    setEditTitle(task.title);
+    setEditDesc(task.description || "");
+    setEditTime(task.time_limit ?? "");
+    setEditMem(task.memory_limit ?? "");
+    setEditPractice(task.is_practice ?? false);
+    setEditZip(null);
+    setZipStatus("");
+    setEditErr("");
+    setIsEditing(true);
+    setIsOpen(true);
+  };
+
+  const uploadZip = async (token) => {
+    if (!editZip) return;
+    const fd = new FormData();
+    fd.append("file", editZip);
+    fd.append("task_id", task.id);
+    try {
+      const res = await axios.post(buildApiUrl(`admin/upload-tests/${task.id}`), fd, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setZipStatus(res.data?.success ? "Tests uploaded!" : "Upload failed: " + (res.data?.message || ""));
+    } catch (err) {
+      setZipStatus("Upload failed: " + (err.response?.data?.message || err.message));
+    }
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    if (!editTitle.trim()) { setEditErr("Title is required."); return; }
+    const token = localStorage.getItem("authToken");
+    setIsSaving(true);
+    setEditErr("");
+    try {
+      const res = await axios.post(
+        buildApiUrl("admin/edit-task"),
+        {
+          id: task.id,
+          title: editTitle,
+          description: editDesc,
+          time_limit: editPractice ? (parseFloat(editTime) || 0) : 0,
+          memory_limit: editPractice ? (parseFloat(editMem) || 0) : 0,
+          is_practice: editPractice,
+        },
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
+      );
+      if (res.data?.success || res.status === 200) {
+        await uploadZip(token);
+        onTaskUpdated?.({
+          ...task,
+          title: editTitle,
+          description: editDesc,
+          time_limit: editPractice ? (parseFloat(editTime) || 0) : 0,
+          memory_limit: editPractice ? (parseFloat(editMem) || 0) : 0,
+          is_practice: editPractice,
+        });
+        setIsEditing(false);
+      } else {
+        setEditErr(res.data?.message || "Failed to save.");
+      }
+    } catch (err) {
+      setEditErr(err.response?.data?.message || err.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleDeleteFromLesson = async () => {
     const token = localStorage.getItem("authToken");
@@ -30,7 +115,6 @@ export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) 
   const handleDeleteTask = async () => {
     const token = localStorage.getItem("authToken");
     try {
-      setIsDeleting(true);
       await axios.post(
         buildApiUrl("admin/delete-task"),
         { task_id: task.id },
@@ -39,13 +123,11 @@ export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) 
       onTaskDeleted(task.id);
     } catch (err) {
       console.error("Error deleting task:", err);
-      alert("Failed to delete task. Please try again.");
-    } finally {
-      setIsDeleting(false);
     }
   };
 
-  const handleDeleteClick = async () => {
+  const handleDeleteClick = async (e) => {
+    e.stopPropagation();
     const fromLesson = window.confirm(
       `Delete "${task.title}" from this lesson only?\n\nOK = remove from lesson\nCancel = delete permanently`
     );
@@ -59,7 +141,7 @@ export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) 
 
   return (
     <li className="ti-item">
-      <div className="ti-row" onClick={() => setIsOpen((v) => !v)}>
+      <div className="ti-row" onClick={() => !isEditing && setIsOpen((v) => !v)}>
         <span className={`ti-arrow${isOpen ? " ti-arrow--open" : ""}`}>▶</span>
         <span className="ti-title">{task.title}</span>
         <div className="ti-badges">
@@ -67,32 +149,133 @@ export default function TaskItem({ task, isEditMode, onTaskDeleted, lessonId }) 
           {task.time_limit > 0 && <span className="ti-badge">{task.time_limit}s</span>}
           {task.memory_limit > 0 && <span className="ti-badge">{task.memory_limit}MB</span>}
         </div>
-        {isEditMode && (
+        <div className="ti-actions">
+          <button
+            className="ti-edit-btn"
+            title="Edit task"
+            onClick={openEdit}
+          >✎</button>
           <button
             className="ti-delete-btn"
             disabled={isDeleting}
             title="Delete task"
-            onClick={(e) => { e.stopPropagation(); handleDeleteClick(); }}
+            onClick={handleDeleteClick}
           >
             {isDeleting ? "…" : "✕"}
           </button>
-        )}
+        </div>
       </div>
 
       {isOpen && (
         <div className="ti-details">
-          {task.description ? (
-            <div className="ti-desc-md">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{task.description}</ReactMarkdown>
-            </div>
+          {isEditing ? (
+            <form className="ti-edit-form" onSubmit={handleSave}>
+              <label className="ti-edit-label">
+                Title
+                <input
+                  className="ti-edit-input"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  required
+                />
+              </label>
+              <label className="ti-edit-label">
+                Description
+                <MdEditor value={editDesc} onChange={setEditDesc} rows={10} />
+              </label>
+
+              <label className="ti-edit-check">
+                <input
+                  type="checkbox"
+                  checked={editPractice}
+                  onChange={(e) => {
+                    setEditPractice(e.target.checked);
+                    if (!e.target.checked) { setEditTime(""); setEditMem(""); }
+                  }}
+                />
+                Practice task
+              </label>
+
+              {editPractice && (
+                <>
+                  <div className="ti-edit-meta">
+                    <label className="ti-edit-label">
+                      Time limit (s)
+                      <input
+                        className="ti-edit-input ti-edit-input--sm"
+                        type="number"
+                        value={editTime}
+                        onChange={(e) => setEditTime(e.target.value)}
+                      />
+                    </label>
+                    <label className="ti-edit-label">
+                      Memory (MB)
+                      <input
+                        className="ti-edit-input ti-edit-input--sm"
+                        type="number"
+                        value={editMem}
+                        onChange={(e) => setEditMem(e.target.value)}
+                      />
+                    </label>
+                  </div>
+
+                  <div className="ti-edit-label">
+                    Replace tests (.zip)
+                    <div className="ti-zip-row">
+                      <label className="ti-zip-btn" htmlFor={`edit-zip-${task.id}`}>
+                        {editZip ? editZip.name : "Choose ZIP"}
+                      </label>
+                      <input
+                        id={`edit-zip-${task.id}`}
+                        type="file"
+                        accept=".zip"
+                        className="ti-zip-hidden"
+                        onChange={(e) => { setEditZip(e.target.files[0] || null); setZipStatus(""); }}
+                      />
+                      {editZip && (
+                        <button
+                          type="button"
+                          className="ti-zip-clear"
+                          onClick={() => { setEditZip(null); setZipStatus(""); }}
+                        >✕</button>
+                      )}
+                    </div>
+                    <span className="ti-zip-hint">Format: 1/in.txt, 1/out.txt, 2/in.txt, 2/out.txt …</span>
+                    {zipStatus && (
+                      <span className={zipStatus.includes("failed") ? "ti-edit-err" : "ti-zip-ok"}>
+                        {zipStatus}
+                      </span>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {editErr && <p className="ti-edit-err">{editErr}</p>}
+              <div className="ti-edit-btns">
+                <button type="submit" className="ti-save-btn" disabled={isSaving}>
+                  {isSaving ? "Saving…" : "Save"}
+                </button>
+                <button type="button" className="ti-cancel-btn" onClick={() => setIsEditing(false)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
           ) : (
-            <p className="ti-no-desc">No description.</p>
+            <>
+              {task.description ? (
+                <div className="ti-desc-md">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{task.description}</ReactMarkdown>
+                </div>
+              ) : (
+                <p className="ti-no-desc">No description.</p>
+              )}
+              <div className="ti-meta-row">
+                {task.time_limit > 0 && <span className="ti-meta-item">⏱ {task.time_limit}s time limit</span>}
+                {task.memory_limit > 0 && <span className="ti-meta-item">💾 {task.memory_limit} MB memory</span>}
+                {task.is_practice && <span className="ti-meta-item ti-meta-practice">Practice task</span>}
+              </div>
+            </>
           )}
-          <div className="ti-meta-row">
-            {task.time_limit > 0 && <span className="ti-meta-item">⏱ {task.time_limit}s time limit</span>}
-            {task.memory_limit > 0 && <span className="ti-meta-item">💾 {task.memory_limit} MB memory</span>}
-            {task.is_practice && <span className="ti-meta-item ti-meta-practice">Practice task</span>}
-          </div>
         </div>
       )}
     </li>
