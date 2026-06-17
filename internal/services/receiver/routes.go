@@ -21,16 +21,17 @@ func SetupRoutes(db *database.Database) http.Handler {
 	}))
 
 	// MEMBER ROUTES
-	r.Post("/api/submit", SubmitHandler)
 	r.Post("/api/login", LoginHandler(db))
 	r.Post("/api/register", RegistrationHandler(db))
 	r.Get("/api/verify", VerifyHandler(db))
 	r.Post("/api/request-reset-password", RequestResetPasswordHandler(db))
 	r.Get("/api/reset-password", VerifyHandler(db))
 
+	r.With(middleware.MemberMiddleware).Post("/api/submit", SubmitHandler(db))
 	r.With(middleware.MemberMiddleware).Get("/api/lessons", GetAllLessonsHandler(db))
 	r.With(middleware.MemberMiddleware).Get("/api/tasks/{taskID}", GetTasksDetailsHandler(db))
 	r.With(middleware.MemberMiddleware).Get("/api/user/solutions", GetUserSolutionsHandler(db))
+	r.With(middleware.MemberMiddleware).Get("/api/solutions/{solutionID}", GetSolutionHandler(db))
 	r.With(middleware.MemberMiddleware).Get("/api/user/stats", GetUserStatsHandler(db))
 
 	// user stats and progress handlers and routes as future improvements
@@ -54,6 +55,7 @@ func SetupRoutes(db *database.Database) http.Handler {
 	r.With(middleware.AdminMiddleware).Post("/api/admin/add-email-to-whitelist", AddEmailToWhitelistHandler(db))
 	r.With(middleware.AdminMiddleware).Post("/api/admin/delete-email-from-whitelist", DeleteEmailFromWhitelistHandler(db))
 	r.With(middleware.AdminMiddleware).Post("/api/admin/edit-whitelist", EditWhitelistHandler(db))
+	r.With(middleware.AdminMiddleware).Post("/api/admin/set-lesson-visibility", SetLessonVisibilityHandler(db))
 
 	return r
 }

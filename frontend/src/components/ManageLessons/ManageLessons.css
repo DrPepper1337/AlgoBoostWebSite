@@ -1,156 +1,544 @@
-.manage-lessons-wrapper {
-    padding: 30px;
-    min-height: 100vh;
+/* ── design tokens (mirror MemberHub) ── */
+.ml-page {
+  --bg:           #0c0c0c;
+  --panel:        #1c1c1c;
+  --panel-2:      #242424;
+  --muted:        #b9b9b9;
+  --white:        #eaeaea;
+  --accent:       #ff7a0a;
+  --accent-dark:  #c85a00;
+  --radius:       22px;
+  --radius-sm:    14px;
+  --shadow:       0 10px 24px rgba(0,0,0,.45);
+  --inner-border: inset 0 0 0 1px #2a2a2a;
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--white);
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 40px;
-     margin-top: 40px;
-    font-size: 2rem;
+/* ── Loading ── */
+.ml-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
 }
 
-.manage-lessons-list {
-    display: block;
+.ml-spinner {
+  width: 42px;
+  height: 42px;
+  border: 3px solid rgba(255,122,10,.15);
+  border-top-color: #ff7a0a;
+  border-radius: 50%;
+  animation: ml-spin .7s linear infinite;
 }
 
-.add-lesson-form {
-    border: 3px solid #ccc;
-    padding: 20px;
-    margin-bottom: 50px;
-    border-radius: 6px;
-    position: relative;
+@keyframes ml-spin { to { transform: rotate(360deg); } }
+
+/* ── Two-panel layout ── */
+.ml-layout {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  min-height: 100vh;
+  padding-top: 8vh;
 }
 
-.add-lesson-form button {
-    padding: 20px;
-    margin: 10px 0px 10px 0px;
-    display: flex;
-    align-items: center;  
-    justify-content: center;
-    width: 10%;
-}
-
-.add-lesson-form label {
-    font-size: 1.5rem;
-}
-
-.add-lesson-form input {
-    border: 0.5px solid #ff7a0a;
-}
-
-.add-lesson-form textarea {
-    border: 0.5px solid #ff7a0a;
-}
-
-.add-lesson-form-row {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.manage-lesson-item {
-    border: 3px solid #ff7a0a;
-    padding: 20px;
-    margin-bottom: 25px;
-    border-radius: 6px;
-    position: relative;
-
-    display: flex;
-    flex-direction: column;
-}
-
-.lesson-item h2 {
-    margin: 0 0 10px;
-    font-size: 1.4rem;
-}
-
-.lesson-item p {
-    margin: 0 0 15px;
-    font-size: 1rem;
-    text-align: left;
-}
-
-.lesson-item h3 {
-    font-size: 1.2rem;
-    margin: 20px 0 10px;
-    text-align: left;
-}
-
-.task-list {
-    list-style-type: none;
-    padding-left: 20px;
-    margin-top: 0;
-} 
-
-/* Forms */
-.add-task-form {
-  margin-top: 12px;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background-color: var(--light-grey-bg)
-}
-
-
-
-
-/* Buttons */
-.form-button-wrapper {
-    display: flex;
-    justify-content: flex-start;
-    margin-top: 10px;
-}
-
-
-.manage-lessons-button {
-    display: inline-block;
-    width: auto;
-    padding: 8px 16px;
-    border: 1px solid #aaa;
-    background: var(--light-grey-bg);
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 10px;
-    margin-bottom: 30px;
-     transition: transform 0.1s ease;
-}
-
-.manage-lessons-button:hover {
-    background: var(--orange-vivid);
-}
-
-.manage-lessons-button:active {
-    transform: scale(0.98);
-}
-
-.manage-lessons-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.lesson-buttons {
-  position: absolute;
-  top: 10px;
-  left: 10px;
+/* ── Sidebar ── */
+.ml-sidebar {
+  background: var(--panel);
+  border-right: 1px solid #222;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  position: sticky;
+  top: 8vh;
+  height: calc(100vh - 8vh);
+  overflow-y: auto;
+}
+
+.ml-sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 16px 14px;
+  border-bottom: 1px solid #222;
+  flex-shrink: 0;
+}
+
+.ml-sidebar-title {
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.ml-sidebar-actions { display: flex; gap: 6px; }
+
+.ml-icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+  line-height: 1;
+  box-shadow: var(--inner-border);
+}
+
+.ml-icon-btn:hover { color: var(--white); background: #2c2c2c; }
+
+.ml-icon-btn--active {
+  color: var(--accent);
+  border-color: rgba(255,122,10,.4);
+  background: rgba(255,122,10,.08);
+}
+
+.ml-icon-btn--orange {
+  color: var(--accent);
+  border-color: rgba(255,122,10,.3);
+  font-size: 1.3rem;
+  font-weight: 300;
+}
+
+.ml-icon-btn--orange:hover {
+  background: rgba(255,122,10,.12);
+  border-color: var(--accent);
+}
+
+/* Add-lesson inline form */
+.ml-add-lesson-form {
+  padding: 12px 14px;
+  border-bottom: 1px solid #222;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
-          
+  background: var(--panel-2);
 }
 
-.lesson-buttons .manage-lessons-button {
-    margin: 0; 
+.ml-form-btns { display: flex; gap: 6px; }
+
+/* Lesson nav */
+.ml-lesson-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
 }
 
-.delete-button {
-
-    top: 10px;
-    left: 10px;
-    margin-right: 0;
+.ml-nav-empty {
+  padding: 16px;
+  color: #555;
+  font-size: 13px;
+  font-style: italic;
 }
 
-.delete-button:hover {
-    background: #ff4d4d;
+.ml-nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px 16px;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-family: 'M PLUS 1p', sans-serif;
+  text-align: left;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.ml-nav-item:hover {
+  color: var(--white);
+  background: rgba(255,255,255,.04);
+}
+
+.ml-nav-item--active {
+  color: var(--white);
+  border-left-color: var(--accent);
+  background: rgba(255,122,10,.07);
+}
+
+.ml-nav-item-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ml-nav-item-count {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(255,122,10,.12);
+  border-radius: 99px;
+  padding: 1px 8px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* ── Main panel ── */
+.ml-panel {
+  padding: 24px 28px 60px;
+  overflow-y: auto;
+  max-width: 820px;
+}
+
+.ml-panel-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: #444;
+  font-style: italic;
+}
+
+/* Lesson banner (orange gradient, mirrors welcome-banner) */
+.ml-panel-head {
+  position: relative;
+  background: linear-gradient(90deg, var(--accent), #ff9c3a);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px 26px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ml-panel-head-info { flex: 1; min-width: 0; }
+
+.ml-panel-title {
+  margin: 0 0 8px;
+  font-size: clamp(22px, 3.5vw, 38px);
+  font-weight: 800;
+  color: #0c0c0c;
+  line-height: 1.1;
+}
+
+.ml-panel-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(0,0,0,.65);
+}
+
+.ml-panel-desc p { margin: 0.2em 0; }
+.ml-panel-desc h1, .ml-panel-desc h2, .ml-panel-desc h3 { color: #0c0c0c; margin: .3em 0; }
+.ml-panel-desc code { background: rgba(0,0,0,.15); border-radius: 3px; padding: 1px 5px; }
+.ml-panel-desc a { color: #0c0c0c; text-decoration: underline; }
+.ml-panel-desc blockquote { border-left: 3px solid rgba(0,0,0,.3); margin: .4em 0; padding: 3px 10px; }
+
+/* ── Tasks section ── */
+.ml-tasks-section {
+  background: var(--panel);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ml-tasks-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ml-tasks-title {
+  margin: 0;
+  font-size: clamp(16px, 2vw, 22px);
+  font-weight: 700;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: .5px;
+}
+
+.ml-tasks-count {
+  font-size: 11px;
+  background: rgba(255,122,10,.12);
+  color: var(--accent);
+  border-radius: 99px;
+  padding: 2px 9px;
+  font-family: 'M PLUS 1p', sans-serif;
+}
+
+.ml-task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ml-no-tasks {
+  color: #555;
+  font-size: 13px;
+  font-style: italic;
+  margin: 0;
+}
+
+/* ── Add-task form ── */
+.ml-task-form {
+  background: var(--panel-2);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--inner-border);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ml-task-meta-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+/* ── Inputs ── */
+.ml-input {
+  display: block;
+  width: 100%;
+  background: #161616;
+  border: 1px solid #333;
+  border-radius: 10px;
+  color: var(--white);
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: 'M PLUS 1p', sans-serif;
+  box-sizing: border-box;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.ml-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255,122,10,.12);
+}
+
+.ml-input--sm { width: 110px; }
+
+.ml-label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 11px;
+  color: #777;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.ml-label--check {
+  flex-direction: row;
+  align-items: center;
+  gap: 7px;
+  text-transform: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding-bottom: 3px;
+}
+
+.ml-label--practice {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
+  background: var(--panel-2);
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 9px 13px;
+  margin: 2px 0 4px;
+}
+
+.ml-label--check input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ── Buttons ── */
+.ml-btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: var(--panel-2);
+  color: var(--white);
+  font-size: 13px;
+  font-family: 'M PLUS 1p', sans-serif;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .1s;
+  white-space: nowrap;
+  box-shadow: var(--inner-border);
+}
+
+.ml-btn:hover { background: #2c2c2c; }
+.ml-btn:active { transform: scale(.97); }
+
+.ml-btn--orange {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(255,122,10,.3);
+}
+
+.ml-btn--orange:hover {
+  background: #ff8f2a;
+  border-color: #ff8f2a;
+  box-shadow: 0 6px 18px rgba(255,122,10,.4);
+}
+
+.ml-btn--danger {
+  background: #7a0a0a;
+  border-color: #a01010;
+  color: #ffbdbd;
+  font-weight: 700;
+  box-shadow: 0 0 0 1px rgba(220,53,69,.25);
+}
+
+.ml-btn--danger:hover {
+  background: #9b1010;
+  border-color: #dc3545;
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(220,53,69,.45);
+}
+
+.ml-btn--sm { padding: 6px 12px; font-size: 12px; }
+
+/* ── Zip upload ── */
+.ml-zip-section { display: flex; flex-direction: column; gap: 5px; }
+.ml-zip-row { display: flex; align-items: center; gap: 8px; }
+.ml-zip-hidden { display: none; }
+
+.ml-zip-btn {
+  display: inline-block;
+  padding: 6px 14px;
+  border: 1px dashed rgba(255,122,10,.4);
+  border-radius: 8px;
+  color: var(--accent);
+  font-size: 12px;
+  cursor: pointer;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background .15s;
+}
+
+.ml-zip-btn:hover { background: rgba(255,122,10,.08); }
+
+.ml-zip-clear {
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0 3px;
+  transition: color .15s;
+}
+
+.ml-zip-clear:hover { color: #ff6b7a; }
+
+.ml-hint { font-size: 11px; color: #444; }
+
+/* ── Feedback ── */
+.ml-err { color: #E74C3C; font-size: 12px; margin: 0; }
+.ml-ok  { color: #2ECC71; font-size: 12px; margin: 0; }
+
+/* ── Nav item as div (contains buttons) ── */
+.ml-nav-item {
+  cursor: pointer;
+}
+
+.ml-nav-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* ── Visibility toggle button ── */
+.ml-vis-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 2px;
+  opacity: 0.55;
+  line-height: 1;
+  transition: opacity .15s, transform .15s;
+}
+
+.ml-vis-btn:hover      { opacity: 1; transform: scale(1.15); }
+.ml-vis-btn--open      { opacity: 0.9; }
+
+/* ── Panel head action buttons ── */
+.ml-panel-head-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.ml-btn--dark {
+  background: rgba(0,0,0,.25);
+  border-color: rgba(0,0,0,.35);
+  color: #0c0c0c;
+  box-shadow: none;
+}
+
+.ml-btn--dark:hover {
+  background: rgba(0,0,0,.4);
+}
+
+.ml-btn--vis-open {
+  background: rgba(0,0,0,.18);
+  border-color: rgba(0,0,0,.25);
+}
+
+/* ── Edit lesson form ── */
+.ml-edit-lesson-form {
+  background: var(--panel);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px 26px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ml-edit-lesson-heading {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .ml-layout { grid-template-columns: 1fr; }
+  .ml-sidebar {
+    position: static;
+    height: auto;
+    max-height: 260px;
+    border-right: none;
+    border-bottom: 1px solid #222;
+  }
+  .ml-panel { padding: 16px 14px 40px; }
 }

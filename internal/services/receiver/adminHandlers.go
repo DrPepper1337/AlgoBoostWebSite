@@ -384,3 +384,25 @@ func DeleteEmailFromWhitelistHandler(db *database.Database) http.HandlerFunc {
 		utils.WriteJSON(w, http.StatusOK, true, "entry deleted from whitelist successfully", nil)
 	}
 }
+
+func SetLessonVisibilityHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type lessonData struct {
+			Id int `json:"lesson_id"`
+			Open bool `json:"open"`
+		}
+		var data lessonData;
+		err := json.NewDecoder(r.Body).Decode(&data);
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil);
+			return
+		}
+		err = db.SetLessonVisibility(data.Id, data.Open);
+		if err != nil {
+			zap.L().Error("Error setting visibility:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to set visibility of a lesson", nil)
+			return
+		}
+		utils.WriteJSON(w, http.StatusOK, true, "setted lesson visibility successfully", nil)
+	}
+}

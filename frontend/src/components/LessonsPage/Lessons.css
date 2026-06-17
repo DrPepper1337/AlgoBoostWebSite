@@ -1,35 +1,254 @@
+/* ── design tokens (mirror MemberHub) ── */
+.lessons-page {
+  --bg:           #0c0c0c;
+  --panel:        #1c1c1c;
+  --panel-2:      #242424;
+  --muted:        #b9b9b9;
+  --white:        #eaeaea;
+  --accent:       #ff7a0a;
+  --accent-dark:  #c85a00;
+  --radius:       22px;
+  --radius-sm:    14px;
+  --shadow:       0 10px 24px rgba(0,0,0,.45);
+  --inner-border: inset 0 0 0 1px #2a2a2a;
 
-
-.lessons-wrapper {
-  position: relative;
-  width: 100%;
   min-height: 100vh;
-  box-sizing: border-box;
-  color: var(--color-text);
-  background-color: var(--color-bg);
-}
-.lessons-wrapper h2 {
-  margin-top: 7rem;
-  text-align: center;
+  background: var(--bg);
+  color: var(--white);
+  padding-top: 8vh;
+  padding-bottom: 4rem;
 }
 
-.user-menu-button {
-  font-size: 2rem;          
+/* ── Hero banner ── */
+.lessons-hero {
+  margin: 20px auto 24px;
+  max-width: 85vw;
+  background: linear-gradient(90deg, var(--accent), #ff9c3a);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px 32px;
+  overflow: hidden;
+}
+
+.lessons-hero__title {
+  margin: 0 0 6px;
+  font-size: clamp(28px, 4.2vw, 52px);
+  font-weight: 800;
+  color: #0c0c0c;
+  line-height: 1;
+}
+
+.lessons-hero__sub {
+  margin: 0;
+  color: rgba(0,0,0,0.6);
+  font-size: 1rem;
+}
+
+/* ── Grid ── */
+.lessons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  max-width: 85vw;
+  margin: 0 auto;
+}
+
+/* ── Card ── */
+.lesson-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: center;
+  background: var(--panel-2);
+  border-radius: 20px;
+  padding: 18px 18px 18px 20px;
+  box-shadow: var(--inner-border), var(--shadow);
   cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+  outline: none;
+  border: none;
+  color: var(--white);
+  text-align: left;
 }
 
+.lesson-card:hover,
+.lesson-card:focus {
+  transform: translateY(-3px);
+  box-shadow: inset 0 0 0 1px #333, 0 16px 28px rgba(0,0,0,.5);
+}
 
-.sessions-wrapper {
+.lesson-card--locked {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.lesson-card--locked:hover,
+.lesson-card--locked:focus {
+  transform: none;
+  box-shadow: var(--inner-border), var(--shadow);
+}
+
+.lesson-card__index {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.lesson-card__body { min-width: 0; }
+
+.lesson-card__title {
+  margin: 0 0 4px;
+  font-size: clamp(15px, 1.8vw, 20px);
+  color: #ff8f2a;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lesson-card__desc {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.lesson-card__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lesson-card__count {
+  font-size: 12px;
+  color: #888;
+  background: rgba(255,255,255,0.06);
+  border-radius: 99px;
+  padding: 2px 9px;
+}
+
+.lesson-card__arrow {
+  margin-left: auto;
+  font-size: 16px;
+  color: #bfbfbf;
+  transition: transform .15s;
+}
+
+.lesson-card:hover .lesson-card__arrow { transform: translateX(3px); }
+
+.lesson-card__locked-tag {
+  margin-left: auto;
+  font-size: 11px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+/* ── States ── */
+.lessons-center {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 1rem;
 }
-@media (min-width: 700px) {
-  .sessions-wrapper {
-    grid-template-columns: 1fr 1fr;
-  }
+
+.lessons-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255,122,10,0.2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: ls-spin .7s linear infinite;
+}
+
+@keyframes ls-spin { to { transform: rotate(360deg); } }
+
+.lessons-empty__icon { font-size: 3rem; opacity: 0.3; margin-bottom: .75rem; }
+.lessons-empty__text { color: #555; font-size: 1rem; margin: 0; }
+
+.lesson-card__login-tag {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+/* ── Auth wall ── */
+.lessons-auth-wall {
+  gap: 1rem;
+}
+
+.lessons-auth-wall__icon { font-size: 3rem; opacity: 0.5; }
+
+.lessons-auth-wall__text {
+  color: #888;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.lessons-auth-wall__btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  border: none;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.6rem 2rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.14s, transform 0.14s;
+  box-shadow: 0 4px 14px rgba(255, 122, 10, 0.35);
+}
+
+.lessons-auth-wall__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(255, 122, 10, 0.5);
+}
+
+/* ── Skeleton shimmer ── */
+@keyframes ls-shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+.ls-skel {
+  background: linear-gradient(90deg, #1e1e1e 0%, #2a2a2a 50%, #1e1e1e 100%);
+  background-size: 1200px 100%;
+  animation: ls-shimmer 1.6s linear infinite;
+  border-radius: 6px;
+}
+
+.lesson-card--skeleton {
+  pointer-events: none;
+  cursor: default;
+}
+
+.lesson-card--skeleton:hover,
+.lesson-card--skeleton:focus {
+  transform: none;
+  box-shadow: var(--inner-border), var(--shadow);
+}
+
+.ls-skel--index  { width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0; }
+.ls-skel--title  { height: 16px; width: 70%;  margin-bottom: 8px; }
+.ls-skel--desc   { height: 11px; width: 90%;  margin-bottom: 4px; }
+.ls-skel--footer { height: 11px; width: 30%;  margin-top: 10px; }
+
+@media (max-width: 600px) {
+  .lessons-hero { padding: 22px 20px; }
+  .lessons-grid { grid-template-columns: 1fr; }
 }

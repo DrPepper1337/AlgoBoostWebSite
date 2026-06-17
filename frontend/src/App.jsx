@@ -3,7 +3,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute, { AdminRoute } from './components/ProtectedRoute';
 import LoginRegister from './components/LoginRegister/LoginRegister';
 import LessonsPage from './components/LessonsPage/Lessons';
-import TasksPageTemp from './components/TasksPage/TasksPageTemp';
+import TasksPage from './components/TasksPage/TasksPage';
 import VerifyPage from './components/LoginRegister/VerifyPage';
 import PasswordReset from './components/LoginRegister/PasswordReset';
 import PasswordResetSuccess from './components/LoginRegister/PasswordResetSuccess';
@@ -11,6 +11,8 @@ import MemberHub from './components/MemberHub/MemberHub';
 import UserProfile from './components/UserProfile/UserProfile';
 import ManageUsers from './components/ManageUsers/ManageUsers';
 import ManageLessons from './components/ManageLessons/ManageLessons';
+import TaskDetailPage from './components/TaskDetailPage/TaskDetailPage';
+import SubmissionPage from './components/SubmissionPage/SubmissionPage';
 import './styles/App.css';
 import Home from './Home';
 import Header from './components/HeaderNavBar/Header';
@@ -53,29 +55,35 @@ function App() {
               <SettingsPage />
             </ProtectedRoute>
           } />
-          <Route path="/lessons" element={
-            <ProtectedRoute>
-              <LessonsPage />
-            </ProtectedRoute>
-          } />
+          <Route path="/lessons" element={<LessonsPage />} />
           <Route path="/tasks/:lessonId" element={
             <ProtectedRoute>
-              <TasksPageTemp />
+              <TasksPage />
             </ProtectedRoute>
           } />
-        </Route>
+          <Route path="/tasks/:lessonId/:taskId" element={
+            <ProtectedRoute>
+              <TaskDetailPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/submissions/:solutionId" element={
+            <ProtectedRoute>
+              <SubmissionPage />
+            </ProtectedRoute>
+          } />
 
-        {/* Admin Routes */}
-        <Route path="/manageLessons" element={
-          <AdminRoute>
-            <ManageLessons />
-          </AdminRoute>
-        } />
-        <Route path="/manageUsers" element={
-          <AdminRoute>
-            <ManageUsers />
-          </AdminRoute>
-        } />
+          {/* Admin Routes */}
+          <Route path="/manageLessons" element={
+            <AdminRoute>
+              <ManageLessons />
+            </AdminRoute>
+          } />
+          <Route path="/manageUsers" element={
+            <AdminRoute>
+              <ManageUsers />
+            </AdminRoute>
+          } />
+        </Route>
 
       </Routes>
     </AuthProvider>

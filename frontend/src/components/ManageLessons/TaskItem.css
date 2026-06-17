@@ -1,10 +1,139 @@
-.task-item {
-    margin: 6px 0;
-    padding-left: 5px;
-    font-size: 1rem;
+.ti-item {
+  list-style: none;
+  background: #242424;
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px #2a2a2a, 0 6px 14px rgba(0,0,0,.35);
+  overflow: hidden;
+  transition: box-shadow .15s, transform .15s;
 }
 
-.task-title {
-    font-weight: 500;
-    text-align: left;
+.ti-item:hover {
+  transform: translateY(-2px);
+  box-shadow: inset 0 0 0 1px #333, 0 10px 20px rgba(0,0,0,.45);
 }
+
+.ti-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ti-arrow {
+  color: #555;
+  font-size: 9px;
+  flex-shrink: 0;
+  transition: transform .18s;
+  display: inline-block;
+}
+
+.ti-arrow--open { transform: rotate(90deg); }
+
+.ti-title {
+  flex: 1;
+  font-size: 14px;
+  color: #eaeaea;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ti-badges { display: flex; gap: 5px; flex-shrink: 0; }
+
+.ti-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: rgba(255,255,255,.06);
+  color: #888;
+  border: 1px solid #2a2a2a;
+}
+
+.ti-badge--practice {
+  background: rgba(255,122,10,.1);
+  color: #ff7a0a;
+  border-color: rgba(255,122,10,.2);
+}
+
+.ti-delete-btn {
+  background: none;
+  border: none;
+  color: #444;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: color .15s, background .15s;
+  line-height: 1;
+}
+
+.ti-delete-btn:hover {
+  color: #ff6b7a;
+  background: rgba(220,53,69,.1);
+}
+
+.ti-delete-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+/* ── Expanded ── */
+.ti-details {
+  padding: 12px 18px 14px 36px;
+  border-top: 1px solid #1e1e1e;
+  background: rgba(0,0,0,.2);
+}
+
+.ti-no-desc { color: #444; font-size: 13px; margin: 0; font-style: italic; }
+
+.ti-desc-md {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #b9b9b9;
+  margin-bottom: 8px;
+}
+
+.ti-desc-md p { margin: .3em 0; }
+
+.ti-desc-md code {
+  background: rgba(255,122,10,.1);
+  color: #ffb347;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: .83em;
+}
+
+.ti-desc-md pre {
+  background: #0c0c0c;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  overflow-x: auto;
+  margin: .4em 0;
+}
+
+.ti-desc-md pre code { background: none; color: #e0c97f; padding: 0; }
+
+.ti-desc-md h1, .ti-desc-md h2, .ti-desc-md h3 {
+  color: #ff8f2a;
+  margin: .35em 0 .15em;
+}
+
+.ti-desc-md a { color: #ff7a0a; }
+
+.ti-desc-md blockquote {
+  border-left: 3px solid #ff7a0a;
+  margin: .4em 0;
+  padding: 3px 10px;
+  color: #555;
+}
+
+.ti-meta-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ti-meta-item { font-size: 12px; color: #555; }
+.ti-meta-practice { color: #ff7a0a; }

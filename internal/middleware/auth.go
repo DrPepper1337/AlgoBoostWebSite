@@ -65,14 +65,17 @@ func AdminMiddleware(next http.Handler) http.Handler {
 		}
 
 		claims := token.Claims.(jwt.MapClaims)
-		role := claims["role"].(string)
-
+		userID := int(claims["user_id"].(float64))
+		role, _ := claims["role"].(string)
+		name, _ := claims["username"].(string)
 		if role != "admin" {
 			http.Error(w, "forbidden: admin access required", http.StatusForbidden)
 			return
 		}
-		// maybe send admin user id as well in context ??
-		next.ServeHTTP(w, r)
+		ctx := context.WithValue(r.Context(), userIDKey, userID)
+		ctx = context.WithValue(ctx, roleKey, role)
+		ctx = context.WithValue(ctx, nameKey, name)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 

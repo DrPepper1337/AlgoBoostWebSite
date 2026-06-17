@@ -91,10 +91,10 @@ func main() {
 	}
 
 	// Set lessons visible
-	if err := db.SetLessonVisability(dpLessonID, true); err != nil {
+	if err := db.SetLessonVisibility(dpLessonID, true); err != nil {
 		zap.L().Debug(err.Error())
 	}
-	if err := db.SetLessonVisability(llLessonID, true); err != nil {
+	if err := db.SetLessonVisibility(llLessonID, true); err != nil {
 		zap.L().Debug(err.Error())
 	}
 
@@ -138,20 +138,20 @@ func main() {
     }
 
     // Add test solutions for user ID 1
-    _, err = db.AddSolution("python", "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)", 1, 2)
-    if err != nil {
-        zap.L().Debug(err.Error())
-    }
+    // _, err = db.AddSolution("python", "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)", 1, 2)
+    // if err != nil {
+    //     zap.L().Debug(err.Error())
+    // }
 
-	  _, err = db.AddSolution("python", "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)", 1, 3)
-    if err != nil {
-        zap.L().Debug(err.Error())
-    }
+	//   _, err = db.AddSolution("python", "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)", 1, 3)
+    // if err != nil {
+    //     zap.L().Debug(err.Error())
+    // }
 
-	  _, err = db.AddSolution("python", "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)", 1, 4)
-    if err != nil {
-        zap.L().Debug(err.Error())
-    }
+	//   _, err = db.AddSolution("python", "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)", 1, 4)
+    // if err != nil {
+    //     zap.L().Debug(err.Error())
+    // }
 
 
 	

@@ -1,0 +1,110 @@
+.mde-root {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #333;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #161616;
+}
+
+.mde-tabs {
+  display: flex;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.mde-tab {
+  padding: 6px 16px;
+  background: none;
+  border: none;
+  border-right: 1px solid #2a2a2a;
+  color: #666;
+  font-size: 11px;
+  font-family: 'M PLUS 1p', sans-serif;
+  cursor: pointer;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  transition: color .15s, background .15s;
+}
+
+.mde-tab:hover { color: #eaeaea; }
+
+.mde-tab--active {
+  color: #ff7a0a;
+  background: rgba(255,122,10,.07);
+}
+
+.mde-textarea {
+  background: transparent;
+  border: none;
+  color: #eaeaea;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  resize: vertical;
+  outline: none;
+  min-height: 90px;
+  line-height: 1.65;
+}
+
+.mde-preview {
+  padding: 10px 14px;
+  min-height: 80px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #b9b9b9;
+}
+
+.mde-preview-empty { color: #444; font-style: italic; }
+
+/* Rendered markdown */
+.mde-preview p { margin: .3em 0; }
+
+.mde-preview h1, .mde-preview h2, .mde-preview h3 {
+  color: #ff8f2a;
+  margin: .5em 0 .2em;
+}
+
+.mde-preview code {
+  background: rgba(255,122,10,.1);
+  color: #ffb347;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: .85em;
+}
+
+.mde-preview pre {
+  background: #0c0c0c;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  overflow-x: auto;
+  margin: .5em 0;
+}
+
+.mde-preview pre code { background: none; color: #e0c97f; padding: 0; }
+
+.mde-preview ul, .mde-preview ol {
+  padding-left: 1.4em;
+  margin: .3em 0;
+}
+
+.mde-preview blockquote {
+  border-left: 3px solid #ff7a0a;
+  margin: .5em 0;
+  padding: 3px 12px;
+  color: #666;
+}
+
+.mde-preview a { color: #ff7a0a; }
+
+.mde-preview table { border-collapse: collapse; width: 100%; font-size: .85em; }
+
+.mde-preview th, .mde-preview td {
+  border: 1px solid #2a2a2a;
+  padding: 5px 10px;
+}
+
+.mde-preview th {
+  background: rgba(255,122,10,.08);
+  color: #ff7a0a;
+}

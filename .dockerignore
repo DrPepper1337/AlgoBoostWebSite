@@ -1,0 +1,3 @@
+deploy/postgres_data
+.cache
+frontend/node_modules

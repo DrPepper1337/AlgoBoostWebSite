@@ -1,444 +1,255 @@
 import "./ManageUsers.css";
-import HeaderNavBar from "../HeaderNavBar/Header";
 import { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
 import { buildApiUrl } from "../../config/api";
 
+const TABS = ["Admins", "Members", "Whitelist"];
 
 export default function ManageUsers() {
-    const [admins, setAdmins] = useState([]);
-    const [members, setMembers] = useState([]);
-    const [whitelist, setWhitelist] = useState([]);
-    const [editingId, setEditingId] = useState(null);
-    const [editingType, setEditingType] = useState(null);
-    const [editData, setEditData] = useState({});
-    const [addData, setAddData] = useState({role: "admin"});
+  const [activeTab, setActiveTab] = useState("Admins");
+  const [admins, setAdmins] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [whitelist, setWhitelist] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    const startEditing = (id, type, EntryData) => {
-        setEditingId(id);
-        setEditingType(type);
-        setEditData({
-            name: EntryData.name || '',
-            role: EntryData.role || 'member'
-        });
-    };
+  const [editingId, setEditingId] = useState(null);
+  const [editingType, setEditingType] = useState(null);
+  const [editData, setEditData] = useState({});
 
-    const cancelEdit = () => {
-        setEditingId(null);
-        setEditingType(null);
-        setEditData({});
-    };
+  const [addData, setAddData] = useState({ name: "", email: "", role: "member" });
+  const [addError, setAddError] = useState("");
+  const [addSuccess, setAddSuccess] = useState("");
 
-    const saveEdit = async (id, type) => {
-        if (!['admin', 'member'].includes(editData.role.toLowerCase())) {
-            alert('Role must be either "admin" or "member"');
-            return;
-        }
+  const startEditing = (id, type, data) => {
+    setEditingId(id);
+    setEditingType(type);
+    setEditData({ name: data.name || "", role: data.role || "member" });
+  };
 
-        try {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditingType(null);
+    setEditData({});
+  };
 
-            const originalData = type === "user" ? ([...admins, ...members].find(u => u.id === id)) : ([...whitelist].find(u => u.id === id));
-            if (!originalData) {
-                alert('Entry not found');
-                return;
-            }
-
-            const updates = [];
-
-            if (editData.name.trim() !== originalData.name) {
-                updates.push({
-                    property: 'name',
-                    value: editData.name.trim()
-                });
-            }
-
-            if (editData.role.toLowerCase() !== originalData.role) {
-                updates.push({
-                    property: 'role',
-                    value: editData.role.toLowerCase()
-                });
-            }
-
-            if (updates.length === 0) {
-                alert('No changes detected');
-                setEditingId(null);
-                setEditingType(null);
-                setEditData({});
-                return;
-            }
-
-            for (const update of updates) {
-                const endpoint = type === "user" ? buildApiUrl('admin/edit-user') : buildApiUrl('admin/edit-whitelist');
-                const response = await axios.post(endpoint, {
-                    id: id,
-                    property: update.property,
-                    value: update.value
-                }, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                if (!response.data.success) {
-                    throw new Error(`Failed to update ${update.property}`);
-                }
-            }
-
-            alert('User updated successfully');
-            setEditingId(null);
-            setEditingType(null);
-            setEditData({});
-            fetchAllData();
-        } catch (error) {
-            console.error('Failed to edit:', error);
-            alert('Failed to edit: ' + (error.response?.data?.message || error.message));
-        }
-    };
-
-    const handleDelete = async (id, userName, type) => {
-        if (!window.confirm(`Are you sure you want to delete "${userName}"? This action cannot be undone.`)) return;
-
-        try {
-            const token = localStorage.getItem('authToken');
-            if (!token) return;
-
-            const endpoint = type === "user" ? buildApiUrl('admin/delete-user') : buildApiUrl('admin/delete-email-from-whitelist');
-
-            const response = await axios.post(endpoint, {
-                id: id
-            }, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            if (response.data.success) {
-                alert('Entry deleted successfully');
-                fetchAllData();
-            }
-        } catch (error) {
-            console.error('Failed to delete Entry:', error);
-            alert('Failed to delete Entry: ' + (error.response?.data?.message || error.message));
-        }
-    };
-
-    const fetchAllData = async () => {
-        const token = localStorage.getItem('authToken');
-        if (!token) return;
-
-        try {
-            const [adminsRes, membersRes, whitelistRes] = await Promise.all([
-                axios.get(buildApiUrl('admin/admins'), {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-                axios.get(buildApiUrl('admin/members'), {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-                axios.get(buildApiUrl('admin/whitelist'), {
-                    headers: { Authorization: `Bearer ${token}` },
-                })
-            ]);
-
-            setAdmins(Array.isArray(adminsRes.data?.data) ? adminsRes.data.data : []);
-            setMembers(Array.isArray(membersRes.data?.data) ? membersRes.data.data : []);
-            setWhitelist(Array.isArray(whitelistRes.data?.data) ? whitelistRes.data.data : []);
-        } catch (error) {
-            console.error('Failed to fetch data:', error);
-        }
-    };
-
-    const addEmailToWhitelist = async (email, name, role) => {
-        const token = localStorage.getItem('authToken');
-        if (!token) return;
-
-        if ( !name || !role) {
-            alert('Please fill in all the fields');
-            return;
-        }
-
-        try {
-            const response = await axios.post(buildApiUrl('admin/add-email-to-whitelist'), {
-                email: email,
-                name: name,
-                role: role
-            }, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-
-            if (response.data.success) {
-                alert('Email added successfully');
-                setAddData({})
-                fetchAllData();
-            }
-
-            return;
-        } catch (error) {
-            console.error(`Failed to add ${email} to whitelist:`, error);
-        }
+  const saveEdit = async (id, type) => {
+    if (!["admin", "member"].includes(editData.role.toLowerCase())) {
+      alert('Role must be "admin" or "member"');
+      return;
     }
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+      const original =
+        type === "user"
+          ? [...admins, ...members].find((u) => u.id === id)
+          : whitelist.find((w) => w.id === id);
+      if (!original) return;
 
-    useEffect(() => {
-        fetchAllData();
-    }, []);
+      const updates = [];
+      if (editData.name.trim() !== original.name)
+        updates.push({ property: "name", value: editData.name.trim() });
+      if (editData.role.toLowerCase() !== original.role)
+        updates.push({ property: "role", value: editData.role.toLowerCase() });
 
-    return (
-        <div className="manage-users-wrapper">
-            <HeaderNavBar />
-            <h4>Manage Admins ({admins.length})</h4>
-            <div className="admin-list">
-                {admins.length === 0 ? (
-                    <p>No admins found</p>
-                ) : (
-                    admins.map((a) => (
-                        <div key={a.id} className="admin-card user-card">
-                            <div className="user-info">
-                                <p><strong>Name: </strong>
-                                    {editingId === a.id && editingType === "user" ? (
-                                        <input
-                                            type="text"
-                                            value={editData.name}
-                                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                                            className="edit-input"
-                                        />
-                                    ) : (
-                                        a.name || 'N/A'
-                                    )}
-                                </p>
-                                <p><strong>Email: </strong> {a.email}</p>
-                                <p><strong>Role: </strong>
-                                    {editingId === a.id && editingType === "user" ? (
-                                        <select
-                                            value={editData.role}
-                                            onChange={(e) => setEditData({ ...editData, role: e.target.value })}
-                                            className="edit-select"
-                                        >
-                                            <option value="admin">admin</option>
-                                            <option value="member">member</option>
-                                        </select>
-                                    ) : (
-                                        a.role
-                                    )}
-                                </p>
-                            </div>
-                            <div className="user-actions">
-                                {editingId === a.id && editingType === "user" ? (
-                                    <>
-                                        <button
-                                            className="save-btn"
-                                            onClick={() => saveEdit(a.id, "user")}
-                                        >
-                                            Save
-                                        </button>
-                                        <button
-                                            className="cancel-btn"
-                                            onClick={cancelEdit}
-                                        >
-                                            Cancel
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <button
-                                            className="edit-btn"
-                                            onClick={() => startEditing(a.id, "user", { name: a.name, role: a.role })}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            className="delete-btn"
-                                            onClick={() => handleDelete(a.id, a.name, "user")}
-                                        >
-                                            Delete
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
-            <h4>Manage Members ({members.length})</h4>
-            <div className="member-list">
-                {members.length === 0 ? (
-                    <p>No members found</p>
-                ) : (
-                    members.map((m) => (
-                        <div key={m.id} className="member-card user-card">
-                            <div className="user-info">
-                                <p><strong>Name: </strong>
-                                    {editingId === m.id && editingType === "user" ? (
-                                        <input
-                                            type="text"
-                                            value={editData.name}
-                                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                                            className="edit-input"
-                                        />
-                                    ) : (
-                                        m.name || 'N/A'
-                                    )}
-                                </p>
-                                <p><strong>Email: </strong> {m.email}</p>
-                                <p><strong>Role: </strong>
-                                    {editingId === m.id && editingType === "user" ? (
-                                        <select
-                                            value={editData.role}
-                                            onChange={(e) => setEditData({ ...editData, role: e.target.value })}
-                                            className="edit-select"
-                                        >
-                                            <option value="admin">admin</option>
-                                            <option value="member">member</option>
-                                        </select>
-                                    ) : (
-                                        m.role
-                                    )}
-                                </p>
-                            </div>
-                            <div className="user-actions">
-                                {editingId === m.id && editingType === "user" ? (
-                                    <>
-                                        <button
-                                            className="save-btn"
-                                            onClick={() => saveEdit(m.id, "user")}
-                                        >
-                                            Save
-                                        </button>
-                                        <button
-                                            className="cancel-btn"
-                                            onClick={cancelEdit}
-                                        >
-                                            Cancel
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <button
-                                            className="edit-btn"
-                                            onClick={() => startEditing(m.id, "user", { name: m.name, role: m.role })}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            className="delete-btn"
-                                            onClick={() => handleDelete(m.id, m.name, "user")}
-                                        >
-                                            Delete
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
-            <h4>Manage Whitelist ({whitelist.length})</h4>
-            <div className="white-list">
-                {whitelist.length === 0 ? (
-                    <p>No whitelist entries found</p>
-                ) : (
-                    whitelist.map((w) => (
-                        <div key={w.id} className="whitelist-card user-card">
-                            <div className="user-info">
-                                <p><strong>Name: </strong>
-                                    {editingId === w.id && editingType === "whitelist" ? (
-                                        <input
-                                            type="text"
-                                            value={editData.name}
-                                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                                            className="edit-input"
-                                        />
-                                    ) : (
-                                        w.name || 'N/A'
-                                    )}
-                                </p>
-                                <p><strong>Email: </strong> {w.email}</p>
-                                <p><strong>Role: </strong>
-                                    {editingId === w.id && editingType === "whitelist" ? (
-                                        <select
-                                            value={editData.role}
-                                            onChange={(e) => setEditData({ ...editData, role: e.target.value })}
-                                            className="edit-select"
-                                        >
-                                            <option value="admin">admin</option>
-                                            <option value="member">member</option>
-                                        </select>
-                                    ) : (
-                                        w.role
-                                    )}
-                                </p>
-                            </div>
-                            <div className="user-actions">
-                                {editingId === w.id && editingType === "whitelist" ? (
-                                    <>
-                                        <button
-                                            className="save-btn"
-                                            onClick={() => saveEdit(w.id, "whitelist")}
-                                        >
-                                            Save
-                                        </button>
-                                        <button
-                                            className="cancel-btn"
-                                            onClick={cancelEdit}
-                                        >
-                                            Cancel
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <button
-                                            className="edit-btn"
-                                            onClick={() => startEditing(w.id, "whitelist", { name: w.name, role: w.role })}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            className="delete-btn"
-                                            onClick={() => handleDelete(w.id, w.email, "whitelist")}
-                                        >
-                                            Delete
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
+      if (updates.length === 0) { cancelEdit(); return; }
 
-            <div className="whitelist-card user-card">
-                <div className="user-info">
-                    <p><strong>Name: </strong>
-                        <input
-                            type="text"
-                            value={addData.name}
-                            onChange={(e) => setAddData({ ...addData, name: e.target.value })}
-                            className="edit-input"
-                        />
-                    </p>
+      const endpoint =
+        type === "user"
+          ? buildApiUrl("admin/edit-user")
+          : buildApiUrl("admin/edit-whitelist");
 
-                    <p><strong>Email: </strong>
-                        <input
-                            type="text"
-                            value={addData.email}
-                            onChange={(e) => setAddData({ ...addData, email: e.target.value })}
-                            className="edit-input"
-                        />
-                    </p>
+      for (const u of updates) {
+        await axios.post(endpoint, { id, property: u.property, value: u.value }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+      cancelEdit();
+      fetchAllData();
+    } catch (err) {
+      alert("Failed to save: " + (err.response?.data?.message || err.message));
+    }
+  };
 
-                    <p><strong>Role: </strong>
-                        <select
-                            value={addData.role}
-                            onChange={(e) => setAddData({ ...addData, role: e.target.value })}
-                            className="edit-select"
-                        >
+  const handleDelete = async (id, label, type) => {
+    if (!window.confirm(`Delete "${label}"?`)) return;
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+      const endpoint =
+        type === "user"
+          ? buildApiUrl("admin/delete-user")
+          : buildApiUrl("admin/delete-email-from-whitelist");
+      await axios.post(endpoint, { id }, { headers: { Authorization: `Bearer ${token}` } });
+      fetchAllData();
+    } catch (err) {
+      alert("Failed to delete: " + (err.response?.data?.message || err.message));
+    }
+  };
+
+  const addEmailToWhitelist = async () => {
+    setAddError("");
+    setAddSuccess("");
+    if (!addData.email || !addData.name || !addData.role) {
+      setAddError("All fields are required.");
+      return;
+    }
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+      await axios.post(
+        buildApiUrl("admin/add-email-to-whitelist"),
+        { email: addData.email, name: addData.name, role: addData.role },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAddSuccess("Added to whitelist!");
+      setAddData({ name: "", email: "", role: "member" });
+      fetchAllData();
+    } catch (err) {
+      setAddError(err.response?.data?.message || err.message);
+    }
+  };
+
+  const fetchAllData = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+    try {
+      const [a, m, w] = await Promise.all([
+        axios.get(buildApiUrl("admin/admins"), { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(buildApiUrl("admin/members"), { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(buildApiUrl("admin/whitelist"), { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
+      setAdmins(Array.isArray(a.data?.data) ? a.data.data : []);
+      setMembers(Array.isArray(m.data?.data) ? m.data.data : []);
+      setWhitelist(Array.isArray(w.data?.data) ? w.data.data : []);
+    } catch (err) {
+      console.error("Failed to fetch data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchAllData(); }, []);
+
+  const counts = { Admins: admins.length, Members: members.length, Whitelist: whitelist.length };
+
+  const rows =
+    activeTab === "Admins" ? admins :
+    activeTab === "Members" ? members :
+    whitelist;
+
+  const rowType = activeTab === "Whitelist" ? "whitelist" : "user";
+
+  return (
+    <div className="mu-page">
+      <div className="mu-header">
+        <h1 className="mu-title">Manage Users</h1>
+        <p className="mu-subtitle">Control team access and roles</p>
+      </div>
+
+      <div className="mu-body">
+        <div className="mu-tabs">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              className={`mu-tab${activeTab === tab ? " mu-tab--active" : ""}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+              <span className="mu-tab-count">{counts[tab]}</span>
+            </button>
+          ))}
+        </div>
+
+        {loading ? (
+          <div className="mu-loading"><div className="mu-spinner" /></div>
+        ) : (
+          <>
+            <div className="mu-list">
+              {rows.length === 0 ? (
+                <p className="mu-empty">No entries found.</p>
+              ) : (
+                rows.map((entry) => {
+                  const isEditing = editingId === entry.id && editingType === rowType;
+                  return (
+                    <div key={entry.id} className="mu-row">
+                      <div className="mu-row-avatar">
+                        {(entry.name || entry.email || "?")[0].toUpperCase()}
+                      </div>
+                      <div className="mu-row-info">
+                        {isEditing ? (
+                          <input
+                            className="mu-input"
+                            value={editData.name}
+                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                            placeholder="Name"
+                          />
+                        ) : (
+                          <span className="mu-row-name">{entry.name || "—"}</span>
+                        )}
+                        <span className="mu-row-email">{entry.email}</span>
+                      </div>
+                      <div className="mu-row-role">
+                        {isEditing ? (
+                          <select
+                            className="mu-select"
+                            value={editData.role}
+                            onChange={(e) => setEditData({ ...editData, role: e.target.value })}
+                          >
                             <option value="admin">admin</option>
                             <option value="member">member</option>
-                        </select>
-                    </p>
-
-                    <button
-                        className="add-btn"
-                        onClick={() => addEmailToWhitelist(addData.email, addData.name, addData.role)}
-                    >Add</button>
-                </div>
+                          </select>
+                        ) : (
+                          <span className={`mu-badge mu-badge--${entry.role}`}>{entry.role}</span>
+                        )}
+                      </div>
+                      <div className="mu-row-actions">
+                        {isEditing ? (
+                          <>
+                            <button className="mu-btn mu-btn--save" onClick={() => saveEdit(entry.id, rowType)}>Save</button>
+                            <button className="mu-btn mu-btn--cancel" onClick={cancelEdit}>Cancel</button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              className="mu-btn mu-btn--edit"
+                              onClick={() => startEditing(entry.id, rowType, { name: entry.name, role: entry.role })}
+                            >Edit</button>
+                            <button
+                              className="mu-btn mu-btn--delete"
+                              onClick={() => handleDelete(entry.id, entry.name || entry.email, rowType)}
+                            >Delete</button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
-        </div>
-    )
+
+            {activeTab === "Whitelist" && (
+              <div className="mu-add-card">
+                <h3 className="mu-add-title">Add to Whitelist</h3>
+                <div className="mu-add-form">
+                  <input className="mu-input" placeholder="Name" value={addData.name}
+                    onChange={(e) => setAddData({ ...addData, name: e.target.value })} />
+                  <input className="mu-input" placeholder="Email" type="email" value={addData.email}
+                    onChange={(e) => setAddData({ ...addData, email: e.target.value })} />
+                  <select className="mu-select" value={addData.role}
+                    onChange={(e) => setAddData({ ...addData, role: e.target.value })}>
+                    <option value="admin">admin</option>
+                    <option value="member">member</option>
+                  </select>
+                  <button className="mu-btn mu-btn--primary" onClick={addEmailToWhitelist}>Add</button>
+                </div>
+                {addError && <p className="mu-error">{addError}</p>}
+                {addSuccess && <p className="mu-success">{addSuccess}</p>}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
 }

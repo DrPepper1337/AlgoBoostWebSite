@@ -50,27 +50,32 @@ func (db *Database) UpdateSolution(id int, statusCode int, time float64, memory 
 
 func (db *Database) GetSolution(id int) (models.Solution, error) {
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-	sql, args, err := psql.Select("id", "compiler", "code", "memory", "time", "status_code", "task_id", "user_id").From("solutions").Where(sq.Eq{"id": id}).ToSql()
+	sql, args, err := psql.Select(
+		"id", "compiler", "code",
+		"COALESCE(memory, 0)", "COALESCE(time, 0)",
+		"status_code", "task_id", "user_id",
+	).From("solutions").Where(sq.Eq{"id": id}).ToSql()
 	if err != nil {
 		return models.Solution{}, err
 	}
-	row := db.Postgres.QueryRow(context.Background(), sql, args...)
 	var result models.Solution
-	err = row.Scan(&result.Compiler, &result.Code, &result.Memory, &result.Time, &result.StatusCode, &result.TaskID, &result.UserID)
+	err = db.Postgres.QueryRow(context.Background(), sql, args...).
+		Scan(&result.ID, &result.Compiler, &result.Code, &result.Memory, &result.Time, &result.StatusCode, &result.TaskID, &result.UserID)
 	if err != nil {
 		return models.Solution{}, err
 	}
-	sql, args, err = psql.Select("id", "solution_id", "num_of_test", "test_input", "test_output", "user_output").From("statuses").Where(sq.Eq{"solution_id": result.ID}).ToSql()
-	if err != nil {
-		return models.Solution{}, err
+
+	// Status row only exists after the solver runs — ignore ErrNoRows.
+	sql, args, err = psql.Select("num_of_test", "test_input", "test_output", "user_output").
+		From("statuses").Where(sq.Eq{"solution_id": result.ID}).ToSql()
+	if err == nil {
+		var status models.Status
+		err = db.Postgres.QueryRow(context.Background(), sql, args...).
+			Scan(&status.NumOfTest, &status.TestInput, &status.TestOutput, &status.UserOutput)
+		if err == nil {
+			result.Status = status
+		}
 	}
-	row = db.Postgres.QueryRow(context.Background(), sql, args...)
-	var status models.Status
-	err = row.Scan(&status.NumOfTest, &status.TestInput, &status.TestOutput, &status.UserOutput)
-	if err != nil {
-		return models.Solution{}, err
-	}
-	result.Status = status
 	return result, nil
 }
 

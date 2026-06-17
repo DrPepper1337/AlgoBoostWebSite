@@ -20,7 +20,7 @@ func (s *Solver) CheckSubmission(solution *models.Solution) error {
 	case "c++":
 		filename += "cpp"
 	case "python":
-		filename += "py "
+		filename += "py"
 	case "java":
 		filename += "java"
 	}

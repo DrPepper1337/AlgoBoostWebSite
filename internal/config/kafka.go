@@ -4,5 +4,5 @@ import (
 	"os"
 )
 
-var KafkaBrokers = []string{os.Getenv("KAFKA_ADVERTISED_LISTENERS")}
-var KafkaTopic = "submissions"
+var KafkaBrokers = []string{os.Getenv("KAFKA_BROKER")}
+var KafkaTopic = os.Getenv("KAFKA_SUBMISSION_TOPIC")

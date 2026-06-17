@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -20,10 +21,13 @@ import (
 	kafka "github.com/segmentio/kafka-go"
 )
 
-var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
-	Brokers: config.KafkaBrokers,
-	Topic:   config.KafkaTopic,
-})
+var kafkaWriter = &kafka.Writer{
+	Addr:                   kafka.TCP(config.KafkaBrokers...),
+	Topic:                  config.KafkaTopic,
+	AllowAutoTopicCreation: true,
+	MaxAttempts:            15,
+	WriteTimeout:           30 * time.Second,
+}
 
 func RegistrationHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -332,6 +336,22 @@ func GetUserSolutionsHandler(db *database.Database) http.HandlerFunc {
     }
 }
 
+func GetSolutionHandler(db *database.Database) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        solutionID, err := strconv.Atoi(chi.URLParam(r, "solutionID"));
+		if err != nil {
+ 			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to convert solutionID to int: "+err.Error(), nil)
+            return
+		}
+
+        solution, err := db.GetSolution(solutionID);
+        if err != nil {
+            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to fetch solution: "+err.Error(), nil)
+            return
+        }
+        utils.WriteJSON(w, http.StatusOK, true, "solution fetched successfully", solution)
+    }
+}
 
 func GetUserStatsHandler(db *database.Database) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
@@ -367,40 +387,51 @@ func GetUserStatsHandler(db *database.Database) http.HandlerFunc {
     }
 }
 
-func SubmitHandler(w http.ResponseWriter, r *http.Request) {
-	var req models.Solution
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request: "+err.Error(), nil)
-		return
-	}
+func SubmitHandler(db *database.Database) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+		var req models.Solution
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request: "+err.Error(), nil)
+			return
+		}
 
-	// serialise as json to end to kafka
-	// converts the request to a JSON-formatted byte slice
-	value, err := json.Marshal(req)
-	if err != nil {
-		zap.L().Error("JSON marshal error:", zap.Error(err))
-		utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to marshal request: "+err.Error(), nil)
-		return
-	}
+		solutionID, err := db.AddSolution(req.Compiler, req.Code, req.UserID, req.TaskID);
+		if err != nil {
+			zap.L().Error("Failed to add solution to the database", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to add the solution to database: "+err.Error(), nil)
+			return
+		}
+		req.ID = solutionID;
+		// serialise as json to end to kafka
+		// converts the request to a JSON-formatted byte slice
+		value, err := json.Marshal(req)
+		if err != nil {
+			zap.L().Error("JSON marshal error:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to marshal request: "+err.Error(), nil)
+			return
+		}
 
-	// write the message to kafka
-	userID, ok := middleware.GetUserIDFromContext(r.Context())
-	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
-		return
-	}
+		// write the message to kafka
+		userID, ok := middleware.GetUserIDFromContext(r.Context())
+		if !ok {
+			utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
+			return
+		}
 
-	err = kafkaWriter.WriteMessages(context.Background(), kafka.Message{
-		Key:   []byte(strconv.Itoa(userID)),
-		Value: value,
-	})
-	if err != nil {
-		zap.L().Error("Kafka write error:", zap.Error(err))
-		utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to submit code: "+err.Error(), nil)
-		return
-	}
+		err = kafkaWriter.WriteMessages(context.Background(), kafka.Message{
+			Key:   []byte(strconv.Itoa(userID)),
+			Value: value,
+		})
+		if err != nil {
+			zap.L().Error("Kafka write error:", zap.Error(err))
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to submit code: "+err.Error(), nil)
+			return
+		}
 
-	zap.L().Info("code submitted to Kafka for task", zap.String("taskID", strconv.Itoa(req.TaskID)))
-	utils.WriteJSON(w, http.StatusOK, true, "code submitted successfully", nil)
+		zap.L().Info("code submitted to Kafka for task", zap.String("taskID", strconv.Itoa(req.TaskID)))
+		utils.WriteJSON(w, http.StatusOK, true, "code submitted successfully", map[string]int{
+				"solution_id": solutionID,
+		})
+	}
 }

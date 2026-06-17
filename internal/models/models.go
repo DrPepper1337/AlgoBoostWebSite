@@ -43,6 +43,7 @@ type ShortTask struct {
 	ID     int    `json:"id"`
 	Title  string `json:"title"`
 	Status int    `json:"status"`
+	IsPractice  bool    `json:"is_practice"`
 }
 
 type Lesson struct {

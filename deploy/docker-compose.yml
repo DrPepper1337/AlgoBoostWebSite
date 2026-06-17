@@ -15,6 +15,7 @@ services:
     depends_on: [zookeeper]
     environment:
       KAFKA_HEAP_OPTS: "-Xms256m -Xmx512m"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     ports: ["9092:9092"]
     healthcheck:
       test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]

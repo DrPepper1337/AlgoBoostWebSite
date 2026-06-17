@@ -179,7 +179,7 @@ export default function Header() {
                 Member Hub
               </button>
             )}
-            {isAuthenticated && !(location.pathname === "/lessons") && (
+            {!(location.pathname === "/lessons") && (
               <button
                 className="navbarLink"
                 onClick={() => {
