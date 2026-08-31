@@ -9,6 +9,12 @@ We are a St Andrews Universiy student-led society, commited to helping our peers
 3. Run `docker compose -f deploy/docker-compose.dev.yml up --build`
 4. The website should be accessible via `http://localhost/8088` on your machine
 
+To remove stale volumes run:
+
+```bash
+docker compose -f deploy/docker-compose.dev.yml down -v
+```
+
 ## Ports - Development
 
 - `8088` = Nginx. proxies `/` to the Vite dev server (frontend hot-reload) and `/api/` to receiver
