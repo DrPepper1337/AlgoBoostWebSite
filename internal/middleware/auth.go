@@ -18,6 +18,12 @@ const (
 	nameKey   contextKey = "name"
 )
 
+// SetUserIDInContext sets the user ID in context (useful for testing)
+func SetUserIDInContext(ctx context.Context, userID int) context.Context {
+    return context.WithValue(ctx, userIDKey, userID)
+}
+
+
 func MemberMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
@@ -91,3 +97,6 @@ func GetUserNameFromContext(ctx context.Context) (string, bool) {
 	username, ok := ctx.Value("username").(string)
 	return username, ok
 }
+
+
+

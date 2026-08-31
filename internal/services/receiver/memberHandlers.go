@@ -28,6 +28,7 @@ var kafkaWriter *kafka.Writer = kafka.NewWriter(kafka.WriterConfig{
 func RegistrationHandler(db *database.Database) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type regCreds struct {
+			Name	 string `json:"name"`
 			Email    string `json:"email"`
 			Password string `json:"password"`
 		}
@@ -39,8 +40,8 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 			return
 		}
 
-		if credentials.Email == "" || credentials.Password == "" {
-			utils.WriteJSON(w, http.StatusBadRequest, false, "email and password are required", nil)
+		if credentials.Name == "" || credentials.Email == "" || credentials.Password == "" {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "name, email and password are required", nil)
 			return
 		}
 
@@ -74,7 +75,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 		password := string(hashedPassword)
 
 		// email verification
-		token, err := utils.GenerateVerificationToken(db, credentials.Email, password, whitelist.Name, whitelist.Role, "registration")
+		token, err := utils.GenerateVerificationToken(db, credentials.Email, password, credentials.Name, whitelist.Role, "registration")
 		if err != nil {
 			zap.L().Error("error generating verification token:", zap.Error(err))
 			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to generate verification token", nil)
@@ -83,7 +84,7 @@ func RegistrationHandler(db *database.Database) http.HandlerFunc {
 
 		verificationLink := fmt.Sprintf("http://localhost:5173/verify?token=%s", token)
 
-		err = utils.SendVerificationEmail(credentials.Email, whitelist.Name, verificationLink)
+		err = utils.SendVerificationEmail(credentials.Email, credentials.Name, verificationLink)
 		if err != nil {
 			zap.L().Error("error sending verification email:", zap.Error(err))
 			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to send verification email", nil)
@@ -367,6 +368,40 @@ func GetUserStatsHandler(db *database.Database) http.HandlerFunc {
     }
 }
 
+func UpdateUserNameHandler(db *database.Database) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type nameUpdate struct {
+			Name string `json:"name"`
+		}
+
+		var req nameUpdate
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+			return
+		}
+
+		if req.Name == "" {
+			utils.WriteJSON(w, http.StatusBadRequest, false, "name cannot be empty", nil)
+			return
+		}
+
+		userID, ok := middleware.GetUserIDFromContext(r.Context())
+		if !ok {
+			utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
+			return
+		}
+
+		err = db.UpdateUserName(userID, req.Name)
+		if err != nil {
+			utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to update name: "+err.Error(), nil)
+			return
+		}
+
+		utils.WriteJSON(w, http.StatusOK, true, "name updated successfully", nil)
+	}
+}
+
 func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	var req models.Solution
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -404,3 +439,62 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	zap.L().Info("code submitted to Kafka for task", zap.String("taskID", strconv.Itoa(req.TaskID)))
 	utils.WriteJSON(w, http.StatusOK, true, "code submitted successfully", nil)
 }
+
+func ChangePasswordHandler(db *database.Database) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        type passwordChange struct {
+            CurrentPassword string `json:"currentPassword"`
+            NewPassword     string `json:"newPassword"`
+        }
+
+        var req passwordChange
+        err := json.NewDecoder(r.Body).Decode(&req)
+        if err != nil {
+            utils.WriteJSON(w, http.StatusBadRequest, false, "invalid request payload", nil)
+            return
+        }
+
+        if req.CurrentPassword == "" || req.NewPassword == "" {
+            utils.WriteJSON(w, http.StatusBadRequest, false, "current and new password are required", nil)
+            return
+        }
+
+        userID, ok := middleware.GetUserIDFromContext(r.Context())
+        if !ok {
+            utils.WriteJSON(w, http.StatusUnauthorized, false, "unauthorized: user ID not found", nil)
+            return
+        }
+
+        // Get user from database
+        user, err := db.GetUser(userID)
+        if err != nil {
+            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to get user", nil)
+            return
+        }
+
+        // Verify current password
+        err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.CurrentPassword))
+        if err != nil {
+            utils.WriteJSON(w, http.StatusUnauthorized, false, "current password is incorrect", nil)
+            return
+        }
+
+        // Hash new password
+        hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+        if err != nil {
+            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to hash password", nil)
+            return
+        }
+
+        // Update password in database
+        err = db.UpdateUserPassword(userID, string(hashedPassword))
+        if err != nil {
+            utils.WriteJSON(w, http.StatusInternalServerError, false, "failed to update password", nil)
+            return
+        }
+
+        utils.WriteJSON(w, http.StatusOK, true, "password changed successfully", nil)
+    }
+}
+
+

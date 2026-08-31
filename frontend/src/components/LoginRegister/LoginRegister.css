@@ -1,18 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
 * {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
 }
 
 .wrapper {
@@ -24,68 +24,65 @@ body {
   position: relative;
 }
 
-.wrapper .form-box{
-    width: 420px;
-    background-color: white;
-    color: black;
-    border-radius: 10px;
-    padding: 30px 40px;
+.wrapper .form-box {
+  width: 420px;
+  background-color: white;
+  color: black;
+  border-radius: 10px;
+  padding: 30px 40px;
 }
 
 .wrapper .form-box.register {
-    position: absolute;
-    translate: 400px;
+  position: absolute;
+  translate: 400px;
 }
 
 .wrapper.active .form-box.register {
-    transition: translate .18s ease;
-    translate: -400px;
+  transition: translate 0.18s ease;
+  translate: -400px;
 }
 
 form h1 {
-    font-size: 36px;
-    text-align: center;
-    font-weight: 700;
-
+  font-size: 36px;
+  text-align: center;
+  font-weight: 700;
 }
 
 form .input-box {
-    position: relative;
-    width: 100%;
-    height: 50px;
-    margin: 30px 0;
-
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin: 30px 0;
 }
 
 .input-box input {
-    width: 100%;
-    height: 100%;
-    color: black;
-    background: transparent;
-    border: none;
-    outline: none;
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    border-radius: 40px;
-    padding: 20px 45px 20px 20px;
+  width: 100%;
+  height: 100%;
+  color: black;
+  background: transparent;
+  border: none;
+  outline: none;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 40px;
+  padding: 20px 45px 20px 20px;
 }
 
 .input-box input::placeholder {
-    color: black;
+  color: black;
 }
 .input-box .icon {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 16px;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
 }
 
 form .remember-forgot {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14.5px;
-    margin: -15px 0 15px;
-
+  display: flex;
+  justify-content: space-between;
+  font-size: 14.5px;
+  margin: -15px 0 15px;
 }
 
 .remember-forgot label {
@@ -96,85 +93,85 @@ form .remember-forgot {
 }
 
 .remember-forgot label input {
-    color: black;
+  color: black;
 }
 
 .remember-forgot a {
-    color: black;
-    text-decoration: none;
+  color: black;
+  text-decoration: none;
 }
 .remember-forgot a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 form button {
-    width: 100%;
-    height: 45px;
-    background-color:  var(--orange-vivid);
-    border-radius: 40px;
-    box-shadow:  0 0 10px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 700;
+  width: 100%;
+  height: 45px;
+  background-color: var(--orange-vivid);
+  border-radius: 40px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 form .register-login-link {
-    font-size: 14.5px;
-    text-align: center;
-    margin: 20px 0 15px;
+  font-size: 14.5px;
+  text-align: center;
+  margin: 20px 0 15px;
 }
 
-.register-login-link p a{
-    color: black;
-    text-decoration: none;
-    text-decoration: none;
-    font-weight: 600;
+.register-login-link p a {
+  color: black;
+  text-decoration: none;
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .register-login-link p a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 @media (max-width: 992px) {
-    .wrapper .form-box{
+  .wrapper .form-box {
     width: 95%;
     background-color: transparent;
     color: var(--white-bg-text);
     border-radius: 10px;
     padding: 30px 40px;
-}
+  }
 
-.input-box  {
+  .input-box input {
+    color: white;
+  }
+
+  .input-box {
     background: rgb(19, 19, 19);
     border-radius: 20px;
-}
+  }
 
-.remember-forgot label input {
+  .remember-forgot label input {
+    color: rgb(19, 19, 19);
+  }
+
+  .remember-forgot label {
     color: white;
-}
+  }
 
-.remember-forgot label {
-
-  color: white;
-}
-
-.remember-forgot a {
+  .remember-forgot a {
     color: white;
     text-decoration: none;
-}
+  }
 
-.input-box input::placeholder {
-    color:var(--light-grey-bg);
+  .input-box input::placeholder {
+    color: var(--light-grey-bg);
+  }
 
-}
-
-.register-login-link p a{
+  .register-login-link p a {
     color: var(--orange-vivid);
+  }
 
-}
-/* form button {
-    width: 70%;
-    transform: translateX(25%);
-    right: -50%;
-} */
+  .input-box .icon {
+    color: var(--light-grey-bg);
+  }
 }
