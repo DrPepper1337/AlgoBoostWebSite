@@ -141,10 +141,10 @@ export default function Header() {
             {isHomePage && !isAdmin && (
               <a
                 className="navbarLink"
-                href="/#events"
+                href="/#gallery"
                 onClick={handleLinkClick}
               >
-                Events
+                Gallery
               </a>
             )}
             {isHomePage && !isAdmin && (

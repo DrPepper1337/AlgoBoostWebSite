@@ -8,9 +8,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 4rem;
+    margin-bottom: 1rem;
     position: relative;
-    height: 280px;
+    height: 320px;
     width: 100vw;
     left: 50%;
     transform: translateX(-50%);
@@ -65,12 +65,12 @@
 .event-card {
     background: #2a2a2a;
     border-radius: 20px;
-    /* padding: 2.5rem 2rem; */
     text-align: center;
     border: 2px solid transparent;
     transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    width: 30vw;
-    height: 40vh;
+    width: clamp(280px, 32vw, 480px);
+    aspect-ratio: 4 / 3;
+    max-height: 320px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -84,12 +84,13 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(100%);
-    transition: filter 0.3s ease;
+    filter: grayscale(80%);
+    transition: filter 0.3s ease, transform 0.3s ease;
 }
 
 .event-card:hover .event-image {
     filter: grayscale(0%);
+    transform: scale(1.02);
 }
 
 .event-card h3 {
@@ -240,6 +241,7 @@
     left: 50%;
     transform-origin: center center;
     transition: transform 0.6s cubic-bezier(.25, .46, .45, .94);
+    transition-property: transform, opacity;
 }
 
 .pos-center {
@@ -257,14 +259,28 @@
     z-index: 2;
 }
 
+.exit-left {
+    transform: translateX(calc(-50% - var(--gap))) scale(0.95);
+    z-index: 0;
+    opacity: 0;
+}
+
+.exit-right {
+    transform: translateX(calc(-50% + var(--gap))) scale(0.95);
+    z-index: 0;
+    opacity: 0;
+}
+
 .off-left {
     transform: translateX(calc(-50% - var(--offscreen))) scale(0.95);
     z-index: 0;
+    opacity: 0;
 }
 
 .off-right {
     transform: translateX(calc(-50% + var(--offscreen))) scale(0.95);
     z-index: 0;
+    opacity: 0;
 }
 
 .to-center {
@@ -280,6 +296,7 @@
 .to-off-right {
     transform: translateX(calc(-50% + var(--offscreen))) scale(0.95);
     z-index: 0;
+    opacity: 0;
 }
 
 .to-left {
@@ -290,6 +307,7 @@
 .to-off-left {
     transform: translateX(calc(-50% - var(--offscreen))) scale(0.95);
     z-index: 0;
+    opacity: 0;
 }
 
 @media (max-width: 768px) {

@@ -7,35 +7,34 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 
-import dsaTalkImage from '../../assets/DSA_talk.webp';
-import tutorialsImage from '../../assets/tutorials.jpg';
-import competitionsImage from '../../assets/competitions.jpg';
+
+import image1 from '../../assets/carousel/photo1.jpg';
+import image2 from '../../assets/carousel/photo2.jpg';
+import image3 from '../../assets/carousel/photo3.jpg';
+import image4 from '../../assets/carousel/photo4.jpg';
+import image5 from '../../assets/carousel/photo5.jpg';
+import image6 from '../../assets/carousel/photo6.jpg';
+import image7 from '../../assets/carousel/photo7.jpg';
 
 import './EventsCarouselMobile.css';
 
+
 const eventTypes = [
-    { id: 'competitions', title: 'Competitions', description: 'Exciting competitions to test your skills. With prizes, of course.', image: competitionsImage },
-    { id: 'dsa-talks', title: 'DSA Talks', description: 'Weekly discussions on Data Structures and Algorithms.', image: dsaTalkImage },
-    { id: 'tutorials', title: 'Tutorials', description: 'In-depth tutorials to consolidate your understanding of key concepts.', image: tutorialsImage },
+    { id: 'gallery-1', image: image1 },
+    { id: 'gallery-2', image: image2 },
+    { id: 'gallery-3', image: image3 },
+    { id: 'gallery-4', image: image4 },
+    { id: 'gallery-5', image: image5 },
+    { id: 'gallery-6', image: image6 },
+    { id: 'gallery-7', image: image7 },
 ];
 
 function EventsCarouselMobile() {
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [isTransitioning, setIsTransitioning] = useState(false);
-    const [isEntering, setIsEntering] = useState(false);
     const swiperRef = useRef(null);
 
     const handleSlideChange = (swiper) => {
-        const newIndex = swiper.activeIndex;
-        if (newIndex !== currentSlide) {
-            setIsTransitioning(true);
-            setTimeout(() => {
-                setCurrentSlide(newIndex);
-                setIsTransitioning(false);
-                setIsEntering(true);
-                setTimeout(() => setIsEntering(false), 400);
-            }, 150);
-        }
+        setCurrentSlide(swiper.activeIndex);
     };
 
     const goToSlide = (index) => {
@@ -49,7 +48,7 @@ function EventsCarouselMobile() {
             {/* Pagination dots above carousel */}
             <div className="carousel-dots">
                 {eventTypes.map((_, index) => (
-                    <span 
+                    <span
                         key={index}
                         className={`dot ${index === currentSlide ? 'active' : ''}`}
                         onClick={() => {
@@ -76,7 +75,7 @@ function EventsCarouselMobile() {
                     <SwiperSlide key={index} className="carousel-slide-mobile">
                         <div className="event-card-mobile">
                             {event.image ? (
-                                <img src={event.image} alt={event.title} className="event-image-mobile" />
+                                <img src={event.image} alt={`Gallery photo ${index + 1}`} className="event-image-mobile" />
                             ) : (
                                 <h3>{event.title}</h3>
                             )}
@@ -84,11 +83,6 @@ function EventsCarouselMobile() {
                     </SwiperSlide>
                 ))}
             </Swiper>
-
-            <div className={`carousel-description-mobile ${isTransitioning ? 'transitioning' : ''} ${isEntering ? 'entering' : ''}`} key={currentSlide}>
-                <h4>{eventTypes[currentSlide].title}</h4>
-                <p>{eventTypes[currentSlide].description}</p>
-            </div>
         </div>
     );
 }

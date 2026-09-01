@@ -133,33 +133,33 @@ export default function Home() {
           <div className="offer-grid">
             <OfferElement
               iconName="calendar"
-              text="Weekly sessions to guide you through the process"
+              text="Regular hands-on technical interview breakdown sessions."
               order={1}
             />
             <OfferElement
               iconName="book"
-              text="High-quality materials you might actually use"
+              text="DSA theory workshops & interactive LeetCode practice."
               order={2}
             />
             <OfferElement
               iconName="up"
-              text="Space to build your algorithmic skills and confidence"
+              text="Supportive space to build your algorithmic skills and confidence."
               order={3}
             />
             <OfferElement
               iconName="user"
-              text="Platform with practice questions, resources, and an events timetable"
+              text="Peer mock interviews and competitions with money-prizes."
               order={4}
             />
             <OfferElement
               iconName="heart"
-              text="Community and occasional snacks. Yes we are bribing you"
+              text="Community and occasional snacks. Yes we are bribing you."
               order={5}
             />
           </div>
         </RevealOnScroll>
 
-        <section id="events" className="section">
+        <section id="gallery" className="section">
           <h1
             style={{
               textAlign: "center",
@@ -167,7 +167,7 @@ export default function Home() {
               color: "#eaeaea",
             }}
           >
-            Our Events
+            Gallery
           </h1>
           {isMobile ? <EventsCarouselMobile /> : <EventsCarousel />}
         </section>
