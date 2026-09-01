@@ -344,13 +344,15 @@ section#about {
   }
 }
 
-/* events section */
+/* gallery section */
 
+section#gallery,
 section#events {
   /* background: var(--light-grey-bg-2); */
   color: #fff;
-  padding: clamp(3rem, 6vw, 5rem) 2rem;
-  height: 110vh;
+  padding: clamp(3rem, 6vw, 4rem) 2rem;
+  height: auto;
+  min-height: 480px;
 }
 
 /* documents section */
@@ -375,6 +377,7 @@ section#documents h1 {
 
 
 @media (max-width: 768px) {
+  section#gallery,
   section#events {
     height: auto;
     margin-top: 20px;

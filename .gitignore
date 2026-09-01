@@ -23,4 +23,4 @@ deploy/postgres_data/
 configs/Docker.env
 .cache/
 vendor/
-.GEMINI.md
+AGENTS.md

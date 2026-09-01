@@ -1,20 +1,32 @@
-import React, {useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import './EventsCarousel.css';
-import dsaTalkImage from '../../assets/DSA_talk.webp';
-import tutorialsImage from '../../assets/tutorials.jpg';
-import competitionsImage from '../../assets/competitions.jpg';
+
+import image1 from '../../assets/carousel/photo1.jpg';
+import image2 from '../../assets/carousel/photo2.jpg';
+import image3 from '../../assets/carousel/photo3.jpg';
+import image4 from '../../assets/carousel/photo4.jpg';
+import image5 from '../../assets/carousel/photo5.jpg';
+import image6 from '../../assets/carousel/photo6.jpg';
+import image7 from '../../assets/carousel/photo7.jpg';
+
 
 const eventTypes = [
-    { id: 'competitions', title: 'Competitions', description: 'Exciting competitions to test your skills. With prizes, of course.', image: competitionsImage },
-    { id: 'dsa-talks', title: 'DSA Talks', description: 'Weekly discussions on Data Structures and Algorithms.', image: dsaTalkImage },
-    { id: 'tutorials', title: 'Tutorials', description: 'In-depth tutorials to consolidate your understanding of key concepts.', image: tutorialsImage },
+    { id: 'gallery-1', image: image1 },
+    { id: 'gallery-2', image: image2 },
+    { id: 'gallery-3', image: image3 },
+    { id: 'gallery-4', image: image4 },
+    { id: 'gallery-5', image: image5 },
+    { id: 'gallery-6', image: image6 },
+    { id: 'gallery-7', image: image7 },
 ];
 
 export default function EventsCarousel() {
     const [current, setCurrent] = useState(1);
     const [dir, setDir] = useState(null);
     const [run, setRun] = useState(false);
-    const [entering, setEntering] = useState(false);
+    const transitionMs = 650;
+
+    const wrapIndex = (index) => (index + eventTypes.length) % eventTypes.length;
 
     const rightIdx = (current + eventTypes.length - 1) % eventTypes.length;
     const centerIdx = current;
@@ -23,29 +35,27 @@ export default function EventsCarousel() {
     const goRight = () => {
         if (dir) return;
         setDir('right');
-        setEntering(false);
-        requestAnimationFrame(() => setRun(true));
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => setRun(true));
+        });
         setTimeout(() => {
             setCurrent(rightIdx);
             setDir(null);
             setRun(false);
-            setEntering(true);
-            setTimeout(() => setEntering(false), 400);
-        }, 600);
+        }, transitionMs);
     };
 
     const goLeft = () => {
         if (dir) return;
         setDir('left');
-        setEntering(false);
-        requestAnimationFrame(() => setRun(true));
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => setRun(true));
+        });
         setTimeout(() => {
             setCurrent(leftIdx);
             setDir(null);
             setRun(false);
-            setEntering(true);
-            setTimeout(() => setEntering(false), 400);
-        }, 600);
+        }, transitionMs);
     };
 
     const items = useMemo(() => {
@@ -56,12 +66,14 @@ export default function EventsCarousel() {
         ];
 
         if (dir === 'left') {
-            base.push({ key: `G-R-${eventTypes[leftIdx].id}`, idx: rightIdx, slot: 'ghost-enter-left' });
+            const ghostLeftIdx = wrapIndex(current + 2);
+            base.push({ key: `G-R-${eventTypes[ghostLeftIdx].id}`, idx: ghostLeftIdx, slot: 'ghost-enter-left' });
         } else if (dir === 'right') {
-            base.push({ key: `G-L-${eventTypes[rightIdx].id}`, idx: leftIdx, slot: 'ghost-enter-right' });
+            const ghostRightIdx = wrapIndex(current - 2);
+            base.push({ key: `G-L-${eventTypes[ghostRightIdx].id}`, idx: ghostRightIdx, slot: 'ghost-enter-right' });
         }
         return base;
-    }, [dir, leftIdx, centerIdx, rightIdx]);
+    }, [current, dir, leftIdx, centerIdx, rightIdx]);
 
     const getClass = (slot) => {
         if (!dir) return slotClass[slot].atRest;
@@ -87,7 +99,7 @@ export default function EventsCarousel() {
                         <div key={key} className={`carousel-item ${getClass(slot)}`}>
                             <div className="event-card">
                                 {eventTypes[idx].image ? (
-                                    <img src={eventTypes[idx].image} alt={eventTypes[idx].title} className="event-image" />
+                                    <img src={eventTypes[idx].image} alt={`Gallery photo ${idx + 1}`} className="event-image" />
                                 ) : (
                                     <h3>{eventTypes[idx].title}</h3>
                                 )}
@@ -99,11 +111,6 @@ export default function EventsCarousel() {
                 <button className="carousel-arrow right" onClick={goRight} disabled={!!dir}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </button>
-            </div>
-
-            <div className={`carousel-description ${dir ? 'transitioning' : ''} ${entering ? 'entering' : ''}`} key={current}>
-                <h4>{eventTypes[current].title}</h4>
-                <p>{eventTypes[current].description}</p>
             </div>
         </div>
     );
@@ -121,7 +128,7 @@ const slotClassRight = {
     start: {
         left: 'pos-left',
         center: 'pos-center',
-        right: 'pos-right',
+        right: 'exit-right',
         'ghost-enter-left': 'off-left',     // ghost starts off-screen left
     },
     end: {
@@ -135,7 +142,7 @@ const slotClassRight = {
 const slotClassLeft = {
     // When clicking LEFT: everything moves to the LEFT.
     start: {
-        left: 'pos-left',
+        left: 'exit-left',
         center: 'pos-center',
         right: 'pos-right',
         'ghost-enter-right': 'off-right',
