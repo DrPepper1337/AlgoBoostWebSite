@@ -5,7 +5,6 @@ import { FaUser } from "react-icons/fa";
 import "./Header.css";
 import "../../styles/Global.css";
 import DropDownProfile from "../DropDownProfile/DropDownProfile";
-import { useMediaQuery } from "react-responsive";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -15,7 +14,6 @@ export default function Header() {
   const location = useLocation();
   const menuRef = useRef(null);
   const isHomePage = location.pathname === "/";
-  const isMobile = useMediaQuery({ maxWidth: 992 });
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -95,164 +93,119 @@ export default function Header() {
               </a>
             )}
 
-              {/* Login/Register links for mobile menu */}
-            {!isAuthenticated && isMobile && (
-              <>
-                <button
-                  className="navbarLink"
-                  onClick={() => {
-                    navigate("/login");
-                    handleLinkClick();
-                  }}
-                >
-                  Login
-                </button>
-                <button
-                  className="navbarLink"
-                  onClick={() => {
-                    navigate("/login?mode=register");
-                    handleLinkClick();
-                  }}
-                >
-                  Register
-                </button>
-              </>
-            )}
-
-
             {isHomePage && !isAdmin && (
-              <a
-                className="navbarLink"
-                href="/#about"
-                onClick={handleLinkClick}
-              >
-                About us
-              </a>
-            )}
-            {isHomePage && !isAdmin && (
-              <a
-                className="navbarLink"
-                href="/#offer"
-                onClick={handleLinkClick}
-              >
-                What we offer
-              </a>
-            )}
-            {isHomePage && !isAdmin && (
-              <a
-                className="navbarLink"
-                href="/#gallery"
-                onClick={handleLinkClick}
-              >
-                Gallery
-              </a>
-            )}
-            {isHomePage && !isAdmin && (
-              <a
-                className="navbarLink"
-                href="/#documents"
-                onClick={handleLinkClick}
-              >
-                Documents
-              </a>
-            )}
-            {!isHomePage && !isAuthenticated && (
-              <button
-                className="navbarLink"
-                onClick={() => {
-                  navigate("/");
-                  handleLinkClick();
-                }}
-              >
-                Welcome Page
-              </button>
-            )}
-
-            {isAuthenticated && !isHomePage && (
-              <button
-                className="navbarLink"
-                onClick={() => {
-                  navigate("/");
-                  handleLinkClick();
-                }}
-              >
-                Welcome Page
-              </button>
-            )}
-            {isAuthenticated && !(location.pathname === "/memberHub") && (
-              <button
-                className="navbarLink"
-                onClick={() => {
-                  navigate("/memberHub");
-                  handleLinkClick();
-                }}
-              >
-                Member Hub
-              </button>
-            )}
-            {isAuthenticated && !(location.pathname === "/lessons") && (
-              <button
-                className="navbarLink"
-                onClick={() => {
-                  navigate("/lessons");
-                  handleLinkClick();
-                }}
-              >
-                Lessons
-              </button>
-            )}
-            {isAdmin && (
-              <>
-                {!(location.pathname === "/manageUsers") && (
+                  <a
+                    className="navbarLink"
+                    href="/#about"
+                    onClick={handleLinkClick}
+                  >
+                    About us
+                  </a>
+                )}
+                {isHomePage && !isAdmin && (
+                  <a
+                    className="navbarLink"
+                    href="/#offer"
+                    onClick={handleLinkClick}
+                  >
+                    What we offer
+                  </a>
+                )}
+                {isHomePage && !isAdmin && (
+                  <a
+                    className="navbarLink"
+                    href="/#gallery"
+                    onClick={handleLinkClick}
+                  >
+                    Gallery
+                  </a>
+                )}
+                {isHomePage && !isAdmin && (
+                  <a
+                    className="navbarLink"
+                    href="/#documents"
+                    onClick={handleLinkClick}
+                  >
+                    Documents
+                  </a>
+                )}
+                {!isHomePage && !isAuthenticated && (
                   <button
-                    className="navbarLink admin-link"
+                    className="navbarLink"
                     onClick={() => {
-                      navigate("/manageUsers");
+                      navigate("/");
                       handleLinkClick();
                     }}
                   >
-                    Manage Users
+                    Welcome Page
                   </button>
                 )}
-                {!(location.pathname === "/manageLessons") && (
+
+                {isAuthenticated && !isHomePage && (
                   <button
-                    className="navbarLink admin-link"
+                    className="navbarLink"
                     onClick={() => {
-                      navigate("/manageLessons");
+                      navigate("/");
                       handleLinkClick();
                     }}
                   >
-                    Manage Lessons
+                    Welcome Page
                   </button>
                 )}
-              </>
-            )}
-          </nav>
+                {isAuthenticated && !(location.pathname === "/memberHub") && (
+                  <button
+                    className="navbarLink"
+                    onClick={() => {
+                      navigate("/memberHub");
+                      handleLinkClick();
+                    }}
+                  >
+                    Member Hub
+                  </button>
+                )}
+                {isAuthenticated && !(location.pathname === "/lessons") && (
+                  <button
+                    className="navbarLink"
+                    onClick={() => {
+                      navigate("/lessons");
+                      handleLinkClick();
+                    }}
+                  >
+                    Lessons
+                  </button>
+                )}
+                {isAdmin && (
+                  <>
+                    {!(location.pathname === "/manageUsers") && (
+                      <button
+                        className="navbarLink admin-link"
+                        onClick={() => {
+                          navigate("/manageUsers");
+                          handleLinkClick();
+                        }}
+                      >
+                        Manage Users
+                      </button>
+                    )}
+                    {!(location.pathname === "/manageLessons") && (
+                      <button
+                        className="navbarLink admin-link"
+                        onClick={() => {
+                          navigate("/manageLessons");
+                          handleLinkClick();
+                        }}
+                      >
+                        Manage Lessons
+                      </button>
+                    )}
+                  </>
+                )}
+            </nav>
         </div>
 
         <div className="right-controls">
           {!isAuthenticated ? (
             <div className="menu-buttons">
-              <button
-                className="menu-btn"
-                id="login"
-                onClick={() => {
-                  navigate("/login");
-                  handleLinkClick();
-                }}
-              >
-                Login
-              </button>
-              <button
-                className="menu-btn"
-                id="register"
-                onClick={() => {
-                  navigate("/login?mode=register");
-                  handleLinkClick();
-                }}
-              >
-                Register
-              </button>
               <button
                 className="menu-btn"
                 id="become-a-member"

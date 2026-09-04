@@ -9,12 +9,13 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     historyApiFallback: true,
+    allowedHosts: ['frontend', 'localhost', '127.0.0.1'],
   },
   preview: {
     host: '0.0.0.0',
     port: 5173,
   },
-  base: './',
+  base: '/',
   build: {
     assetsDir: 'assets',
     rollupOptions: {
