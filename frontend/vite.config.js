@@ -15,7 +15,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
   },
-  base: '/AlgoboostWebsite/',
+  base: '/',
   build: {
     assetsDir: 'assets',
     rollupOptions: {
